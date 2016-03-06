@@ -11,12 +11,16 @@
 	</head>
 	
 	<body>
-		<canvas id="gameCanvas"></canvas>
+		<div class="myCanvas">
+			<canvas id="gameCanvas"></canvas>	
+		</div>
+		
 		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 		<script src="js/requestAnimationFrame.js"></script>
 		<script src="js/Keys.js"></script>
 		<script src="js/Player.js"></script>
 		<script src="js/game.js"></script>
+		<script src="js/Map.js"></script>
 		<script>
 			// Initialise the game
 			init();
