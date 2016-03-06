@@ -13,15 +13,10 @@ var canvas,			// Canvas DOM element
 	vY = 0,
 	RADIUS = 100,
 	MOUSE_RADIUS = 20;
-var 
-	scale,
+var scale,
 	playerSize,
 	mstartX = -1,
-	mstartY = -1,
-	vX = 0,
-	vY = 0,
-	RADIUS = 100,
-	MOUSE_RADIUS = 20;
+	mstartY = -1;
 var mapWidth = 20, mapHeight = 12;
 var pixelPerBlock = 20;
 var remainingWidth, remainingHeight;
