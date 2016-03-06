@@ -309,6 +309,8 @@ function update() {
 };
 
 function checkTile(x, y, map) {
+	if (map==-1)
+		return;
 	var i = Math.round((y-pixelPerBlock/2)/pixelPerBlock), r = Math.round((x-pixelPerBlock/2)/pixelPerBlock);
 	if (i<0 || i>=mapHeight || r<0 || r>=mapWidth)
 		return;
