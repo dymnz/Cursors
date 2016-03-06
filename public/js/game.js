@@ -312,7 +312,7 @@ function checkTile(x, y, map) {
 	var i = Math.round((y-pixelPerBlock/2)/pixelPerBlock), r = Math.round((x-pixelPerBlock/2)/pixelPerBlock);
 	if (i<0 || i>=mapHeight || r<0 || r>=mapWidth)
 		return;
-
+	
 	var blockId = (maps[map])[i][r];
 	switch(blockId){
 		case 400:

@@ -72,11 +72,6 @@ var Player = function(startX, startY) {
 				x += moveAmount;
 		};
 
-<<<<<<< HEAD
-		x += vX;
-		y += vY;
-		
-=======
 		if ( ((y+vY>0) && (y+vY<pixelPerBlock*mapHeight) && !isCollision(x, y+vY, map)) )
 			y += vY;
 		else{
@@ -136,10 +131,6 @@ var Player = function(startX, startY) {
 			}
 		}
 
-
-		
-
->>>>>>> origin/master
 		return (prevX != x || prevY != y) ? true : false;
 		
 	};
