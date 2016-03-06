@@ -13,14 +13,11 @@ var util = require("util"),					// Utility resources (logging, object inspection
 **************************************************/
 var socket,		// Socket controller
 	players,	// Array of connected players
-<<<<<<< HEAD
 	psockets;
-=======
 	playerList;	// Array of ID-player pairs
 
 var roomCount = 2,
 	mapCount = 20;
->>>>>>> origin/master
 
 
 /**************************************************
@@ -30,9 +27,7 @@ function init() {
 
 	// Create an empty array to store players
 	players = [];
-<<<<<<< HEAD
 	psockets = [];
-=======
 	for(var i = 0;i < roomCount;i++){
 		players[i] = [];
 		for(var j = 0;j < mapCount;j++)
@@ -40,7 +35,6 @@ function init() {
 	}
 
 	playerList = [];
->>>>>>> origin/master
 
 	// Set up Socket.IO to listen on port 8000
 	socket = io.listen(8000);
@@ -119,14 +113,11 @@ function onNewPlayer(data) {
 
 	// Broadcast new player to connected socket clients
 	//this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
-<<<<<<< HEAD
 	for(s in psockets){
 		if(s != this.id)
 			psockets[s].emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
 	}
-=======
 	broadcasting(newPlayer, "new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
->>>>>>> origin/master
 
 	// Assign initial map for new player
 	this.emit("map change", {map: 4} );
