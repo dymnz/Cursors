@@ -7,7 +7,8 @@ var Player = function(startX, startY) {
 		id,
 		moveAmount = 1,
 		map=-1,
-		playerSize;
+		playerSize,
+		oriX, oriY;
 	
 	// Getters and setters
 	var getX = function() {
@@ -17,7 +18,13 @@ var Player = function(startX, startY) {
 	var getY = function() {
 		return y;
 	};
+	var getOriX = function() {
+		return oriX;
+	};
 
+	var getOriY = function() {
+		return oriY;
+	};
 	var getMap = function(){
 		return map;
 	}
@@ -28,6 +35,13 @@ var Player = function(startX, startY) {
 
 	var setY = function(newY) {
 		y = newY;
+	};
+	var setOriX = function(newX) {
+		oriX = newX;
+	};
+
+	var setOriY = function(newY) {
+		oriY = newY;
 	};
 
 	var setMap  = function(newMap) {
@@ -42,19 +56,19 @@ var Player = function(startX, startY) {
 
 		// Up key takes priority over down
 		if (keys.up) {
-			if (!isCollision(x, y-moveAmount, map))
+			if ((y-moveAmount>=0) && !isCollision(x, y-moveAmount, map))
 				y -= moveAmount;
 		} else if (keys.down) {
-			if (!isCollision(x, y+moveAmount, map))
+			if ((y+moveAmount<=pixelPerBlock*mapHeight) && !isCollision(x, y+moveAmount, map))
 				y += moveAmount;
 		};
 
 		// Left key takes priority over right
 		if (keys.left) {
-			if (!isCollision(x-moveAmount, y, map))
+			if ((x-moveAmount>=0) && !isCollision(x-moveAmount, y, map))
 				x -= moveAmount;
 		} else if (keys.right) {
-			if (!isCollision(x+moveAmount, y, map))
+			if ((x+moveAmount<=pixelPerBlock*mapWidth) && !isCollision(x+moveAmount, y, map))
 				x += moveAmount;
 		};
 
@@ -71,9 +85,13 @@ var Player = function(startX, startY) {
 	return {
 		getX: getX,
 		getY: getY,
+		getOriX: getOriX,
+		getOriY: getOriY,
 		getMap: getMap,
 		setX: setX,
 		setY: setY,
+		setOriX: setOriX,
+		setOriY: setOriY,
 		setMap: setMap,
 		update: update,
 		draw: draw

@@ -13,6 +13,7 @@ var mapWidth = 20, mapHeight = 12;
 var pixelPerBlock = 20;
 var remainingWidth, remainingHeight;
 var paddingX, paddingY;
+var doors = [];
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
@@ -180,18 +181,31 @@ function onMapChange(data) {
 	// Set the map 
 	localPlayer.setMap(data.map);
 
+	// Clear 
+	remotePlayers = [];
+	doors = [];
+
 	// Find starting point
 	for (i = 0 ; i<mapHeight ; i++){
 		for(r = 0 ; r<mapWidth ; r++){
-			if((maps[data.map])[i][r]===300)
+			var blockId = (maps[data.map])[i][r];
+			if(blockId===300)
 			{
 				localPlayer.setX(r*pixelPerBlock + Math.round(Math.random()*(pixelPerBlock)));
 				localPlayer.setY(i*pixelPerBlock + Math.round(Math.random()*(pixelPerBlock)));
+				localPlayer.setOriX(localPlayer.getX());
+				localPlayer.setOriY(localPlayer.getY());
 				console.log("x :" + localPlayer.getX() + "y :" + localPlayer.getY());
 
 			}
+			else if(blockId>=100 && blockId<=109)
+			{
+				var door = [blockId, 'close'];
+				doors.push(door);
+			}
 		}
 	}
+
 };
 
 
@@ -216,8 +230,25 @@ function update() {
 		// Send local player data to the game server
 		socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
 	};
+	checkTile(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
 };
 
+function checkTile(x, y, map) {
+	var i = Math.round((y-pixelPerBlock/2)/pixelPerBlock), r = Math.round((x-pixelPerBlock/2)/pixelPerBlock);
+	if (i<0 || i>=mapHeight || r<0 || r>=mapWidth)
+		return;
+
+	var blockId = (maps[map])[i][r];
+	switch(blockId){
+		case 400:
+			socket.emit("back to last");
+			break;
+		case 500:
+			localPlayer.setX(localPlayer.getOriX());
+			localPlayer.setY(localPlayer.getOriY());
+			break;
+	}
+}
 
 /**************************************************
 ** GAME DRAW
@@ -248,21 +279,29 @@ function drawMap(map) {
 
 	for (i = 0 ; i<mapHeight ; i++){
 		for(r = 0 ; r<mapWidth ; r++){
-			switch((maps[map])[i][r])
-			{
-				case 1: // Wall
-					ctx.fillStyle = 'black';
-					drawBlock(i, r);
-					break;
-				case 300: // Origin
-					ctx.fillStyle = 'yellow';
-					drawBlock(i, r);
-					break;					
-				case 999: // Goal
-					ctx.fillStyle = 'green';
-					drawBlock(i, r);
-					break;
-				default:
+			var blockId = (maps[map])[i][r];
+
+			// Doors
+			if(blockId>=100 && blockId<=109){
+				ctx.fillStyle = findStyle(blockId);
+				drawBlock(i, r);
+				drawCross(i, r);
+			}
+			// Button
+			else if (blockId>=200 && blockId<=209){
+				ctx.fillStyle = findStyle(blockId);
+				drawBlock(i, r);
+				drawCircle(i, r);					
+			}
+			// Goal
+			else if (blockId == 999 || blockId == 1){
+				ctx.fillStyle = findStyle(blockId);
+				drawBlock(i, r);
+			}
+			//400 back to last, 500 back to origin
+			else if (blockId ==  400 || blockId ==500){
+				ctx.fillStyle = findStyle(blockId);
+				drawBlock(i, r);
 			}
 			
 		}
@@ -277,7 +316,6 @@ function drawPlayer(x, y, style)
 	ctx.fillStyle = style;
 	ctx.fillRect(cX - playerSize/2+paddingX, cY-playerSize/2+paddingY, playerSize, playerSize);
 	
-	console.log("cx :" + cX + "cy :" + cY);
 }
 
 function drawBlock(i, r)
@@ -285,6 +323,27 @@ function drawBlock(i, r)
 	ctx.fillRect(r*blockWidth+2+paddingX, i*blockWidth+2+paddingY, blockWidth-4, blockWidth-4);
 }
 
+function drawCross(i, r)
+{
+	ctx.fillStyle = 'black';
+	ctx.lineWidth=3;
+	ctx.beginPath();
+	ctx.moveTo(r*blockWidth+paddingX+4,i*blockWidth+paddingY+4);
+	ctx.lineTo(r*blockWidth+paddingX + blockWidth-4,i*blockWidth+paddingY+blockWidth-4);
+	ctx.stroke();
+	ctx.beginPath();
+	ctx.moveTo(r*blockWidth+paddingX+blockWidth-4,i*blockWidth+paddingY+4);
+	ctx.lineTo(r*blockWidth+paddingX+4,i*blockWidth+paddingY+blockWidth-4);
+	ctx.stroke();
+}
+
+function drawCircle(i, r) {
+	ctx.fillStyle = 'black';
+	ctx.lineWidth=3;
+	ctx.beginPath();
+	ctx.arc(r*blockWidth+paddingX + blockWidth/2, i*blockWidth+paddingY+blockWidth/2 ,blockWidth/2,0,2*Math.PI);
+	ctx.stroke();
+}
 
 /**************************************************
 ** GAME HELPER FUNCTIONS
@@ -302,8 +361,37 @@ function playerById(id) {
 
 function isCollision(x, y, map){
 	var i = Math.round((y-pixelPerBlock/2)/pixelPerBlock), r = Math.round((x-pixelPerBlock/2)/pixelPerBlock);
-	if((maps[map])[i][r]===1)
+	if (i<0 || i>=mapHeight || r<0 || r>=mapWidth)
 		return true;
+	var blockId = (maps[map])[i][r];
+	if(blockId===1)
+		return true;
+	if(blockId>=100 && blockId<=109)
+	{
+		if(isDoorOpen(blockId))
+			return false;
+		else
+			return true;
+	}
 	return false;
 }
+function findStyle(id) {
+	var i;
+	for(i = 0; i<stylelist.length ; i++)
+		if(stylelist[i][0]==id)
+			return stylelist[i][1];
+	return 'black';
+}
 
+function isDoorOpen(id){
+	var i;
+	for(i=0 ; i<doors.length ; i++)
+	{
+		if(doors[i][0]===id)
+			if(doors[i][1]==='close')
+				return false;
+			else 
+				return true;
+	}
+	return false;
+}
