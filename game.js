@@ -81,6 +81,9 @@ function onNewPlayer(data) {
 	// Broadcast new player to connected socket clients
 	this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
 
+	// Assign initial map for new player
+	this.emit("map change", {map: 0} );
+
 	// Send existing players to the new player
 	var i, existingPlayer;
 	for (i = 0; i < players.length; i++) {

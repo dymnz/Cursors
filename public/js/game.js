@@ -6,9 +6,13 @@ var canvas,			// Canvas DOM element
 	keys,			// Keyboard input
 	localPlayer,	// Local player
 	remotePlayers,	// Remote players
-	socket;			// Socket connection
-
-
+	socket,
+	scale,
+	playerSize;			// Socket connection
+var mapWidth = 20, mapHeight = 12;
+var pixelPerBlock = 20;
+var remainingWidth, remainingHeight;
+var paddingX, paddingY;
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
@@ -21,6 +25,24 @@ function init() {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 
+	//Calculate width per block
+	if (canvas.width/mapWidth >= canvas.height/mapHeight){
+		blockWidth = canvas.height/mapHeight;
+		remainingHeight = 0;
+		remainingWidth = canvas.width - blockWidth*mapWidth;
+	}
+	else{
+		blockWidth = canvas.width/mapWidth;
+		remainingHeight = canvas.height - blockWidth*mapHeight;
+		remainingWidth = 0;
+	}
+
+	paddingX = Math.round(remainingWidth/2);
+	paddingY = Math.round(remainingHeight/2)
+	scale = blockWidth/pixelPerBlock;
+	playerSize = Math.round(scale * blockWidth/10);
+	
+
 	// Initialise keyboard controls
 	keys = new Keys();
 
@@ -32,6 +54,7 @@ function init() {
 
 	// Initialise the local player
 	localPlayer = new Player(startX, startY);
+	//localPlayer.
 
 	// Initialise socket connection
 	socket = io.connect("http://localhost:8000", {port: 8000, transports: ["websocket"]});
@@ -69,6 +92,10 @@ var setEventHandlers = function() {
 
 	// Player removed message received
 	socket.on("remove player", onRemovePlayer);
+
+	// Map change
+	socket.on("map change", onMapChange);
+
 };
 
 // Keyboard key down
@@ -146,6 +173,27 @@ function onRemovePlayer(data) {
 	remotePlayers.splice(remotePlayers.indexOf(removePlayer), 1);
 };
 
+// Map change
+function onMapChange(data) {
+	console.log("Map changed");
+
+	// Set the map 
+	localPlayer.setMap(data.map);
+
+	// Find starting point
+	for (i = 0 ; i<mapHeight ; i++){
+		for(r = 0 ; r<mapWidth ; r++){
+			if((maps[data.map])[i][r]===300)
+			{
+				localPlayer.setX(r*pixelPerBlock + Math.round(Math.random()*(pixelPerBlock)));
+				localPlayer.setY(i*pixelPerBlock + Math.round(Math.random()*(pixelPerBlock)));
+				console.log("x :" + localPlayer.getX() + "y :" + localPlayer.getY());
+
+			}
+		}
+	}
+};
+
 
 /**************************************************
 ** GAME ANIMATION LOOP
@@ -175,18 +223,67 @@ function update() {
 ** GAME DRAW
 **************************************************/
 function draw() {
+	if(localPlayer.getMap()===-1)
+		return;
+
 	// Wipe the canvas clean
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.fillStyle = 'aqua';
+	ctx.fillRect(paddingX, paddingY, canvas.width-remainingWidth, canvas.height-remainingHeight);
+
+	// Draw map
+	drawMap(localPlayer.getMap());
 
 	// Draw the local player
-	localPlayer.draw(ctx);
+	drawPlayer(localPlayer.getX(), localPlayer.getY(), 'red');
 
 	// Draw the remote players
 	var i;
 	for (i = 0; i < remotePlayers.length; i++) {
-		remotePlayers[i].draw(ctx);
+		drawPlayer(remotePlayers[i].getX(), remotePlayers[i].getY(), 'grey');
 	};
 };
+
+function drawMap(map) {
+	var i, r;
+
+	for (i = 0 ; i<mapHeight ; i++){
+		for(r = 0 ; r<mapWidth ; r++){
+			switch((maps[map])[i][r])
+			{
+				case 1: // Wall
+					ctx.fillStyle = 'black';
+					drawBlock(i, r);
+					break;
+				case 300: // Origin
+					ctx.fillStyle = 'yellow';
+					drawBlock(i, r);
+					break;					
+				case 999: // Goal
+					ctx.fillStyle = 'green';
+					drawBlock(i, r);
+					break;
+				default:
+			}
+			
+		}
+	}
+}
+
+function drawPlayer(x, y, style)
+{
+	// Translate the coord
+	var cX = Math.round( scale* x),
+		cY = Math.round( scale * y);
+	ctx.fillStyle = style;
+	ctx.fillRect(cX - playerSize/2+paddingX, cY-playerSize/2+paddingY, playerSize, playerSize);
+	
+	console.log("cx :" + cX + "cy :" + cY);
+}
+
+function drawBlock(i, r)
+{
+	ctx.fillRect(r*blockWidth+2+paddingX, i*blockWidth+2+paddingY, blockWidth-4, blockWidth-4);
+}
 
 
 /**************************************************
@@ -202,3 +299,11 @@ function playerById(id) {
 	
 	return false;
 };
+
+function isCollision(x, y, map){
+	var i = Math.round((y-pixelPerBlock/2)/pixelPerBlock), r = Math.round((x-pixelPerBlock/2)/pixelPerBlock);
+	if((maps[map])[i][r]===1)
+		return true;
+	return false;
+}
+

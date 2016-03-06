@@ -5,7 +5,9 @@ var Player = function(startX, startY) {
 	var x = startX,
 		y = startY,
 		id,
-		moveAmount = 2;
+		moveAmount = 1,
+		map=-1,
+		playerSize;
 	
 	// Getters and setters
 	var getX = function() {
@@ -16,6 +18,10 @@ var Player = function(startX, startY) {
 		return y;
 	};
 
+	var getMap = function(){
+		return map;
+	}
+
 	var setX = function(newX) {
 		x = newX;
 	};
@@ -23,6 +29,10 @@ var Player = function(startX, startY) {
 	var setY = function(newY) {
 		y = newY;
 	};
+
+	var setMap  = function(newMap) {
+		map = newMap;
+	}
 
 	// Update player position
 	var update = function(keys) {
@@ -32,16 +42,20 @@ var Player = function(startX, startY) {
 
 		// Up key takes priority over down
 		if (keys.up) {
-			y -= moveAmount;
+			if (!isCollision(x, y-moveAmount, map))
+				y -= moveAmount;
 		} else if (keys.down) {
-			y += moveAmount;
+			if (!isCollision(x, y+moveAmount, map))
+				y += moveAmount;
 		};
 
 		// Left key takes priority over right
 		if (keys.left) {
-			x -= moveAmount;
+			if (!isCollision(x-moveAmount, y, map))
+				x -= moveAmount;
 		} else if (keys.right) {
-			x += moveAmount;
+			if (!isCollision(x+moveAmount, y, map))
+				x += moveAmount;
 		};
 
 		return (prevX != x || prevY != y) ? true : false;
@@ -49,6 +63,7 @@ var Player = function(startX, startY) {
 
 	// Draw player
 	var draw = function(ctx) {
+		ctx.fillStyle = 'red';
 		ctx.fillRect(x-5, y-5, 10, 10);
 	};
 
@@ -56,8 +71,10 @@ var Player = function(startX, startY) {
 	return {
 		getX: getX,
 		getY: getY,
+		getMap: getMap,
 		setX: setX,
 		setY: setY,
+		setMap: setMap,
 		update: update,
 		draw: draw
 	}
