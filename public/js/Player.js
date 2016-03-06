@@ -131,9 +131,6 @@ var Player = function(startX, startY) {
 			}
 		}
 
-
-		
-
 		return (prevX != x || prevY != y) ? true : false;
 		
 	};

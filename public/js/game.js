@@ -134,22 +134,22 @@ function onKeyup(e) {
 
 function mouseHandler(e) {
 	if(mstartX != -1 && e.type == "mousemove"){
-		mouseX = (e.pageX + startX)/2;
-		mouseY = (e.pageY + startY)/2;
-		var mouseLength = Math.sqrt((mouseX-startX)*(mouseX-startX) + (mouseY-startY)*(mouseY-startY));
+		mouseX = (e.pageX + mstartX)/2;
+		mouseY = (e.pageY + mstartY)/2;
+		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
 		if(mouseLength > RADIUS){
-			mouseX = RADIUS*(mouseX-startX)/mouseLength + startX;
-			mouseY = RADIUS*(mouseY-startY)/mouseLength + startY;
+			mouseX = RADIUS*(mouseX-mstartX)/mouseLength + mstartX;
+			mouseY = RADIUS*(mouseY-mstartY)/mouseLength + mstartY;
 		}
-		vX = (mouseX - startX)/10;
-		vY = (mouseY - startY)/10;
+		vX = (mouseX - mstartX)/10;
+		vY = (mouseY - mstartY)/10;
 	}
 	else if(e.type == "mousedown"){
-		startX = e.pageX;
-		startY = e.pageY;
-		mouseX = startX;
-		mouseY = startY;
-		socket.emit("push", {});
+		mstartX = e.pageX;
+		mstartY = e.pageY;
+		mouseX = mstartX;
+		mouseY = mstartY;
+		socket.emit("push");
 	}
 	else if(e.type == "mouseup") {
 		mstartX = -1;
@@ -157,6 +157,7 @@ function mouseHandler(e) {
 }
 
 function touchHandler(e) {
+	e.preventDefault();
 	if(e.type == "touchstart"){
 		mstartX = e.touches[0].pageX;
 		mstartY = e.touches[0].pageY;
@@ -304,10 +305,12 @@ function update() {
 };
 
 function checkTile(x, y, map) {
+	if (map==-1)
+		return;
 	var i = Math.round((y-pixelPerBlock/2)/pixelPerBlock), r = Math.round((x-pixelPerBlock/2)/pixelPerBlock);
 	if (i<0 || i>=mapHeight || r<0 || r>=mapWidth)
 		return;
-
+	
 	var blockId = (maps[map])[i][r];
 	switch(blockId){
 		case 400:
