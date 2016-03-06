@@ -6,11 +6,16 @@ var canvas,			// Canvas DOM element
 	keys,			// Keyboard input
 	localPlayer,	// Local player
 	remotePlayers,	// Remote players
-	socket,
-	scale,
-	playerSize;			// Socket connection
-var 	mouseX,
+	socket,			// Socket connection
+	mouseX,
 	mouseY,
+	vX = 0,
+	vY = 0,
+	RADIUS = 100,
+	MOUSE_RADIUS = 20;
+var 
+	scale,
+	playerSize,
 	mstartX = -1,
 	mstartY = -1,
 	vX = 0,
@@ -22,6 +27,7 @@ var pixelPerBlock = 20;
 var remainingWidth, remainingHeight;
 var paddingX, paddingY;
 var doors = [];
+
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
@@ -295,7 +301,7 @@ function animate() {
 **************************************************/
 function update() {
 	// Update local player and check for change
-	if (localPlayer.update(keys)) {
+	if (localPlayer.update(keys, vX, vY)) {
 		// Send local player data to the game server
 		socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
 	};
