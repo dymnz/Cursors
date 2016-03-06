@@ -47,7 +47,7 @@ function init() {
 	}
 
 	paddingX = Math.round(remainingWidth/2);
-	paddingY = Math.round(remainingHeight/2)
+	paddingY = Math.round(remainingHeight/2);
 	scale = blockWidth/pixelPerBlock;
 	playerSize = Math.round(scale * blockWidth/10);
 	

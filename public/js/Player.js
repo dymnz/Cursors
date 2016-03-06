@@ -75,16 +75,13 @@ var Player = function(startX, startY) {
 		if ( ((y+vY>0) && (y+vY<pixelPerBlock*mapHeight) && !isCollision(x, y+vY, map)) )
 			y += vY;
 		else{
-			console.log("1111");
 			if(vY<0)
 			{
-				console.log("xxxx");
 				while(vY<0)
 				{
 					vY++;
 					if((y+vY>0) && (y+vY<pixelPerBlock*mapHeight) && !isCollision(x, y+(vY), map))
 					{
-						console.log("1");
 						y+=vY;
 						break;
 					}				
@@ -93,13 +90,11 @@ var Player = function(startX, startY) {
 			}
 			else if(vY>0)
 			{
-				console.log("dddd");
 				while(vY>0)
 				{
 					vY--;
 					if((y+vY>0) && (y+vY<pixelPerBlock*mapHeight )&& !isCollision(x, y+(vY), map))
 					{
-						console.log("2");
 						y+=vY;
 						break;
 					}					
@@ -110,14 +105,12 @@ var Player = function(startX, startY) {
 		if ((x+vX>0) && (x+vX<pixelPerBlock*mapWidth) && !isCollision(x+vX, y, map)) 
 			x += vX;
 		else {
-			console.log("2222");
 			if(vX<0)
 			{
 				while(vX<0){
 					vX++;
 					if((x+vX>0) && (x+vX<pixelPerBlock*mapWidth)&&!isCollision(x+(vX), y, map))
 					{
-						console.log("3");
 						x+=vX;
 						break;
 					}					
@@ -130,7 +123,6 @@ var Player = function(startX, startY) {
 					vX--;
 					if((x+vX>0) && (x+vX<pixelPerBlock*mapWidth)&&!isCollision(x+(vX), y, map))
 					{
-						console.log("4");
 						x+=vX;
 						break;
 					}					

@@ -82,7 +82,7 @@ function onNewPlayer(data) {
 	this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
 
 	// Assign initial map for new player
-	this.emit("map change", {map: 2} );
+	this.emit("map change", {map: 4} );
 
 	// Send existing players to the new player
 	var i, existingPlayer;
