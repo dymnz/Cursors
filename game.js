@@ -12,7 +12,8 @@ var util = require("util"),					// Utility resources (logging, object inspection
 ** GAME VARIABLES
 **************************************************/
 var socket,		// Socket controller
-	players;	// Array of connected players
+	players,	// Array of connected players
+	psockets;
 
 
 /**************************************************
@@ -21,6 +22,7 @@ var socket,		// Socket controller
 function init() {
 	// Create an empty array to store players
 	players = [];
+	psockets = [];
 
 	// Set up Socket.IO to listen on port 8000
 	socket = io.listen(8000);
@@ -43,6 +45,9 @@ var setEventHandlers = function() {
 // New socket connection
 function onSocketConnection(client) {
 	util.log("New player has connected: "+client.id);
+
+	//add socket reference
+	psockets[client.id] = client;
 
 	// Listen for client disconnected
 	client.on("disconnect", onClientDisconnect);
@@ -80,7 +85,11 @@ function onNewPlayer(data) {
 	newPlayer.id = this.id;
 
 	// Broadcast new player to connected socket clients
-	this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
+	//this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
+	for(s in psockets){
+		if(s != this.id)
+			psockets[s].emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
+	}
 
 	// Assign initial map for new player
 	this.emit("map change", {map: 0} );
