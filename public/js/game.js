@@ -227,7 +227,7 @@ function draw() {
 		return;
 
 	// Wipe the canvas clean
-	ctx.fillStyle = 'aqua';
+	ctx.fillStyle = 'white';
 	ctx.fillRect(paddingX, paddingY, canvas.width-remainingWidth, canvas.height-remainingHeight);
 
 	// Draw map
