@@ -6,9 +6,28 @@ var canvas,			// Canvas DOM element
 	keys,			// Keyboard input
 	localPlayer,	// Local player
 	remotePlayers,	// Remote players
-	socket;			// Socket connection
+<<<<<<< HEAD
+	socket,			// Socket connection
+	mouseX,
+	mouseY,
+	startX = -1,
+	startY = -1,
+	vX = 0,
+	vY = 0,
+	RADIUS = 100,
+	MOUSE_RADIUS = 20;
 
 
+=======
+	socket,
+	scale,
+	playerSize;			// Socket connection
+var mapWidth = 20, mapHeight = 12;
+var pixelPerBlock = 20;
+var remainingWidth, remainingHeight;
+var paddingX, paddingY;
+var doors = [];
+>>>>>>> origin/master
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
@@ -21,6 +40,24 @@ function init() {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 
+	//Calculate width per block
+	if (canvas.width/mapWidth >= canvas.height/mapHeight){
+		blockWidth = canvas.height/mapHeight;
+		remainingHeight = 0;
+		remainingWidth = canvas.width - blockWidth*mapWidth;
+	}
+	else{
+		blockWidth = canvas.width/mapWidth;
+		remainingHeight = canvas.height - blockWidth*mapHeight;
+		remainingWidth = 0;
+	}
+
+	paddingX = Math.round(remainingWidth/2);
+	paddingY = Math.round(remainingHeight/2)
+	scale = blockWidth/pixelPerBlock;
+	playerSize = Math.round(scale * blockWidth/10);
+	
+
 	// Initialise keyboard controls
 	keys = new Keys();
 
@@ -32,6 +69,7 @@ function init() {
 
 	// Initialise the local player
 	localPlayer = new Player(startX, startY);
+	//localPlayer.
 
 	// Initialise socket connection
 	socket = io.connect("http://localhost:8000", {port: 8000, transports: ["websocket"]});
@@ -51,6 +89,12 @@ var setEventHandlers = function() {
 	// Keyboard
 	window.addEventListener("keydown", onKeydown, false);
 	window.addEventListener("keyup", onKeyup, false);
+	canvas.addEventListener("mousemove", mouseHandler, false);
+	canvas.addEventListener("mousedown", mouseHandler, false);
+	canvas.addEventListener("mouseup", mouseHandler, false);
+	canvas.addEventListener("touchstart", touchHandler, false);
+	canvas.addEventListener("touchmove", touchHandler, false);
+	canvas.addEventListener("touchend", touchHandler, false);
 
 	// Window resize
 	window.addEventListener("resize", onResize, false);
@@ -69,6 +113,10 @@ var setEventHandlers = function() {
 
 	// Player removed message received
 	socket.on("remove player", onRemovePlayer);
+
+	// Map change
+	socket.on("map change", onMapChange);
+
 };
 
 // Keyboard key down
@@ -84,6 +132,60 @@ function onKeyup(e) {
 		keys.onKeyUp(e);
 	};
 };
+
+function mouseHandler(e) {
+	if(startX != -1 && e.type == "mousemove"){
+		mouseX = (e.pageX + startX)/2;
+		mouseY = (e.pageY + startY)/2;
+		var mouseLength = Math.sqrt((mouseX-startX)*(mouseX-startX) + (mouseY-startY)*(mouseY-startY));
+		if(mouseLength > RADIUS){
+			mouseX = RADIUS*(mouseX-startX)/mouseLength + startX;
+			mouseY = RADIUS*(mouseY-startY)/mouseLength + startY;
+		}
+		vX = (mouseX - startX)/10;
+		vY = (mouseY - startY)/10;
+	}
+	else if(e.type == "mousedown"){
+		startX = e.pageX;
+		startY = e.pageY;
+		mouseX = startX;
+		mouseY = startY;
+		socket.emit("push", {});
+	}
+	else if(e.type == "mouseup") {
+		startX = -1;
+		vX = 0;
+		vY = 0;
+	}
+}
+
+function touchHandler(e) {
+	e.preventDefault();
+	if(e.type == "touchstart"){
+		startX = e.touches[0].pageX;
+		startY = e.touches[0].pageY;
+		mouseX = startX;
+		mouseY = startY;
+		socket.emit("push", {});
+	}
+	else if(e.type == "touchmove"){
+		mouseX = (e.touches[0].pageX + startX)/2;
+		mouseY = (e.touches[0].pageY + startY)/2;
+		var mouseLength = Math.sqrt((mouseX-startX)*(mouseX-startX) + (mouseY-startY)*(mouseY-startY));
+		if(mouseLength > RADIUS){
+			mouseX = RADIUS*(mouseX-startX)/mouseLength + startX;
+			mouseY = RADIUS*(mouseY-startY)/mouseLength + startY;
+		}
+		vX = (mouseX - startX)/10;
+		vY = (mouseY - startY)/10;
+	}
+	else if(e.type == "touchend"){
+		startX = -1;
+		startY = -1;
+		vX = 0;
+		vY = 0;
+	}
+}
 
 // Browser window resize
 function onResize(e) {
@@ -146,6 +248,40 @@ function onRemovePlayer(data) {
 	remotePlayers.splice(remotePlayers.indexOf(removePlayer), 1);
 };
 
+// Map change
+function onMapChange(data) {
+	console.log("Map changed");
+
+	// Set the map 
+	localPlayer.setMap(data.map);
+
+	// Clear 
+	remotePlayers = [];
+	doors = [];
+
+	// Find starting point
+	for (i = 0 ; i<mapHeight ; i++){
+		for(r = 0 ; r<mapWidth ; r++){
+			var blockId = (maps[data.map])[i][r];
+			if(blockId===300)
+			{
+				localPlayer.setX(r*pixelPerBlock + Math.round(Math.random()*(pixelPerBlock)));
+				localPlayer.setY(i*pixelPerBlock + Math.round(Math.random()*(pixelPerBlock)));
+				localPlayer.setOriX(localPlayer.getX());
+				localPlayer.setOriY(localPlayer.getY());
+				console.log("x :" + localPlayer.getX() + "y :" + localPlayer.getY());
+
+			}
+			else if(blockId>=100 && blockId<=109)
+			{
+				var door = [blockId, 'close'];
+				doors.push(door);
+			}
+		}
+	}
+
+};
+
 
 /**************************************************
 ** GAME ANIMATION LOOP
@@ -164,30 +300,142 @@ function animate() {
 **************************************************/
 function update() {
 	// Update local player and check for change
-	if (localPlayer.update(keys)) {
+	if (localPlayer.update(keys, vX, vY)) {
 		// Send local player data to the game server
 		socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
 	};
+	checkTile(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
 };
 
+function checkTile(x, y, map) {
+	var i = Math.round((y-pixelPerBlock/2)/pixelPerBlock), r = Math.round((x-pixelPerBlock/2)/pixelPerBlock);
+	if (i<0 || i>=mapHeight || r<0 || r>=mapWidth)
+		return;
+
+	var blockId = (maps[map])[i][r];
+	switch(blockId){
+		case 400:
+			socket.emit("back to last");
+			break;
+		case 500:
+			localPlayer.setX(localPlayer.getOriX());
+			localPlayer.setY(localPlayer.getOriY());
+			break;
+	}
+}
 
 /**************************************************
 ** GAME DRAW
 **************************************************/
 function draw() {
+	if(localPlayer.getMap()===-1)
+		return;
+
 	// Wipe the canvas clean
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.fillStyle = 'white';
+	ctx.fillRect(paddingX, paddingY, canvas.width-remainingWidth, canvas.height-remainingHeight);
+
+	// Draw map
+	drawMap(localPlayer.getMap());
 
 	// Draw the local player
+<<<<<<< HEAD
 	localPlayer.draw(ctx);
+	
+	if(startX != -1){
+		var originColor = ctx.fillStyle;
+		ctx.beginPath();
+		ctx.arc(startX, startY, RADIUS, 0, 2*Math.PI);
+		ctx.stroke();
+		
+		ctx.beginPath();
+		ctx.arc(mouseX, mouseY, MOUSE_RADIUS, 0, 2*Math.PI);
+		ctx.fillStyle = 'red';
+		ctx.fill();	
+		ctx.fillStyle = originColor;
+	}
+	
+=======
+	drawPlayer(localPlayer.getX(), localPlayer.getY(), 'red');
 
+>>>>>>> origin/master
 	// Draw the remote players
 	var i;
 	for (i = 0; i < remotePlayers.length; i++) {
-		remotePlayers[i].draw(ctx);
+		drawPlayer(remotePlayers[i].getX(), remotePlayers[i].getY(), 'grey');
 	};
 };
 
+function drawMap(map) {
+	var i, r;
+
+	for (i = 0 ; i<mapHeight ; i++){
+		for(r = 0 ; r<mapWidth ; r++){
+			var blockId = (maps[map])[i][r];
+
+			// Doors
+			if(blockId>=100 && blockId<=109){
+				ctx.fillStyle = findStyle(blockId);
+				drawBlock(i, r);
+				drawCross(i, r);
+			}
+			// Button
+			else if (blockId>=200 && blockId<=209){
+				ctx.fillStyle = findStyle(blockId);
+				drawBlock(i, r);
+				drawCircle(i, r);					
+			}
+			// Goal
+			else if (blockId == 999 || blockId == 1){
+				ctx.fillStyle = findStyle(blockId);
+				drawBlock(i, r);
+			}
+			//400 back to last, 500 back to origin
+			else if (blockId ==  400 || blockId ==500){
+				ctx.fillStyle = findStyle(blockId);
+				drawBlock(i, r);
+			}
+			
+		}
+	}
+}
+
+function drawPlayer(x, y, style)
+{
+	// Translate the coord
+	var cX = Math.round( scale* x),
+		cY = Math.round( scale * y);
+	ctx.fillStyle = style;
+	ctx.fillRect(cX - playerSize/2+paddingX, cY-playerSize/2+paddingY, playerSize, playerSize);
+	
+}
+
+function drawBlock(i, r)
+{
+	ctx.fillRect(r*blockWidth+2+paddingX, i*blockWidth+2+paddingY, blockWidth-4, blockWidth-4);
+}
+
+function drawCross(i, r)
+{
+	ctx.fillStyle = 'black';
+	ctx.lineWidth=3;
+	ctx.beginPath();
+	ctx.moveTo(r*blockWidth+paddingX+4,i*blockWidth+paddingY+4);
+	ctx.lineTo(r*blockWidth+paddingX + blockWidth-4,i*blockWidth+paddingY+blockWidth-4);
+	ctx.stroke();
+	ctx.beginPath();
+	ctx.moveTo(r*blockWidth+paddingX+blockWidth-4,i*blockWidth+paddingY+4);
+	ctx.lineTo(r*blockWidth+paddingX+4,i*blockWidth+paddingY+blockWidth-4);
+	ctx.stroke();
+}
+
+function drawCircle(i, r) {
+	ctx.fillStyle = 'black';
+	ctx.lineWidth=3;
+	ctx.beginPath();
+	ctx.arc(r*blockWidth+paddingX + blockWidth/2, i*blockWidth+paddingY+blockWidth/2 ,blockWidth/2,0,2*Math.PI);
+	ctx.stroke();
+}
 
 /**************************************************
 ** GAME HELPER FUNCTIONS
@@ -202,3 +450,40 @@ function playerById(id) {
 	
 	return false;
 };
+
+function isCollision(x, y, map){
+	var i = Math.round((y-pixelPerBlock/2)/pixelPerBlock), r = Math.round((x-pixelPerBlock/2)/pixelPerBlock);
+	if (i<0 || i>=mapHeight || r<0 || r>=mapWidth)
+		return true;
+	var blockId = (maps[map])[i][r];
+	if(blockId===1)
+		return true;
+	if(blockId>=100 && blockId<=109)
+	{
+		if(isDoorOpen(blockId))
+			return false;
+		else
+			return true;
+	}
+	return false;
+}
+function findStyle(id) {
+	var i;
+	for(i = 0; i<stylelist.length ; i++)
+		if(stylelist[i][0]==id)
+			return stylelist[i][1];
+	return 'black';
+}
+
+function isDoorOpen(id){
+	var i;
+	for(i=0 ; i<doors.length ; i++)
+	{
+		if(doors[i][0]===id)
+			if(doors[i][1]==='close')
+				return false;
+			else 
+				return true;
+	}
+	return false;
+}
