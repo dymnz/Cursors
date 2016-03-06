@@ -4,7 +4,10 @@
 var Player = function(startX, startY) {
 	var x = startX,
 		y = startY,
-		id;
+		id,
+		roomIndex,
+		mapIndex,
+		socket;
 
 	// Getters and setters
 	var getX = function() {
@@ -23,13 +26,43 @@ var Player = function(startX, startY) {
 		y = newY;
 	};
 
+	var setRoomIndex = function(newIndex){
+		roomIndex = newIndex;
+	};
+
+	var setMapIndex = function(newIndex){
+		mapIndex = newIndex;
+	};
+
+	var getRoomIndex = function(){
+		return roomIndex;
+	};
+
+	var getMapIndex = function(){
+		return mapIndex;
+	};
+
+	var setSocket = function(newSocket){
+		socket = newSocket;
+	};
+
+	var getSocket = function(){
+		return socket;
+	};
+
 	// Define which variables and methods can be accessed
 	return {
 		getX: getX,
 		getY: getY,
 		setX: setX,
 		setY: setY,
-		id: id
+		id: id,
+		setRoomIndex: setRoomIndex,
+		setMapIndex: setMapIndex,
+		getRoomIndex: getRoomIndex,
+		getMapIndex: getMapIndex,
+		setSocket: setSocket,
+		getSocket: getSocket
 	}
 };
 

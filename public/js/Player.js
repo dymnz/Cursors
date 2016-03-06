@@ -72,10 +72,76 @@ var Player = function(startX, startY) {
 				x += moveAmount;
 		};
 
+<<<<<<< HEAD
 		x += vX;
 		y += vY;
 		
+=======
+		if ( ((y+vY>0) && (y+vY<pixelPerBlock*mapHeight) && !isCollision(x, y+vY, map)) )
+			y += vY;
+		else{
+			if(vY<0)
+			{
+				while(vY<0)
+				{
+					vY++;
+					if((y+vY>0) && (y+vY<pixelPerBlock*mapHeight) && !isCollision(x, y+(vY), map))
+					{
+						y+=vY;
+						break;
+					}				
+				}
+
+			}
+			else if(vY>0)
+			{
+				while(vY>0)
+				{
+					vY--;
+					if((y+vY>0) && (y+vY<pixelPerBlock*mapHeight )&& !isCollision(x, y+(vY), map))
+					{
+						y+=vY;
+						break;
+					}					
+				}
+	
+			}
+		}
+		if ((x+vX>0) && (x+vX<pixelPerBlock*mapWidth) && !isCollision(x+vX, y, map)) 
+			x += vX;
+		else {
+			if(vX<0)
+			{
+				while(vX<0){
+					vX++;
+					if((x+vX>0) && (x+vX<pixelPerBlock*mapWidth)&&!isCollision(x+(vX), y, map))
+					{
+						x+=vX;
+						break;
+					}					
+				}
+
+			}
+			else if(vX>0)
+			{
+				while(vX>0){
+					vX--;
+					if((x+vX>0) && (x+vX<pixelPerBlock*mapWidth)&&!isCollision(x+(vX), y, map))
+					{
+						x+=vX;
+						break;
+					}					
+				}
+
+			}
+		}
+
+
+		
+
+>>>>>>> origin/master
 		return (prevX != x || prevY != y) ? true : false;
+		
 	};
 
 	// Draw player
