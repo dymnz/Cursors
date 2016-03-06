@@ -10,7 +10,8 @@ int main()
 	string map;
 	vector <string> mapString;
 	string t = "10";
-	for (int r=0; r<12; r++)
+	while(1){
+			for (int r=0; r<12; r++)
 	{
 		cin>>c;
 		
@@ -80,5 +81,8 @@ int main()
 	}
 
 	cout<<map;
+	mapString.clear();
+	}
+
 	return 0;
 }
