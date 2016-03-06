@@ -7,6 +7,7 @@ var canvas,			// Canvas DOM element
 	localPlayer,	// Local player
 	remotePlayers,	// Remote players
 <<<<<<< HEAD
+<<<<<<< HEAD
 	socket,			// Socket connection
 	mouseX,
 	mouseY,
@@ -19,6 +20,8 @@ var canvas,			// Canvas DOM element
 
 
 =======
+=======
+>>>>>>> origin/master
 	socket,
 	scale,
 	playerSize;			// Socket connection
@@ -27,6 +30,9 @@ var pixelPerBlock = 20;
 var remainingWidth, remainingHeight;
 var paddingX, paddingY;
 var doors = [];
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 /**************************************************
 ** GAME INITIALISATION
@@ -340,6 +346,7 @@ function draw() {
 
 	// Draw the local player
 <<<<<<< HEAD
+<<<<<<< HEAD
 	localPlayer.draw(ctx);
 	
 	if(startX != -1){
@@ -356,6 +363,8 @@ function draw() {
 	}
 	
 =======
+=======
+>>>>>>> origin/master
 	drawPlayer(localPlayer.getX(), localPlayer.getY(), 'red');
 
 >>>>>>> origin/master
