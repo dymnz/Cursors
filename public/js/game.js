@@ -9,6 +9,14 @@ var canvas,			// Canvas DOM element
 	socket,
 	scale,
 	playerSize;			// Socket connection
+var 	mouseX,
+	mouseY,
+	mstartX = -1,
+	mstartY = -1,
+	vX = 0,
+	vY = 0,
+	RADIUS = 100,
+	MOUSE_RADIUS = 20;
 var mapWidth = 20, mapHeight = 12;
 var pixelPerBlock = 20;
 var remainingWidth, remainingHeight;
@@ -75,6 +83,12 @@ var setEventHandlers = function() {
 	// Keyboard
 	window.addEventListener("keydown", onKeydown, false);
 	window.addEventListener("keyup", onKeyup, false);
+	canvas.addEventListener("mousemove", mouseHandler, false);
+	canvas.addEventListener("mousedown", mouseHandler, false);
+	canvas.addEventListener("mouseup", mouseHandler, false);
+	canvas.addEventListener("touchstart", touchHandler, false);
+	canvas.addEventListener("touchmove", touchHandler, false);
+	canvas.addEventListener("touchend", touchHandler, false);
 
 	// Window resize
 	window.addEventListener("resize", onResize, false);
@@ -112,6 +126,61 @@ function onKeyup(e) {
 		keys.onKeyUp(e);
 	};
 };
+
+
+function mouseHandler(e) {
+	if(mstartX != -1 && e.type == "mousemove"){
+		mouseX = (e.pageX + mstartX)/2;
+		mouseY = (e.pageY + mstartY)/2;
+		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
+		if(mouseLength > RADIUS){
+			mouseX = RADIUS*(mouseX-mstartX)/mouseLength + mstartX;
+			mouseY = RADIUS*(mouseY-mstartY)/mouseLength + mstartY;
+		}
+		vX = (mouseX - mstartX)/10;
+		vY = (mouseY - mstartY)/10;
+	}
+	else if(e.type == "mousedown"){
+		mstartX = e.pageX;
+		mstartY = e.pageY;
+		mouseX = mstartX;
+		mouseY = mstartY;
+		socket.emit("push", {});
+	}
+	else if(e.type == "mouseup") {
+		mstartX = -1;
+		vX = 0;
+		vY = 0;
+	}
+}
+
+function touchHandler(e) {
+	e.preventDefault();
+	if(e.type == "touchstart"){
+		mstartX = e.touches[0].pageX;
+		mstartY = e.touches[0].pageY;
+		mouseX = mstartX;
+		mouseY = mstartY;
+		socket.emit("push", {});
+	}
+	else if(e.type == "touchmove"){
+		mouseX = (e.touches[0].pageX + startX)/2;
+		mouseY = (e.touches[0].pageY + startY)/2;
+		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
+		if(mouseLength > RADIUS){
+			mouseX = RADIUS*(mouseX-mstartX)/mouseLength + mstartX;
+			mouseY = RADIUS*(mouseY-mstartY)/mouseLength + mstartY;
+		}
+		vX = (mouseX - mstartX)/10;
+		vY = (mouseY - mstartY)/10;
+	}
+	else if(e.type == "touchend"){
+		mstartX = -1;
+		mstartY = -1;
+		vX = 0;
+		vY = 0;
+	}
+}
 
 // Browser window resize
 function onResize(e) {
@@ -272,6 +341,23 @@ function draw() {
 	for (i = 0; i < remotePlayers.length; i++) {
 		drawPlayer(remotePlayers[i].getX(), remotePlayers[i].getY(), 'grey');
 	};
+
+	// Draw gamepad	
+	if(mstartX != -1){
+		var originColor = ctx.fillStyle;
+		ctx.beginPath();
+		ctx.arc(mstartX, mstartY, RADIUS, 0, 2*Math.PI);
+		ctx.stroke();
+		
+		ctx.beginPath();
+		ctx.arc(mouseX, mouseY, MOUSE_RADIUS, 0, 2*Math.PI);
+		ctx.fillStyle = 'red';
+		ctx.fill();	
+		ctx.fillStyle = originColor;
+	}
+	
+
+
 };
 
 function drawMap(map) {
@@ -360,9 +446,12 @@ function playerById(id) {
 };
 
 function isCollision(x, y, map){
+	if (map == -1)
+		return true;
 	var i = Math.round((y-pixelPerBlock/2)/pixelPerBlock), r = Math.round((x-pixelPerBlock/2)/pixelPerBlock);
 	if (i<0 || i>=mapHeight || r<0 || r>=mapWidth)
 		return true;
+	//console.log("i :" + i, "r: "+ r);
 	var blockId = (maps[map])[i][r];
 	if(blockId===1)
 		return true;
