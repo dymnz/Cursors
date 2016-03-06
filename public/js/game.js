@@ -145,7 +145,7 @@ function mouseHandler(e) {
 		mstartY = e.pageY;
 		mouseX = mstartX;
 		mouseY = mstartY;
-		socket.emit("push", {});
+		socket.emit("push");
 	}
 	else if(e.type == "mouseup") {
 		mstartX = -1;
@@ -161,7 +161,7 @@ function touchHandler(e) {
 		mstartY = e.touches[0].pageY;
 		mouseX = mstartX;
 		mouseY = mstartY;
-		socket.emit("push", {});
+		socket.emit("push");
 	}
 	else if(e.type == "touchmove"){
 		mouseX = (e.touches[0].pageX + startX)/2;
@@ -315,6 +315,9 @@ function checkTile(x, y, map) {
 		case 500:
 			localPlayer.setX(localPlayer.getOriX());
 			localPlayer.setY(localPlayer.getOriY());
+			break;
+		case 999:
+			socket.emit("on goal");
 			break;
 	}
 }
