@@ -6,9 +6,6 @@ var canvas,			// Canvas DOM element
 	keys,			// Keyboard input
 	localPlayer,	// Local player
 	remotePlayers,	// Remote players
-<<<<<<< HEAD
-	socket,
-=======
 	socket,			// Socket connection
 	mouseX,
 	mouseY,
@@ -17,7 +14,6 @@ var canvas,			// Canvas DOM element
 	RADIUS = 100,
 	MOUSE_RADIUS = 20;
 var 
->>>>>>> origin/master
 	scale,
 	playerSize,
 	mstartX = -1,
@@ -31,10 +27,6 @@ var pixelPerBlock = 20;
 var remainingWidth, remainingHeight;
 var paddingX, paddingY;
 var doors = [];
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
@@ -114,7 +106,7 @@ var setEventHandlers = function() {
 
 	// New player message received
 	socket.on("new player", onNewPlayer);
-
+	
 	// Player move message received
 	socket.on("move player", onMovePlayer);
 
@@ -140,9 +132,8 @@ function onKeyup(e) {
 	};
 };
 
-<<<<<<< HEAD
 function mouseHandler(e) {
-	if(startX != -1 && e.type == "mousemove"){
+	if(mstartX != -1 && e.type == "mousemove"){
 		mouseX = (e.pageX + startX)/2;
 		mouseY = (e.pageY + startY)/2;
 		var mouseLength = Math.sqrt((mouseX-startX)*(mouseX-startX) + (mouseY-startY)*(mouseY-startY));
@@ -161,33 +152,7 @@ function mouseHandler(e) {
 		socket.emit("push", {});
 	}
 	else if(e.type == "mouseup") {
-		startX = -1;
-=======
->>>>>>> origin/master
-
-function mouseHandler(e) {
-	if(mstartX != -1 && e.type == "mousemove"){
-		mouseX = (e.pageX + mstartX)/2;
-		mouseY = (e.pageY + mstartY)/2;
-		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
-		if(mouseLength > RADIUS){
-			mouseX = RADIUS*(mouseX-mstartX)/mouseLength + mstartX;
-			mouseY = RADIUS*(mouseY-mstartY)/mouseLength + mstartY;
-		}
-		vX = (mouseX - mstartX)/10;
-		vY = (mouseY - mstartY)/10;
-	}
-	else if(e.type == "mousedown"){
-		mstartX = e.pageX;
-		mstartY = e.pageY;
-		mouseX = mstartX;
-		mouseY = mstartY;
-		socket.emit("push");
-	}
-	else if(e.type == "mouseup") {
 		mstartX = -1;
-		vX = 0;
-		vY = 0;
 	}
 }
 
@@ -197,16 +162,11 @@ function touchHandler(e) {
 		mstartY = e.touches[0].pageY;
 		mouseX = mstartX;
 		mouseY = mstartY;
-<<<<<<< HEAD
 		socket.emit("push", {});
-=======
-		socket.emit("push");
->>>>>>> origin/master
 	}
 	else if(e.type == "touchmove"){
 		mouseX = (e.touches[0].pageX + startX)/2;
 		mouseY = (e.touches[0].pageY + startY)/2;
-<<<<<<< HEAD
 		var mouseLength = Math.sqrt((mouseX-startX)*(mouseX-startX) + (mouseY-startY)*(mouseY-startY));
 		if(mouseLength > RADIUS){
 			mouseX = RADIUS*(mouseX-startX)/mouseLength + startX;
@@ -214,19 +174,6 @@ function touchHandler(e) {
 		}
 		vX = (mouseX - startX)/10;
 		vY = (mouseY - startY)/10;
-	}
-	else if(e.type == "touchend"){
-		startX = -1;
-		startY = -1;
-=======
->>>>>>> origin/master
-		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
-		if(mouseLength > RADIUS){
-			mouseX = RADIUS*(mouseX-mstartX)/mouseLength + mstartX;
-			mouseY = RADIUS*(mouseY-mstartY)/mouseLength + mstartY;
-		}
-		vX = (mouseX - mstartX)/10;
-		vY = (mouseY - mstartY)/10;
 	}
 	else if(e.type == "touchend"){
 		mstartX = -1;
@@ -391,12 +338,6 @@ function draw() {
 	drawMap(localPlayer.getMap());
 
 	// Draw the local player
-<<<<<<< HEAD
-	localPlayer.draw(ctx);
-	
-	
-=======
->>>>>>> origin/master
 	drawPlayer(localPlayer.getX(), localPlayer.getY(), 'red');
 
 	// Draw the remote players
