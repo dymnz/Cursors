@@ -15,7 +15,7 @@ var socket,		// Socket controller
 	players,	// Array of connected players
 	playerList;	// Array of ID-player pairs
 
-var roomCount = 2,
+var roomCount = 1,
 	mapCount = 9;
 
 
