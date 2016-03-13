@@ -16,7 +16,7 @@ var socket,		// Socket controller
 	playerList;	// Array of ID-player pairs
 
 var roomCount = 2,
-	mapCount = 20;
+	mapCount = 9;
 
 
 /**************************************************
@@ -118,7 +118,7 @@ function onNewPlayer(data) {
 	broadcasting(newPlayer, "new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
 
 	// Assign initial map for new player
-	this.emit("map change", {map: 4} );
+	this.emit("map change", {map: 0} );
 
 	// Send existing players to the new player
 	var i, existingPlayer,
@@ -164,7 +164,11 @@ function onGoal(){
 		return;
 	};
 
+	//notify everyone who should be removed
+	broadcasting(onGoalPlayer, "remove player", {id: this.id});
+
 	var mapIndex = onGoalPlayer.getMapIndex();
+
 	if(mapIndex < mapCount - 1){
 		//go to the next map
 		mapIndex++;
@@ -199,6 +203,8 @@ function backToLast(){
 		util.log("Player not found: " + this.id);
 		return;
 	};
+
+	broadcasting(backPlayer, "remove player", {id: this.id});
 
 	var mapIndex = backPlayer.getMapIndex();
 	if(mapIndex > 0){
@@ -235,17 +241,11 @@ function doorOpen(data){
 
 	//get doorId
 	var doorId = data.id;
-	var i = currentPlayer.getRoomIndex(),
-		j = currentPlayer.getMapIndex();
-
-	for(var index = 0;index < players[i][j].length;index++){
-		players[i][j][index].getSocket().emit("door open", {id: doorId});
-	};
+	
+	braodcastAll(currentPlayer, "door open", {id: doorId});
 
 	var timeOut = setTimeout(function(cmd, data) {
-  		for(var index = 0;index < players[i][j].length;index++){
-			players[i][j][index].getSocket().emit(cmd, {id: data});
-		};
+  		braodcastAll(currentPlayer, "door close", {id: doorId});
 	}, 10000, "door close", doorId);
 
 }
@@ -279,6 +279,15 @@ function broadcasting(currentPlayer, cmd, msg){
 	for(var index = 0;index < players[i][j].length;index++){
 		if(currentPlayer.id != players[i][j][index].id)
 			players[i][j][index].getSocket().emit(cmd, msg);
+	};
+}
+
+function braodcastAll(currentPlayer, cmd, msg){
+	var i = currentPlayer.getRoomIndex(),
+		j = currentPlayer.getMapIndex();
+
+	for(var index = 0;index < players[i][j].length;index++){
+		players[i][j][index].getSocket().emit(cmd, msg);
 	};
 }
 
