@@ -16,7 +16,8 @@ var socket,		// Socket controller
 	playerList;	// Array of ID-player pairs
 
 var roomCount = 1,
-	mapCount = 9;
+	mapCount = 17,
+	test = 0;
 
 
 /**************************************************
@@ -56,7 +57,7 @@ function onSocketConnection(client) {
 	util.log("New player has connected: "+client.id);
 
 	// Assign initial map for new player
-	client.emit("map change", {map: 0} );
+	client.emit("map change", {map: test} );
 
 	// Listen for client disconnected
 	client.on("disconnect", onClientDisconnect);
@@ -118,7 +119,7 @@ function onNewPlayer(data) {
 
 	//set Room and map
 	roomBalancing(newPlayer);
-	newPlayer.setMapIndex(0);
+	newPlayer.setMapIndex(test);
 
 	// Broadcast new player to connected socket clients
 	//this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
