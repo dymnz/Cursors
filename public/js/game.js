@@ -66,7 +66,7 @@ function init() {
 	//localPlayer.
 
 	// Initialise socket connection
-	socket = io.connect("http://140.113.68.53:8000", {port: 8000, transports: ["websocket"]});
+	socket = io.connect("http://localhost:8000", {port: 8000, transports: ["websocket"]});
 
 	// Initialise remote players array
 	remotePlayers = [];
@@ -147,10 +147,12 @@ function mouseHandler(e) {
 		mstartY = e.pageY;
 		mouseX = mstartX;
 		mouseY = mstartY;
-		buttonPushed();
+		buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
 	}
 	else if(e.type == "mouseup") {
 		mstartX = -1;
+		vX = 0;
+		vY = 0;
 	}
 }
 
@@ -160,18 +162,18 @@ function touchHandler(e) {
 		mstartY = e.touches[0].pageY;
 		mouseX = mstartX;
 		mouseY = mstartY;
-		buttonPushed();
+		buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
 	}
 	else if(e.type == "touchmove"){
-		mouseX = (e.touches[0].pageX + startX)/2;
-		mouseY = (e.touches[0].pageY + startY)/2;
-		var mouseLength = Math.sqrt((mouseX-startX)*(mouseX-startX) + (mouseY-startY)*(mouseY-startY));
+		mouseX = (e.touches[0].pageX + mstartX)/2;
+		mouseY = (e.touches[0].pageY + mstartY)/2;
+		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
 		if(mouseLength > RADIUS){
-			mouseX = RADIUS*(mouseX-startX)/mouseLength + startX;
-			mouseY = RADIUS*(mouseY-startY)/mouseLength + startY;
+			mouseX = RADIUS*(mouseX-mstartX)/mouseLength + mstartX;
+			mouseY = RADIUS*(mouseY-mstartY)/mouseLength + mstartY;
 		}
-		vX = (mouseX - startX)/10;
-		vY = (mouseY - startY)/10;
+		vX = (mouseX - mstartX)/10;
+		vY = (mouseY - mstartY)/10;
 	}
 	else if(e.type == "touchend"){
 		mstartX = -1;
@@ -282,13 +284,13 @@ function onDoorOpen(data) {
 
 	var doorIndex = findDoorById(id);
 
+	console.log("Door open");
 	if(doorIndex == -1)
 		console.log("Door index error");
 	else if (doors[doorIndex][1] == "close")
 		doors[doorIndex][1] = "open";
 	else 
 		console.log("Door status error"); 
-
 }
 
 
@@ -525,11 +527,16 @@ function checkOnButton(x, y, map) {
 }
 
 function buttonPushed(x, y, map) {
+	console.log("pushed");
+
 	socket.emit("push");
 
 	var blockId = checkOnButton(x, y, map);
 	if(blockId != -1)
+	{
 		socket.emit("door open", {id: blockId});
+		console.log("door open sent");
+	}
 }
 
 
