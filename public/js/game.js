@@ -11,6 +11,8 @@ var canvas,			// Canvas DOM element
 	mouseY,
 	vX = 0,
 	vY = 0,
+	lastX,
+	lastY,
 	RADIUS = 100,
 	MOUSE_RADIUS = 20;
 var scale,
@@ -137,25 +139,31 @@ function onKeyup(e) {
 
 function mouseHandler(e) {
 	if(mstartX != -1 && e.type == "mousemove"){
-		mouseX = (e.pageX + mstartX)/2;
-		mouseY = (e.pageY + mstartY)/2;
+		e.preventDefault();
+		mouseX = (e.pageX - mstartX)/3 + mstartX;
+		mouseY = (e.pageY - mstartY)/3 + mstartY;
 		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
 		if(mouseLength > RADIUS){
 			mouseX = RADIUS*(mouseX-mstartX)/mouseLength + mstartX;
 			mouseY = RADIUS*(mouseY-mstartY)/mouseLength + mstartY;
 		}
-		vX = (mouseX - mstartX)/10;
-		vY = (mouseY - mstartY)/10;
+		vX = (mouseX - mstartX)/40;
+		vY = (mouseY - mstartY)/40;
 	}
 	else if(e.type == "mousedown"){
 		mstartX = e.pageX;
 		mstartY = e.pageY;
 		mouseX = mstartX;
 		mouseY = mstartY;
-		buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
+		lastX=localPlayer.getX();
+		lastY=localPlayer.getY();
+		//buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
 	}
 	else if(e.type == "mouseup") {
+		e.preventDefault();
 		mstartX = -1;
+		if(Math.sqrt((localPlayer.getX()-lastX)*(localPlayer.getX()-lastX) + (localPlayer.getY()-lastY)*(localPlayer.getY()-lastY))<5)
+			buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
 		vX = 0;
 		vY = 0;
 	}
@@ -167,20 +175,28 @@ function touchHandler(e) {
 		mstartY = e.touches[0].pageY;
 		mouseX = mstartX;
 		mouseY = mstartY;
+		lastX=localPlayer.getX();
+		lastY=localPlayer.getY();
 		buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
 	}
 	else if(e.type == "touchmove"){
-		mouseX = (e.touches[0].pageX + mstartX)/2;
-		mouseY = (e.touches[0].pageY + mstartY)/2;
+		e.preventDefault();
+		mouseX = (e.touches[0].pageX - mstartX)/3 + mstartX;
+		mouseY = (e.touches[0].pageY - mstartY)/3 + mstartY;
+
 		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
 		if(mouseLength > RADIUS){
 			mouseX = RADIUS*(mouseX-mstartX)/mouseLength + mstartX;
 			mouseY = RADIUS*(mouseY-mstartY)/mouseLength + mstartY;
 		}
-		vX = (mouseX - mstartX)/10;
-		vY = (mouseY - mstartY)/10;
+		vX = (mouseX - mstartX)/40;
+		vY = (mouseY - mstartY)/40;
 	}
 	else if(e.type == "touchend"){
+		e.preventDefault();
+		if(Math.sqrt((localPlayer.getX()-lastX)*(localPlayer.getX()-lastX) + (localPlayer.getY()-lastY)*(localPlayer.getY()-lastY))<5)
+			buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
+
 		mstartX = -1;
 		mstartY = -1;
 		vX = 0;
