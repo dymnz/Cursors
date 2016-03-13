@@ -155,13 +155,13 @@ var Player = function(startX, startY) {
 		getOriX: getOriX,
 		getOriY: getOriY,
 		getMap: getMap,
-		getAlreadyOnGoal: getAlreadyOnGoal;
+		getAlreadyOnGoal: getAlreadyOnGoal,
 		setX: setX,
 		setY: setY,
 		setOriX: setOriX,
 		setOriY: setOriY,
 		setMap: setMap,
-		setAlreadyOnGoal: setAlreadyOnGoal;
+		setAlreadyOnGoal: setAlreadyOnGoal,
 		update: update,
 		draw: draw
 	}

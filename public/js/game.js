@@ -35,22 +35,7 @@ function init() {
 	canvas.height = window.innerHeight;
 
 	//Calculate width per block
-	if (canvas.width/mapWidth >= canvas.height/mapHeight){
-		blockWidth = canvas.height/mapHeight;
-		remainingHeight = 0;
-		remainingWidth = canvas.width - blockWidth*mapWidth;
-	}
-	else{
-		blockWidth = canvas.width/mapWidth;
-		remainingHeight = canvas.height - blockWidth*mapHeight;
-		remainingWidth = 0;
-	}
-
-	paddingX = Math.round(remainingWidth/2);
-	paddingY = Math.round(remainingHeight/2);
-	scale = blockWidth/pixelPerBlock;
-	playerSize = Math.round(scale * blockWidth/10);
-	
+	uiScaling();
 
 	// Initialise keyboard controls
 	keys = new Keys();
@@ -75,6 +60,24 @@ function init() {
 	setEventHandlers();
 };
 
+
+function uiScaling() {
+	if (canvas.width/mapWidth >= canvas.height/mapHeight){
+		blockWidth = canvas.height/mapHeight;
+		remainingHeight = 0;
+		remainingWidth = canvas.width - blockWidth*mapWidth;
+	}
+	else{
+		blockWidth = canvas.width/mapWidth;
+		remainingHeight = canvas.height - blockWidth*mapHeight;
+		remainingWidth = 0;
+	}
+
+	paddingX = Math.round(remainingWidth/2);
+	paddingY = Math.round(remainingHeight/2);
+	scale = blockWidth/pixelPerBlock;
+	playerSize = Math.round(scale * blockWidth/10);	
+}
 
 /**************************************************
 ** GAME EVENT HANDLERS
@@ -190,6 +193,8 @@ function onResize(e) {
 	// Maximise the canvas
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
+
+	uiScaling();
 };
 
 // Socket connected
@@ -258,7 +263,7 @@ function onMapChange(data) {
 	doors = [];
 
 	//
-	localPlayer.setAlreadOnGoal(false);
+	localPlayer.setAlreadyOnGoal(false);
 
 	// Find starting point
 	for (i = 0 ; i<mapHeight ; i++){
