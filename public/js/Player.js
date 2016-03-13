@@ -8,7 +8,8 @@ var Player = function(startX, startY) {
 		moveAmount = 1,
 		map=-1,
 		playerSize,
-		oriX, oriY;
+		oriX, oriY,
+		alreadyOnGoal = false;
 	
 	// Getters and setters
 	var getX = function() {
@@ -28,6 +29,9 @@ var Player = function(startX, startY) {
 	var getMap = function(){
 		return map;
 	}
+	var getAlreadyOnGoal = function () {
+		return alreadyOnGoal;
+	}
 
 	var setX = function(newX) {
 		x = newX;
@@ -46,6 +50,9 @@ var Player = function(startX, startY) {
 
 	var setMap  = function(newMap) {
 		map = newMap;
+	}
+	var setAlreadyOnGoal = function (stat) {
+		alreadyOnGoal = stat;
 	}
 
 	// Update player position
@@ -148,11 +155,13 @@ var Player = function(startX, startY) {
 		getOriX: getOriX,
 		getOriY: getOriY,
 		getMap: getMap,
+		getAlreadyOnGoal: getAlreadyOnGoal;
 		setX: setX,
 		setY: setY,
 		setOriX: setOriX,
 		setOriY: setOriY,
 		setMap: setMap,
+		setAlreadyOnGoal: setAlreadyOnGoal;
 		update: update,
 		draw: draw
 	}

@@ -257,6 +257,9 @@ function onMapChange(data) {
 	remotePlayers = [];
 	doors = [];
 
+	//
+	localPlayer.setAlreadOnGoal(false);
+
 	// Find starting point
 	for (i = 0 ; i<mapHeight ; i++){
 		for(r = 0 ; r<mapWidth ; r++){
@@ -348,7 +351,11 @@ function checkTile(x, y, map) {
 			localPlayer.setY(localPlayer.getOriY());
 			break;
 		case 999:
-			socket.emit("on goal");
+			if(localPlayer.getAlreadyOnGoal() == false)
+			{
+				socket.emit("on goal");
+				localPlayer.setAlreadyOnGoal(true);	
+			}
 			break;
 	}
 }
