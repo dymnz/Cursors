@@ -137,7 +137,7 @@ var stylelist = [
 [104, '#FFC000'],
 [204, '#FFC064'],
 [999, '#92D050'],
-[400, '#A5A5A5'],
+[400, '#DCDCDC'],
 [500, '#FF66FF']];
 
 var maps = [map0, map1, map2, map3, map4, map5, map6, map7, map8];
