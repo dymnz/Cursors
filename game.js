@@ -55,6 +55,9 @@ var setEventHandlers = function() {
 function onSocketConnection(client) {
 	util.log("New player has connected: "+client.id);
 
+	// Assign initial map for new player
+	client.emit("map change", {map: 0} );
+
 	// Listen for client disconnected
 	client.on("disconnect", onClientDisconnect);
 
@@ -120,9 +123,6 @@ function onNewPlayer(data) {
 	// Broadcast new player to connected socket clients
 	//this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
 	broadcasting(newPlayer, "new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
-
-	// Assign initial map for new player
-	this.emit("map change", {map: 0} );
 
 	// Send existing players to the new player
 	var i, existingPlayer,
@@ -257,6 +257,7 @@ function doorOpen(data){
 	
 	braodcastAll(currentPlayer, "door open", {id: doorId});
 
+	clearTimeout(timeOut);
 	var timeOut = setTimeout(function(cmd, data) {
   		braodcastAll(currentPlayer, "door close", {id: doorId});
 	}, 10000, "door close", doorId);

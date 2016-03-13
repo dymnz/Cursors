@@ -229,7 +229,7 @@ function onSocketDisconnect() {
 // New player
 function onNewPlayer(data) {
 	console.log("New player connected: "+data.id);
-
+	console.log("New player is at " + data.x + " " + data.y);
 	// Initialise the new player
 	var newPlayer = new Player(data.x, data.y);
 	newPlayer.id = data.id;
@@ -292,7 +292,9 @@ function onMapChange(data) {
 				localPlayer.setOriX(localPlayer.getX());
 				localPlayer.setOriY(localPlayer.getY());
 				console.log("x :" + localPlayer.getX() + "y :" + localPlayer.getY());
-
+				
+				// Send local player data to the game server
+				socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
 			}
 			else if(blockId>=100 && blockId<=109)
 			{
