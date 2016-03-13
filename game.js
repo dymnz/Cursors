@@ -244,7 +244,7 @@ function doorOpen(data){
   		for(var index = 0;index < players[i][j].length;index++){
 			players[i][j][index].getSocket().emit(cmd, {id: data});
 		};
-	}, 30000, "door close", doorId);
+	}, 10000, "door close", doorId);
 
 }
 
