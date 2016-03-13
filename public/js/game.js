@@ -280,13 +280,13 @@ function onMapChange(data) {
 
 
 function onDoorOpen(data) {
-	var id = data.Id;
+	var id = data.id;
 
 	var doorIndex = findDoorById(id);
 
-	console.log("Door open");
+	console.log("Door open with id: " + id + " and door index: "+ doorIndex);
 	if(doorIndex == -1)
-		console.log("Door index error");
+		console.log("Door index error: onDoorOpen");
 	else if (doors[doorIndex][1] == "close")
 		doors[doorIndex][1] = "open";
 	else 
@@ -475,9 +475,7 @@ function isCollision(x, y, map){
 		return true;
 	if(blockId>=100 && blockId<=109)
 	{
-		if(isDoorOpen(blockId))
-			return false;
-		else
+		if(!isDoorOpen(blockId))
 			return true;
 	}
 	return false;
@@ -494,7 +492,7 @@ function findDoorById(id) {
 	var i;
 	for(i=0 ; i<doors.length ; i++)
 	{
-		if(doors[i][0]===id)	
+		if(doors[i][0]==id)	
 			return i;
 	}
 	return -1;
@@ -508,8 +506,11 @@ function isDoorOpen(id){
 	if (doorIndex == -1)
 		console.log("Door index error");
 	else if (doors[doorIndex][1] == "close")
-		return true;
-	return false;
+	{
+		console.log("door " + id + " is " + doors[doorIndex][1]);
+		return false;
+	}
+	return true;
 }
 
 function checkOnButton(x, y, map) {
@@ -534,7 +535,7 @@ function buttonPushed(x, y, map) {
 	var blockId = checkOnButton(x, y, map);
 	if(blockId != -1)
 	{
-		socket.emit("door open", {id: blockId});
+		socket.emit("door open", {id: blockId-100});
 		console.log("door open sent");
 	}
 }
