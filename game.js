@@ -185,6 +185,9 @@ function onGoal(){
 		//send all players in this map
 		sendExistingPlayers(onGoalPlayer);
 
+		//send this player to other players
+		broadcasting(onGoalPlayer, "new player", {id: onGoalPlayer.id, x: onGoalPlayer.getX(), y: onGoalPlayer.getY()});
+
 		//push this player in the players
 		players[i][mapIndex].push(onGoalPlayer);
 
@@ -223,6 +226,9 @@ function backToLast(){
 
 		//send all players in this map
 		sendExistingPlayers(backPlayer);
+
+		//send this player to other players
+		broadcasting(backPlayer, "new player", {id: backPlayer.id, x: backPlayer.getX(), y: backPlayer.getY()});
 
 		//push this player in the players
 		players[i][mapIndex].push(backPlayer);
