@@ -69,6 +69,9 @@ function onSocketConnection(client) {
 
 	//Listen for "back To Last" message
 	client.on("back to last", backToLast);
+
+	//Listen for "door open" message
+	client.on("door open", doorOpen);
 };
 
 // Socket client has disconnected
