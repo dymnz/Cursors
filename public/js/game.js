@@ -349,7 +349,11 @@ function checkTile(x, y, map) {
 	var blockId = (maps[map])[i][r];
 	switch(blockId){
 		case 400:
-			socket.emit("back to last");
+			if(localPlayer.getAlreadyOnGoal() == false)
+			{
+				socket.emit("back to last");
+				localPlayer.setAlreadyOnGoal(true);	
+			}
 			break;
 		case 500:
 			localPlayer.setX(localPlayer.getOriX());
