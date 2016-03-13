@@ -240,6 +240,12 @@ function doorOpen(data){
 		players[i][j][index].getSocket().emit("door open", {id: doorId});
 	};
 
+	var timeOut = setTimeout(function(cmd, data) {
+  		for(var index = 0;index < players[i][j].length;index++){
+			players[i][j][index].getSocket().emit(cmd, {id: data});
+		};
+	}, 30000, "door close", doorId);
+
 }
 
 /**************************************************
