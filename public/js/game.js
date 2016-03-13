@@ -563,7 +563,6 @@ function isDoorOpen(id){
 		console.log("Door index error");
 	else if (doors[doorIndex][1] == "close")
 	{
-		console.log("door " + id + " is " + doors[doorIndex][1]);
 		return false;
 	}
 	return true;
