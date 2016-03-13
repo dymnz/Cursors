@@ -144,7 +144,7 @@ function mouseHandler(e) {
 		mstartY = e.pageY;
 		mouseX = mstartX;
 		mouseY = mstartY;
-		socket.emit("push");
+		buttonPushed();
 	}
 	else if(e.type == "mouseup") {
 		mstartX = -1;
@@ -157,7 +157,7 @@ function touchHandler(e) {
 		mstartY = e.touches[0].pageY;
 		mouseX = mstartX;
 		mouseY = mstartY;
-		socket.emit("push", {});
+		buttonPushed();
 	}
 	else if(e.type == "touchmove"){
 		mouseX = (e.touches[0].pageX + startX)/2;
@@ -485,3 +485,28 @@ function isDoorOpen(id){
 	}
 	return false;
 }
+
+function checkOnButton(x, y, map) {
+	if (map==-1)
+		return;
+	var i = Math.round((y-pixelPerBlock/2)/pixelPerBlock), r = Math.round((x-pixelPerBlock/2)/pixelPerBlock);
+	if (i<0 || i>=mapHeight || r<0 || r>=mapWidth)
+		return;
+	
+	var blockId = (maps[map])[i][r];
+
+	if(blockId>= 200 && blockId<=209)
+		return blockId;
+	return -1;
+}
+
+function buttonPushed(x, y, map) {
+	socket.emit("push");
+
+	var blockId = checkOnButton(x, y, map);
+	if(blockId != -1)
+		socket.emit("door open", {id: blockId});
+}
+
+
+
