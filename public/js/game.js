@@ -114,6 +114,8 @@ var setEventHandlers = function() {
 	// Door open
 	socket.on("door open", onDoorOpen);
 
+	// Door close
+	socket.on("door close", onDoorClose);
 };
 
 // Keyboard key down
@@ -293,6 +295,17 @@ function onDoorOpen(data) {
 		console.log("Door status error"); 
 }
 
+function onDoorClose(data) {
+	var id = data.id;
+
+	var doorIndex = findDoorById(id);
+	if(doorIndex == -1)
+		console.log("Door index error: onDoorClose");
+	else if (doors[doorIndex][1] == "open")
+		doors[doorIndex][1] = "close";
+	else
+		console.log("Door status error: onDoorClose " + id + " is " + doors[doorIndex][1] ); 
+}
 
 /**************************************************
 ** GAME ANIMATION LOOP
@@ -388,8 +401,12 @@ function drawMap(map) {
 			// Doors
 			if(blockId>=100 && blockId<=109){
 				ctx.fillStyle = findStyle(blockId);
-				drawBlock(i, r);
-				drawCross(i, r);
+				if(!isDoorOpen(blockId))
+				{
+					drawBlock(i, r);
+					drawCross(i, r);
+				}
+				
 			}
 			// Button
 			else if (blockId>=200 && blockId<=209){
