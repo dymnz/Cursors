@@ -12,6 +12,14 @@
 	</head>
 	
 	<body>
+		<div id="welcome">
+		<form>
+		Please enter your ID:<br>
+		<input type="text" id="id"><br>
+		<input type="button" id="submit" value="Submit" onClick="submitID();">
+		</form> 
+		<p id="inform"></p>
+		</div>
 		<div class="myCanvas">
 			<canvas id="gameCanvas"></canvas>	
 		</div>
@@ -24,8 +32,17 @@
 		<script src="js/Map.js"></script>
 		<script>
 			// Initialise the game
-			init();
-			animate();
+			function submitID() {
+		    if ( document.getElementById("id").value.replace(/^\s+|\s+$/g, '').length != 0)
+		         {
+					document.getElementById('welcome').remove();
+					init();
+					animate();
+		         }
+		         else
+		         document.getElementById('inform').innerHTML = 'ID can\'t be empty';
+		         //document.getElementById('welcome').style.visibility = 'hidden';
+		    }
 		</script>
 	</body>
 </html>

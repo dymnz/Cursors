@@ -13,8 +13,8 @@ var canvas,			// Canvas DOM element
 	vY = 0,
 	lastX,
 	lastY,
-	RADIUS = 100,
-	MOUSE_RADIUS = 20;
+	RADIUS = 2,
+	MOUSE_RADIUS = 0.4;
 var scale,
 	playerSize,
 	mstartX = -1,
@@ -143,9 +143,9 @@ function mouseHandler(e) {
 		mouseX = (e.pageX - mstartX)/3 + mstartX;
 		mouseY = (e.pageY - mstartY)/3 + mstartY;
 		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
-		if(mouseLength > RADIUS){
-			mouseX = RADIUS*(mouseX-mstartX)/mouseLength + mstartX;
-			mouseY = RADIUS*(mouseY-mstartY)/mouseLength + mstartY;
+		if(mouseLength > RADIUS * blockWidth){
+			mouseX = RADIUS* blockWidth *(mouseX-mstartX)/mouseLength + mstartX;
+			mouseY = RADIUS* blockWidth *(mouseY-mstartY)/mouseLength + mstartY;
 		}
 		vX = (mouseX - mstartX)/40;
 		vY = (mouseY - mstartY)/40;
@@ -185,9 +185,9 @@ function touchHandler(e) {
 		mouseY = (e.touches[0].pageY - mstartY)/3 + mstartY;
 
 		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
-		if(mouseLength > RADIUS){
-			mouseX = RADIUS*(mouseX-mstartX)/mouseLength + mstartX;
-			mouseY = RADIUS*(mouseY-mstartY)/mouseLength + mstartY;
+		if(mouseLength > RADIUS* blockWidth){
+			mouseX = RADIUS* blockWidth *(mouseX-mstartX)/mouseLength + mstartX;
+			mouseY = RADIUS* blockWidth *(mouseY-mstartY)/mouseLength + mstartY;
 		}
 		vX = (mouseX - mstartX)/40;
 		vY = (mouseY - mstartY)/40;
@@ -421,11 +421,11 @@ function draw() {
 	if(mstartX != -1){
 		var originColor = ctx.fillStyle;
 		ctx.beginPath();
-		ctx.arc(mstartX, mstartY, RADIUS, 0, 2*Math.PI);
+		ctx.arc(mstartX, mstartY, RADIUS * blockWidth , 0, 2*Math.PI);
 		ctx.stroke();
 		
 		ctx.beginPath();
-		ctx.arc(mouseX, mouseY, MOUSE_RADIUS, 0, 2*Math.PI);
+		ctx.arc(mouseX, mouseY, MOUSE_RADIUS * blockWidth , 0, 2*Math.PI);
 		ctx.fillStyle = 'red';
 		ctx.fill();	
 		ctx.fillStyle = originColor;
