@@ -233,7 +233,12 @@ function doorOpen(data){
 
 	//get doorId
 	var doorId = data.id;
-	broadcasting(currentPlayer, "door open", {id: doorId});
+	var i = currentPlayer.getRoomIndex(),
+		j = currentPlayer.getMapIndex();
+
+	for(var index = 0;index < players[i][j].length;index++){
+		players[i][j][index].getSocket().emit("door open", {id: doorId});
+	};
 
 }
 
