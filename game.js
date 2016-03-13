@@ -66,6 +66,9 @@ function onSocketConnection(client) {
 
 	// Listen for "on goal" message
 	client.on("on goal", onGoal);
+
+	//Listen for "back To Last" message
+	client.on("back to last", backToLast);
 };
 
 // Socket client has disconnected
@@ -145,6 +148,7 @@ function onMovePlayer(data) {
 	broadcasting(movePlayer, "move player", {id: movePlayer.id, x: movePlayer.getX(), y: movePlayer.getY()});
 };
 
+//Player is on the goal
 function onGoal(){
 	// Find player in array
 	var onGoalPlayer = playerById(this.id);
@@ -157,6 +161,7 @@ function onGoal(){
 
 	var mapIndex = onGoalPlayer.getMapIndex();
 	if(mapIndex < mapCount - 1){
+		//go to the next map
 		mapIndex++;
 		this.emit("map change", {map: mapIndex});
 
@@ -172,10 +177,49 @@ function onGoal(){
 		//push this player in the players
 		players[i][mapIndex].push(onGoalPlayer);
 
+	//if has reached the last map
 	}else if(mapIndex === mapCount - 1){
 		// add "successful"
 		this.emit("map change", {map: mapIndex});
 	}
+}
+
+//Player gets back to the last map
+function backToLast(){
+	// Find player in array
+	var backPlayer = playerById(this.id);
+
+	//Player not found
+	if(!backPlayer){
+		util.log("Player not found: " + this.id);
+		return;
+	};
+
+	var mapIndex = backPlayer.getMapIndex();
+	if(mapIndex > 0){
+		//go to the previous map
+		mapIndex--;
+		this.emit("map change", {map: mapIndex});
+
+		//remove the player from current map
+		var i = backPlayer.getRoomIndex(),
+			j = backPlayer.getMapIndex();
+		players[i][j].splice(players[i][j].indexOf(backPlayer), 1);
+
+		backPlayer.setMapIndex(mapIndex);
+
+		//send all players in this map
+		sendExistingPlayers(backPlayer);
+
+		//push this player in the players
+		players[i][mapIndex].push(backPlayer);
+
+	//if has reached the first map
+	}else if(mapIndex === 0){
+		// add "failed"
+		this.emit("map change", {map: mapIndex});
+	}
+
 }
 
 
