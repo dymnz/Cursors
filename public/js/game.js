@@ -310,7 +310,14 @@ function onDoorClose(data) {
 	if(doorIndex == -1)
 		console.log("Door index error: onDoorClose");
 	else if (doors[doorIndex][1] == "open")
+	{
 		doors[doorIndex][1] = "close";
+		if(isStuckInDoor(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap()))
+		{
+			localPlayer.setX(localPlayer.getOriX());
+			localPlayer.setY(localPlayer.getOriY());
+		}
+	}
 	else
 		console.log("Door status error: onDoorClose " + id + " is " + doors[doorIndex][1] ); 
 }
@@ -495,6 +502,22 @@ function playerById(id) {
 	
 	return false;
 };
+
+function isStuckInDoor(x, y, map) {
+	if (map == -1)
+		return true;
+	var i = Math.round((y-pixelPerBlock/2)/pixelPerBlock), r = Math.round((x-pixelPerBlock/2)/pixelPerBlock);
+	if (i<0 || i>=mapHeight || r<0 || r>=mapWidth)
+		return true;
+	//console.log("i :" + i, "r: "+ r);
+	var blockId = (maps[map])[i][r];
+	if(blockId>=100 && blockId<=109)
+	{
+		if(!isDoorOpen(blockId))
+			return true;
+	}
+	return false;
+}
 
 function isCollision(x, y, map){
 	if (map == -1)
