@@ -104,6 +104,8 @@ function onClientDisconnect() {
 // New player has joined
 function onNewPlayer(data) {
 	// Create a new player
+	util.log("New player " + this.id);
+
 	var newPlayer = new Player(data.x, data.y);
 	newPlayer.id = this.id;
 	newPlayer.setSocket(this);
@@ -196,6 +198,8 @@ function onGoal(){
 		// add "successful"
 		this.emit("map change", {map: mapIndex});
 	}
+
+	util.log("Player " + this.id + " is at Map:" + mapIndex);
 }
 
 //Player gets back to the last map
@@ -239,6 +243,7 @@ function backToLast(){
 		this.emit("map change", {map: mapIndex});
 	}
 
+	util.log("Player " + this.id + " is at Map:" + mapIndex);
 }
 
 
