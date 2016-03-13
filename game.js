@@ -223,6 +223,17 @@ function backToLast(){
 }
 
 
+//handle the "door open" event
+function doorOpen(data){
+
+	var currentPlayer = playerById(this.id);
+
+	//get doorId
+	var doorId = data.id;
+	broadcasting(currentPlayer, "door open", {id: doorId});
+
+}
+
 /**************************************************
 ** GAME HELPER FUNCTIONS
 **************************************************/
