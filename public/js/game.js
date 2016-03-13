@@ -111,6 +111,9 @@ var setEventHandlers = function() {
 	// Map change
 	socket.on("map change", onMapChange);
 
+	// Door open
+	socket.on("door open", onDoorOpen);
+
 };
 
 // Keyboard key down
@@ -274,6 +277,21 @@ function onMapChange(data) {
 };
 
 
+function onDoorOpen(data) {
+	var id = data.Id;
+
+	var doorIndex = findDoorById(id);
+
+	if(doorIndex == -1)
+		console.log("Door index error");
+	else if (doors[doorIndex][1] == "close")
+		doors[doorIndex][1] = "open";
+	else 
+		console.log("Door status error"); 
+
+}
+
+
 /**************************************************
 ** GAME ANIMATION LOOP
 **************************************************/
@@ -356,9 +374,6 @@ function draw() {
 		ctx.fill();	
 		ctx.fillStyle = originColor;
 	}
-	
-
-
 };
 
 function drawMap(map) {
@@ -473,16 +488,25 @@ function findStyle(id) {
 	return 'black';
 }
 
-function isDoorOpen(id){
+function findDoorById(id) {
 	var i;
 	for(i=0 ; i<doors.length ; i++)
 	{
-		if(doors[i][0]===id)
-			if(doors[i][1]==='close')
-				return false;
-			else 
-				return true;
+		if(doors[i][0]===id)	
+			return i;
 	}
+	return -1;
+}
+
+
+function isDoorOpen(id){
+	
+	var doorIndex = findDoorById(id);
+	
+	if (doorIndex == -1)
+		console.log("Door index error");
+	else if (doors[doorIndex][1] == "close")
+		return true;
 	return false;
 }
 
