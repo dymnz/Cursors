@@ -55,6 +55,8 @@ var setEventHandlers = function() {
 function onSocketConnection(client) {
 	util.log("New player has connected: "+client.id);
 
+	clinet.emit("connect");
+
 	// Listen for client disconnected
 	client.on("disconnect", onClientDisconnect);
 
