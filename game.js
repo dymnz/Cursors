@@ -18,6 +18,7 @@ var socket,		// Socket controller
 var roomCount = 1,
 	mapCount = 17,
 	test = 0;
+var timeOut;
 
 
 /**************************************************

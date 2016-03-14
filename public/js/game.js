@@ -28,6 +28,7 @@ var doors = [];
 ** GAME INITIALISATION
 **************************************************/
 function init() {
+
 	// Declare the canvas and rendering context
 	canvas = document.getElementById("gameCanvas");
 	ctx = canvas.getContext("2d");
@@ -613,6 +614,3 @@ function buttonPushed(x, y, map) {
 		console.log("door open sent");
 	}
 }
-
-
-
