@@ -98,7 +98,7 @@ var setEventHandlers = function() {
 	// Window resize
 	window.addEventListener("resize", onResize, false);
 	window.addEventListener("orientationchange", onResize, false);
-	
+
 	// Socket connection successful
 	socket.on("connect", onSocketConnected);
 
@@ -270,7 +270,7 @@ function onRemovePlayer(data) {
 
 // Map change
 function onMapChange(data) {
-	console.log("Map changed");
+	console.log("Map changed " + data.map);
 
 	// Set the map 
 	localPlayer.setMap(data.map);
