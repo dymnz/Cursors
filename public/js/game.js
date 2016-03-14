@@ -97,7 +97,8 @@ var setEventHandlers = function() {
 
 	// Window resize
 	window.addEventListener("resize", onResize, false);
-
+	window.addEventListener("orientationchange", onResize, false);
+	
 	// Socket connection successful
 	socket.on("connect", onSocketConnected);
 
