@@ -80,6 +80,8 @@ function uiScaling() {
 	paddingY = Math.round(remainingHeight/2);
 	scale = blockWidth/pixelPerBlock;
 	playerSize = Math.round(scale * blockWidth/10);	
+	if(playerSize < 5)
+		playSize = 5;
 }
 
 /**************************************************
