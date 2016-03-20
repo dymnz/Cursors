@@ -345,7 +345,7 @@ function clearDoorTimeOut(id){
 }
 
 function showServerPlayerCount(){
-	util.log("Server Player Count: " + playerList.length + 1);
+	util.log("Server Player Count: " + (playerList.length + 1));
 }
 
 /**************************************************
