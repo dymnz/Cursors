@@ -335,6 +335,7 @@ function onDoorClose(data) {
 		{
 			localPlayer.setX(localPlayer.getOriX());
 			localPlayer.setY(localPlayer.getOriY());
+			socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
 		}
 	}
 	else
