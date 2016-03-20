@@ -16,9 +16,9 @@ var socket,		// Socket controller
 	playerList;	// Array of ID-player pairs
 
 var roomCount = 1,
-	mapCount = 17,
+	mapCount = 24,
 	test = 0;
-var timeOut;
+var doorTimeOut;
 
 
 /**************************************************
@@ -35,6 +35,7 @@ function init() {
 	}
 
 	playerList = [];
+	doorTimeOut = [];
 
 	// Set up Socket.IO to listen on port 8000
 	socket = io.listen(8000);
@@ -56,6 +57,7 @@ var setEventHandlers = function() {
 // New socket connection
 function onSocketConnection(client) {
 	util.log("New player has connected: "+client.id);
+	showServerPlayerCount();
 
 	// Assign initial map for new player
 	client.emit("map change", {map: test} );
@@ -259,10 +261,12 @@ function doorOpen(data){
 	
 	braodcastAll(currentPlayer, "door open", {id: doorId});
 
-	clearTimeout(timeOut);
+	clearDoorTimeOut(doorId);
 	var timeOut = setTimeout(function(cmd, data) {
   		braodcastAll(currentPlayer, "door close", {id: doorId});
+  		clearDoorTimeOut(doorId);
 	}, 10000, "door close", doorId);
+	doorTimeOut.push([doorId, timeOut]);
 
 }
 
@@ -326,10 +330,22 @@ function roomBalancing(player){
 			minPlayer = players[i][0].length;
 			minPlayerIndex = i;
 		}
-		util.log("q room " + i + " q count " + (players[i][0].length) + " min " + minPlayer);
+		
 	};
 	player.setRoomIndex(minPlayerIndex);
-	//util.log("room " + minPlayerIndex + " count " + (players[minPlayerIndex][0].length + 1));
+}
+
+function clearDoorTimeOut(id){
+	for (i = 0; i < doorTimeOut.length; i++) {
+		if (doorTimeOut[i][0] == id && doorTimeOut[i][1] != null){
+			clearTimeout(doorTimeOut[i][1]);
+			doorTimeOut.splice(i, 1);
+		}
+	};
+}
+
+function showServerPlayerCount(){
+	util.log("Server Player Count: " + playerList.length + 1);
 }
 
 /**************************************************
