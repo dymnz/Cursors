@@ -149,8 +149,8 @@ function mouseHandler(e) {
 			mouseX = RADIUS* blockWidth *(mouseX-mstartX)/mouseLength + mstartX;
 			mouseY = RADIUS* blockWidth *(mouseY-mstartY)/mouseLength + mstartY;
 		}
-		vX = (mouseX - mstartX)/40;
-		vY = (mouseY - mstartY)/40;
+		vX = (mouseX - mstartX)/40/scale;
+		vY = (mouseY - mstartY)/40/scale;
 	}
 	else if(e.type == "mousedown"){
 		mstartX = e.pageX;
@@ -179,7 +179,6 @@ function touchHandler(e) {
 		mouseY = mstartY;
 		lastX=localPlayer.getX();
 		lastY=localPlayer.getY();
-		buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
 	}
 	else if(e.type == "touchmove"){
 		e.preventDefault();
@@ -191,8 +190,8 @@ function touchHandler(e) {
 			mouseX = RADIUS* blockWidth *(mouseX-mstartX)/mouseLength + mstartX;
 			mouseY = RADIUS* blockWidth *(mouseY-mstartY)/mouseLength + mstartY;
 		}
-		vX = (mouseX - mstartX)/40;
-		vY = (mouseY - mstartY)/40;
+		vX = (mouseX - mstartX)/40/scale;
+		vY = (mouseY - mstartY)/40/scale;
 	}
 	else if(e.type == "touchend"){
 		e.preventDefault();
@@ -404,6 +403,9 @@ function draw() {
 		return;
 
 	// Wipe the canvas clean
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
 	ctx.fillStyle = 'white';
 	ctx.fillRect(paddingX, paddingY, canvas.width-remainingWidth, canvas.height-remainingHeight);
 
@@ -484,7 +486,7 @@ function drawPlayer(x, y, style)
 
 function drawBlock(i, r)
 {
-	ctx.fillRect(r*blockWidth+2+paddingX, i*blockWidth+2+paddingY, blockWidth-4, blockWidth-4);
+	ctx.fillRect(r*blockWidth+1+paddingX, i*blockWidth+1+paddingY, blockWidth-2, blockWidth-2);
 }
 
 function drawCross(i, r)
