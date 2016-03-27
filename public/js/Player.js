@@ -12,6 +12,8 @@ var Player = function(startX, startY, pname, tid) {
 		playerSize,
 		oriX, oriY,
 		alreadyOnGoal = false;
+		clickedRipple = 0;
+		rippleFlag = false;
 	
 	// Getters and setters
 	var getX = function() {
@@ -166,6 +168,8 @@ var Player = function(startX, startY, pname, tid) {
 		setAlreadyOnGoal: setAlreadyOnGoal,
 		update: update,
 		draw: draw,
-		name: name
+		name: name,
+		clickedRipple: clickedRipple,
+		rippleFlag: rippleFlag
 	}
 };

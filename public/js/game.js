@@ -17,6 +17,8 @@ var canvas,			// Canvas DOM element
 	lastY,
 	RADIUS = 2,
 	MOUSE_RADIUS = 0.4;
+	RIPPLE_DELTA = 0.1;
+	MAX_RIPPLE_SIZE = 0.4;
 var scale,
 	playerSize,
 	mstartX = -1,
@@ -66,8 +68,12 @@ function init(name, team_id) {
 
 function uiScaling() {
 	// Maximise the canvas
-	canvas.width = window.innerWidth+1;
-	canvas.height = window.innerHeight+1;
+	if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+	else if(document.documentElement.msRequestFullscreen) document.documentElement.msRequestFullscreen();
+	else if(document.documentElement.mozRuestFullScreen) document.documentElement.mozRuestFullScreen();
+	else if(document.documentElement.webkitRequestFullscreen) document.documentElement.webkitRequestFullscreen();
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
 
 	if (canvas.width/mapWidth >= canvas.height/mapHeight){
 		blockWidth = canvas.height/mapHeight;
@@ -85,7 +91,7 @@ function uiScaling() {
 	scale = blockWidth/pixelPerBlock;
 	playerSize = Math.round(scale * blockWidth/10);	
 	if(playerSize < 5)
-		playSize = 5;
+		playerSize = 5;
 }
 
 /**************************************************
@@ -437,6 +443,9 @@ function draw() {
 
 	// Draw map
 	drawMap(localPlayer.getMap());
+	
+	var originColor = ctx.fillStyle;
+	var originColor2 = ctx.strokeStyle;
 
 	
 	var originColor = ctx.fillStyle;
@@ -444,11 +453,11 @@ function draw() {
 	// Draw the remote players
 	var i;
 	for (i = 0; i < remotePlayers.length; i++) {
-		drawPlayer(remotePlayers[i].getX(), remotePlayers[i].getY(), 'grey');
+		drawPlayer(remotePlayers[i], 'grey', remotePlayers[i].rippleFlag);
 	};
 
 	// Draw the local player
-	drawPlayer(localPlayer.getX(), localPlayer.getY(), 'red');
+	drawPlayer(localPlayer, 'red', localPlayer.rippleFlag);
 
 	// Draw gamepad	
 	if(mstartX != -1){
@@ -509,9 +518,10 @@ function drawMap(map) {
 	}
 }
 
-function drawPlayer(x, y, style)
+function drawPlayer(player, style)
 {
 	// Translate the coord
+	var x = player.getX(), y = player.getY();
 	var cX = Math.round( scale* x),
 		cY = Math.round( scale * y);
 	ctx.strokeStyle = style;
@@ -521,7 +531,19 @@ function drawPlayer(x, y, style)
 	ctx.fill();	
 	ctx.lineWidth = playerSize/5;
 	ctx.stroke();
-	
+	if(player.rippleFlag){
+		console.log("drawing ripple...");
+		player.clickedRipple += RIPPLE_DELTA;
+		ctx.strokeStyle = "rgba(50, 50, 50, 0.8)";
+		ctx.beginPath();
+		ctx.lineWidth = 2;
+		ctx.arc(cX+paddingX, cY+paddingY, player.clickedRipple*blockWidth, 0, 2*Math.PI);
+		ctx.stroke();
+		if(player.clickedRipple > MAX_RIPPLE_SIZE){
+			player.rippleFlag = false;
+			player.clickedRipple = 0;
+		}
+	}
 }
 
 function drawBlock(i, r)
@@ -648,6 +670,7 @@ function buttonPushed(x, y, map) {
 	console.log("pushed");
 
 	socket.emit("push");
+	localPlayer.rippleFlag = true;
 
 	var blockId = checkOnButton(x, y, map);
 	if(blockId != -1)
