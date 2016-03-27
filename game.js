@@ -17,7 +17,7 @@ var socket,		// Socket controller
 
 var roomCount = 4,
 	mapCount = 24,
-	test = 0;
+	test = 6;
 var doorTimeOut;
 
 var doors = [];
@@ -275,10 +275,10 @@ function backToLast(){
 //handle the "door open" event
 function doorOpen(data){
 
+
 	var currentPlayer = playerById(this.id);
 	var mapIndex = currentPlayer.getMapIndex(),
 		roomIndex = currentPlayer.getRoomIndex();
-
 	//get doorId
 	var doorId = data.id;
 
@@ -406,12 +406,33 @@ function sendDoorInfo(onGoalPlayer){
 /*CONSOLE*/
 function sendInit() {
 	var player = playerById(this.id);
-	this.emit("sendInit", {map: player.getMapIndex(), room: player.getRoomIndex(), maxRoom:roomCount});
+	this.emit("sendInit", {map: player.getMapIndex(), room: player.getRoomIndex(), maxRoomIndex:roomCount});
 }
 
 function onChangeMapTo(data) {
 	this.emit("map change", {map: data.map});
-	playerById(this.id).setMapIndex(data.map);
+	var onGoalPlayer = playerById(this.id);
+	
+	var i = onGoalPlayer.getRoomIndex(),
+			j = onGoalPlayer.getMapIndex();
+		players[i][j].splice(players[i][j].indexOf(onGoalPlayer), 1);
+
+	onGoalPlayer.setMapIndex(data.map);
+
+	//Player not found
+	if(!onGoalPlayer){
+		util.log("Player not found: " + this.id);
+		return;
+	};
+	//send all players in this map
+	sendExistingPlayers(onGoalPlayer);
+
+	//send door Info in this map
+	sendDoorInfo(onGoalPlayer);
+
+	//push this player in the players
+	players[onGoalPlayer.getRoomIndex()][onGoalPlayer.getMapIndex()].push(onGoalPlayer);
+	
 }
 
 function onChangeRoomTo(data) {

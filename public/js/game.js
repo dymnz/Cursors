@@ -672,6 +672,5 @@ function buttonPushed(x, y, map) {
 	if(blockId != -1)
 	{
 		socket.emit("door open", {id: blockId-100});
-		console.log("door open sent");
 	}
 }

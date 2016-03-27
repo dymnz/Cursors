@@ -273,7 +273,6 @@ function onDoorClose(data) {
 ** GAME ANIMATION LOOP
 **************************************************/
 function animate() {
-	update();
 	draw();
 
 	// Request a new animation frame using Paul Irish's shim
@@ -284,14 +283,6 @@ function animate() {
 /**************************************************
 ** GAME UPDATE
 **************************************************/
-function update() {
-	// Update local player and check for change
-	if (localPlayer.update(keys, vX, vY)) {
-		// Send local player data to the game server
-		socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
-	};
-	checkTile(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
-};
 
 function checkTile(x, y, map) {
 	if (map==-1)
@@ -553,8 +544,9 @@ function updateHtml(){
 
 function onRoomChange(data)
 {
-	onMapChange(data);
 	localPlayer.setRoom(data.room);
+	onMapChange(data);
+	console.log("onRoomChange " + data.map +" " + data.room);
 }
 
 
@@ -564,6 +556,7 @@ function GetInit() {
 
 function NextRoom(){
 	localPlayer.nextRoom();
+	console.log("NextRoom "+localPlayer.getRoom());
 	socket.emit("change room to",{room:localPlayer.getRoom()}); //change to next map after press the button
 }
 
@@ -583,12 +576,15 @@ function LastMap(){
 }
 
 function DoorAllOpen(){
+	var mapIndex = localPlayer.getMap();
+	var openedDoor = [];
 	for (i = 0 ; i<mapHeight ; i++){
 		for(r = 0 ; r<mapWidth ; r++){
-			var doorIndex=(maps[data.map])[i][r];
-	if(doorIndex>=100 && doorIndex<=109)
-			{
-				socket.emit("onDoorOpen",doorIndex); //door needs to be close after 10 second too.
+			var id=(maps[mapIndex])[i][r];
+			if(openedDoor.indexOf(id)==-1 && id>=100 && id<=109){
+				openedDoor.push(id);
+				socket.emit("door open", {id: id});
+				console.log("sent door open " + id + " mapIndex:" + mapIndex);
 			}
 		}
 	}
@@ -600,10 +596,10 @@ function mapChoose(){
 }
 
 function onSendInit(data) {
-	console.log("map room " + data.map +"  " + data.room);
 	localPlayer.setMap(data.map);
 	localPlayer.setRoom(data.room);
 	maxRoomIndex = data.maxRoomIndex;
+	console.log("map room " + data.map +"  " + data.room + " maxRoomIndex " +maxRoomIndex);
 	updateHtml();
 }
 

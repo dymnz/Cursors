@@ -83,93 +83,6 @@ var Player = function(startX, startY, pname, tid) {
 			room--;
 	}
 
-	// Update player position
-	var update = function(keys, vX, vY) {
-		// Previous position
-		var prevX = x,
-			prevY = y;
-
-		// Up key takes priority over down
-		if (keys.up) {
-			if ((y-moveAmount>=0) && !isCollision(x, y-moveAmount, map))
-				y -= moveAmount;
-		} else if (keys.down) {
-			if ((y+moveAmount<=pixelPerBlock*mapHeight) && !isCollision(x, y+moveAmount, map))
-				y += moveAmount;
-		};
-
-		// Left key takes priority over right
-		if (keys.left) {
-			if ((x-moveAmount>=0) && !isCollision(x-moveAmount, y, map))
-				x -= moveAmount;
-		} else if (keys.right) {
-			if ((x+moveAmount<=pixelPerBlock*mapWidth) && !isCollision(x+moveAmount, y, map))
-				x += moveAmount;
-		};
-
-		if ( ((y+vY>0) && (y+vY<pixelPerBlock*mapHeight) && !isCollision(x, y+vY, map)) )
-			y += vY;
-		else{
-			if(vY<0)
-			{
-				while(vY<0)
-				{
-					vY++;
-					if((y+vY>0) && (y+vY<pixelPerBlock*mapHeight) && !isCollision(x, y+(vY), map))
-					{
-						y+=vY;
-						break;
-					}				
-				}
-
-			}
-			else if(vY>0)
-			{
-				while(vY>0)
-				{
-					vY--;
-					if((y+vY>0) && (y+vY<pixelPerBlock*mapHeight )&& !isCollision(x, y+(vY), map))
-					{
-						y+=vY;
-						break;
-					}					
-				}
-	
-			}
-		}
-		if ((x+vX>0) && (x+vX<pixelPerBlock*mapWidth) && !isCollision(x+vX, y, map)) 
-			x += vX;
-		else {
-			if(vX<0)
-			{
-				while(vX<0){
-					vX++;
-					if((x+vX>0) && (x+vX<pixelPerBlock*mapWidth)&&!isCollision(x+(vX), y, map))
-					{
-						x+=vX;
-						break;
-					}					
-				}
-
-			}
-			else if(vX>0)
-			{
-				while(vX>0){
-					vX--;
-					if((x+vX>0) && (x+vX<pixelPerBlock*mapWidth)&&!isCollision(x+(vX), y, map))
-					{
-						x+=vX;
-						break;
-					}					
-				}
-
-			}
-		}
-
-		return (prevX != x || prevY != y) ? true : false;
-		
-	};
-
 	// Draw player
 	var draw = function(ctx) {
 		ctx.fillStyle = 'red';
@@ -192,7 +105,6 @@ var Player = function(startX, startY, pname, tid) {
 		setOriY: setOriY,
 		setMap: setMap,
 		setAlreadyOnGoal: setAlreadyOnGoal,
-		update: update,
 		draw: draw,
 		nextMap: nextMap,
 		lastMap: lastMap,
