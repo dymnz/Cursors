@@ -12,29 +12,35 @@
 	</head>
 	
 	<body>
-		<div class="wrapper">
-			<article id="main" style="display: block;">
-				<div class="left" id="runhorse">
-					<p>
-					<input type="button" id="next map" value="next map" onClick="NextPage();">
-					</p>
-					<p>
-					<input type="button" id="pre map" value="pre map" onClick="PrePage()">
-					</p>
-					<p>    				
+		<div class="console">
+			<table>
+			<tr>
+				<td>
+					room:<span id="room"></span>
+					map: <span id="map"></span>
+				</td>
+				<td>
+					<input type="button" id="room last" value="last room" onClick="LastRoom()">	
+				</td>	
+				<td>
+					<input type="button" id="room next" value="next room" onClick="NextRoom()">	
+				</td>	
+				<td>
+					<input type="button" id="map last" value="last map" onClick="LastMap()">	
+				</td>	
+				<td>
+					<input type="button" id="map next" value="next map" onClick="NextMap();">
+				</td>
+				<td>
 					<input type="button" id="DoorAllOpen" value="Open all door" onClick="DoorAllOpen()">
-					</p>
-					<p>
-					Enter map number:<br>
-					<input type="text" id="mapNumber"><br>
+				</td>
+				<td>
+					Enter map number:
+					<input type="text" id="mapNumber">
 					<input type="button" id="pre map" value="Go" onClick="mapChoose()">
-					</p>
-				</div>
-
-			</article>
-			<
-		</div>
-		<p id="inform"></p>
+				</td>
+			</tr>
+			</table>
 		</div>
 		<div class="myCanvas">
 			<canvas id="gameCanvas"></canvas>	
@@ -44,8 +50,11 @@
 		<script src="js/requestAnimationFrame.js"></script>
 		<script src="js/Keys.js"></script>
 		<script src="js/Player.js"></script>
-		<script src="js/game.js"></script>
 		<script src="js/Map.js"></script>
 		<script src="js/console.js"></script>
+		<script>
+			init("ssss", 123);
+			animate();
+		</script>
 	</body>
 </html>

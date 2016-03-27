@@ -15,7 +15,7 @@ var socket,		// Socket controller
 	players,	// Array of connected players
 	playerList;	// Array of ID-player pairs
 
-var roomCount = 1,
+var roomCount = 4,
 	mapCount = 24,
 	test = 0;
 var doorTimeOut;
@@ -86,10 +86,19 @@ function onSocketConnection(client) {
 	//Listen for "door open" message
 	client.on("door open", doorOpen);
 
+<<<<<<< HEAD
 	//Push hint
 	client.on("push", pushHint);
+=======
+	client.on("getInit", sendInit);
+
+	client.on("change map to", onChangeMapTo);
+
+	client.on("change room to", onChangeRoomTo);
+>>>>>>> origin/master
 
 	client.emit("connect");
+
 };
 
 // Socket client has disconnected
@@ -394,7 +403,49 @@ function sendDoorInfo(onGoalPlayer){
 	};
 }
 
+
+/*CONSOLE*/
+function sendInit() {
+	var player = playerById(this.id);
+	this.emit("sendInit", {map: player.getMapIndex(), room: player.getRoomIndex(), maxRoom:roomCount});
+}
+
+function onChangeMapTo(data) {
+	this.emit("map change", {map: data.map});
+	playerById(this.id).setMapIndex(data.map);
+}
+
+function onChangeRoomTo(data) {
+	
+	var onGoalPlayer = playerById(this.id);
+	this.emit("room change", {map: onGoalPlayer.getMapIndex(), room: data.room});
+	var i = onGoalPlayer.getRoomIndex(),
+			j = onGoalPlayer.getMapIndex();
+		players[i][j].splice(players[i][j].indexOf(onGoalPlayer), 1);
+
+	onGoalPlayer.setRoomIndex(data.room);
+
+	//Player not found
+	if(!onGoalPlayer){
+		util.log("Player not found: " + this.id);
+		return;
+	};
+	//send all players in this map
+	sendExistingPlayers(onGoalPlayer);
+
+	//send door Info in this map
+	sendDoorInfo(onGoalPlayer);
+
+	//push this player in the players
+	players[onGoalPlayer.getRoomIndex()][onGoalPlayer.getMapIndex()].push(onGoalPlayer);
+
+}
+
+
 /**************************************************
 ** RUN THE GAME
 **************************************************/
 init();
+
+
+
