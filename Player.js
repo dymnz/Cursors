@@ -1,10 +1,11 @@
 /**************************************************
 ** GAME PLAYER CLASS
 **************************************************/
-var Player = function(startX, startY) {
+var Player = function(startX, startY, pname) {
 	var x = startX,
 		y = startY,
 		id,
+		name = pname,
 		roomIndex,
 		mapIndex,
 		socket;

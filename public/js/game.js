@@ -5,6 +5,7 @@ var canvas,			// Canvas DOM element
 	ctx,			// Canvas rendering context
 	keys,			// Keyboard input
 	localPlayer,	// Local player
+	localName,
 	remotePlayers,	// Remote players
 	socket,			// Socket connection
 	mouseX,
@@ -27,7 +28,7 @@ var doors = [];
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
-function init() {
+function init(name) {
 
 	// Declare the canvas and rendering context
 	canvas = document.getElementById("gameCanvas");
@@ -54,12 +55,13 @@ function init() {
 	//localPlayer.
 
 	// Initialise socket connection
-	socket = io.connect("http://localhost:8000", {port: 8000, transports: ["websocket"]});
+	socket = io.connect("http://127.0.0.1:8000", {port: 8000, transports: ["websocket"]});
 
 	// Initialise remote players array
 	remotePlayers = [];
 
 	// Start listening for events
+	localName=name;
 	setEventHandlers();
 };
 
@@ -221,7 +223,7 @@ function onSocketConnected() {
 	console.log("Connected to socket server");
 
 	// Send local player data to the game server
-	socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY()});
+	socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY(), name: localName});
 };
 
 // Socket disconnected
@@ -234,7 +236,7 @@ function onNewPlayer(data) {
 	console.log("New player connected: "+data.id);
 	console.log("New player is at " + data.x + " " + data.y);
 	// Initialise the new player
-	var newPlayer = new Player(data.x, data.y);
+	var newPlayer = new Player(data.x, data.y, localName);
 	newPlayer.id = data.id;
 
 	// Add new player to the remote players array

@@ -111,9 +111,9 @@ function onClientDisconnect() {
 // New player has joined
 function onNewPlayer(data) {
 	// Create a new player
-	util.log("New player " + this.id);
+	util.log("New player " + this.id + " Name: " + data.name);
 
-	var newPlayer = new Player(data.x, data.y);
+	var newPlayer = new Player(data.x, data.y, data.name);
 	newPlayer.id = this.id;
 	newPlayer.setSocket(this);
 
