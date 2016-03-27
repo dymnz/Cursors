@@ -117,6 +117,9 @@ var setEventHandlers = function() {
 	
 	// Player move message received
 	socket.on("move player", onMovePlayer);
+	
+	// Player push message received
+	socket.on("push", pushHint);
 
 	// Player removed message received
 	socket.on("remove player", onRemovePlayer);
@@ -260,6 +263,20 @@ function onMovePlayer(data) {
 	// Update player position
 	movePlayer.setX(data.x);
 	movePlayer.setY(data.y);
+};
+
+// Player pushing
+function pushHint(data) {
+	var pushPlayer = playerById(data.id);
+
+	// Player not found
+	if (!pushPlayer) {
+		console.log("Player not found: "+data.id);
+		return;
+	};
+
+	// Update player flag
+	movePlayer.rippleFlag = true;
 };
 
 // Remove player

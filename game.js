@@ -86,6 +86,8 @@ function onSocketConnection(client) {
 	//Listen for "door open" message
 	client.on("door open", doorOpen);
 
+	//Push hint
+	client.on("push", pushHint);
 
 	client.emit("connect");
 };
@@ -283,6 +285,20 @@ function doorOpen(data){
 	}, 10000, "door close", doorId, roomIndex, mapIndex);
 
 	doorTimeOut.push([currentPlayer.getRoomIndex(), currentPlayer.getMapIndex(), doorId, timeOut]);
+
+}
+
+//handle the "push" event
+function pushHint(){
+	// Find player in array
+	var movePlayer = playerById(this.id);
+
+	// Player not found
+	if (!movePlayer) {
+		util.log("Player not found: "+this.id);
+		return;
+	};
+	broadcasting(movePlayer, "push", {id: movePlayer.id, x: movePlayer.getX(), y: movePlayer.getY()});
 
 }
 
