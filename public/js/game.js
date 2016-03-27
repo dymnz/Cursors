@@ -421,6 +421,9 @@ function draw() {
 	// Draw map
 	drawMap(localPlayer.getMap());
 
+	
+	var originColor = ctx.fillStyle;
+	var originColor2 = ctx.strokeStyle;
 	// Draw the remote players
 	var i;
 	for (i = 0; i < remotePlayers.length; i++) {
@@ -432,8 +435,6 @@ function draw() {
 
 	// Draw gamepad	
 	if(mstartX != -1){
-		var originColor = ctx.fillStyle;
-		var originColor2 = ctx.strokeStyle;
 		ctx.beginPath();
 		ctx.arc(mstartX, mstartY, RADIUS * blockWidth , 0, 2*Math.PI);
 		ctx.fillStyle =  "rgba(70 ,130, 180, 0.3)";
@@ -448,9 +449,9 @@ function draw() {
 		ctx.fill();	
 		ctx.lineWidth = blockWidth/10;
 		ctx.stroke();
-		ctx.fillStyle = originColor;
-		ctx.strokeStyle = originColor2;
 	}
+	ctx.fillStyle = originColor;
+	ctx.strokeStyle = originColor2;
 };
 
 function drawMap(map) {
