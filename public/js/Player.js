@@ -1,15 +1,17 @@
 /**************************************************
 ** GAME PLAYER CLASS
 **************************************************/
-var Player = function(startX, startY) {
+var Player = function(startX, startY, pname, tid) {
 	var x = startX,
 		y = startY,
 		id,
+		name = pname,
+		teamId = tid;
 		moveAmount = 1,
 		map=-1,
 		playerSize,
 		oriX, oriY,
-		alreadyOnGoal = false;
+		alreadyOnGoal = false,;
 	
 	// Getters and setters
 	var getX = function() {
@@ -163,6 +165,7 @@ var Player = function(startX, startY) {
 		setMap: setMap,
 		setAlreadyOnGoal: setAlreadyOnGoal,
 		update: update,
-		draw: draw
+		draw: draw,
+		name: name
 	}
 };

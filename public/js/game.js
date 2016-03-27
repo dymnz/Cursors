@@ -5,6 +5,8 @@ var canvas,			// Canvas DOM element
 	ctx,			// Canvas rendering context
 	keys,			// Keyboard input
 	localPlayer,	// Local player
+	localName,
+	localTeamId,
 	remotePlayers,	// Remote players
 	socket,			// Socket connection
 	mouseX,
@@ -27,7 +29,7 @@ var doors = [];
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
-function init() {
+function init(name, team_id) {
 
 	// Declare the canvas and rendering context
 	canvas = document.getElementById("gameCanvas");
@@ -54,12 +56,14 @@ function init() {
 	//localPlayer.
 
 	// Initialise socket connection
-	socket = io.connect("http://localhost:8000", {port: 8000, transports: ["websocket"]});
+	socket = io.connect("http://127.0.0.1:8000", {port: 8000, transports: ["websocket"]});
 
 	// Initialise remote players array
 	remotePlayers = [];
 
 	// Start listening for events
+	localName=name;
+	localTeamId=team_id;
 	setEventHandlers();
 };
 
@@ -151,8 +155,8 @@ function mouseHandler(e) {
 			mouseX = RADIUS* blockWidth *(mouseX-mstartX)/mouseLength + mstartX;
 			mouseY = RADIUS* blockWidth *(mouseY-mstartY)/mouseLength + mstartY;
 		}
-		vX = (mouseX - mstartX)/40/scale;
-		vY = (mouseY - mstartY)/40/scale;
+		vX = (mouseX - mstartX)/25/scale;
+		vY = (mouseY - mstartY)/25/scale;
 	}
 	else if(e.type == "mousedown"){
 		mstartX = e.pageX;
@@ -174,7 +178,7 @@ function mouseHandler(e) {
 }
 
 function touchHandler(e) {
-	if(e.type == "touchstart"){
+	if(e.type == "touchstart" && e.touches.length == 1){
 		mstartX = e.touches[0].pageX;
 		mstartY = e.touches[0].pageY;
 		mouseX = mstartX;
@@ -184,16 +188,16 @@ function touchHandler(e) {
 	}
 	else if(e.type == "touchmove"){
 		e.preventDefault();
-		mouseX = (e.touches[0].pageX - mstartX)/3 + mstartX;
-		mouseY = (e.touches[0].pageY - mstartY)/3 + mstartY;
+		mouseX = (e.touches[0].pageX - mstartX)/2 + mstartX;
+		mouseY = (e.touches[0].pageY - mstartY)/2 + mstartY;
 
 		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
 		if(mouseLength > RADIUS* blockWidth){
 			mouseX = RADIUS* blockWidth *(mouseX-mstartX)/mouseLength + mstartX;
 			mouseY = RADIUS* blockWidth *(mouseY-mstartY)/mouseLength + mstartY;
 		}
-		vX = (mouseX - mstartX)/40/scale;
-		vY = (mouseY - mstartY)/40/scale;
+		vX = (mouseX - mstartX)/25/scale;
+		vY = (mouseY - mstartY)/25/scale;
 	}
 	else if(e.type == "touchend"){
 		e.preventDefault();
@@ -221,7 +225,7 @@ function onSocketConnected() {
 	console.log("Connected to socket server");
 
 	// Send local player data to the game server
-	socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY()});
+	socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY(), name: localName, teamId:localTeamId});
 };
 
 // Socket disconnected
@@ -234,7 +238,7 @@ function onNewPlayer(data) {
 	console.log("New player connected: "+data.id);
 	console.log("New player is at " + data.x + " " + data.y);
 	// Initialise the new player
-	var newPlayer = new Player(data.x, data.y);
+	var newPlayer = new Player(data.x, data.y, localName, localTeamId);
 	newPlayer.id = data.id;
 
 	// Add new player to the remote players array

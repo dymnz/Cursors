@@ -3,8 +3,8 @@
 <html lang="en">
 
 	<head>
-		<meta name="viewport" content="width=device-width,initial-scale=1.01,minimal-ui, user-scalable=no">
-
+		<meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no"/>
+		
 		<title>A multiplayer game built using HTML5 canvas and WebSockets</title>
 		<meta charset="utf-8">
 		
@@ -41,15 +41,17 @@
 		<script src="js/Map.js"></script>
 		<script>
 			// Initialise the game
-			function submit() {
-				//TODO FIX THIS
-				if ( document.getElementById("name").value.replace(/^\s+|\s+$/g, '').length != 0){
-					document.getElementById('welcome').remove();
-					init();
-					animate();
-		         		}
-		         		else
-		         			document.getElementById('inform').innerHTML = 'ID can\'t be empty';
+			function submitID() {
+			var name=document.getElementById("name").value;
+			var teamID=document.getElementById("team_id").value;
+			if ( name.replace(/^\s+|\s+$/g, '').length != 0)
+			{
+				document.getElementById('welcome').remove();
+				init(name, teamID);
+				animate();
+		         	}
+		         	else
+		         		document.getElementById('inform').innerHTML = 'Name cannot be empty';
 		   	}
 		</script>
 	</body>
