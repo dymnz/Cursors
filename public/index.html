@@ -4,7 +4,7 @@
 
 	<head>
 		<meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no"/>
-		
+
 		<title>A multiplayer game built using HTML5 canvas and WebSockets</title>
 		<meta charset="utf-8">
 		
@@ -44,7 +44,8 @@
 			function submitID() {
 			var name=document.getElementById("name").value;
 			var teamID=document.getElementById("team_id").value;
-			if ( name.replace(/^\s+|\s+$/g, '').length != 0)
+			if ( (name.replace(/^\s+|\s+$/g, '').length != 0) &&
+				teamId.replace(/^\s+|\s+$/g, '').length != 0)
 			{
 				document.getElementById('welcome').remove();
 				init(name, teamID);
