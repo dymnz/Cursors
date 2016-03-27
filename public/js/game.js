@@ -420,27 +420,35 @@ function draw() {
 	// Draw map
 	drawMap(localPlayer.getMap());
 
-	// Draw the local player
-	drawPlayer(localPlayer.getX(), localPlayer.getY(), 'red');
-
 	// Draw the remote players
 	var i;
 	for (i = 0; i < remotePlayers.length; i++) {
 		drawPlayer(remotePlayers[i].getX(), remotePlayers[i].getY(), 'grey');
 	};
 
+	// Draw the local player
+	drawPlayer(localPlayer.getX(), localPlayer.getY(), 'red');
+
 	// Draw gamepad	
 	if(mstartX != -1){
 		var originColor = ctx.fillStyle;
+		var originColor2 = ctx.strokeStyle;
 		ctx.beginPath();
 		ctx.arc(mstartX, mstartY, RADIUS * blockWidth , 0, 2*Math.PI);
+		ctx.fillStyle =  "rgba(70 ,130, 180, 0.3)";
+		ctx.strokeStyle =  "rgba(70 ,130, 180, 0.9)";
+		ctx.lineWidth = blockWidth/5;
 		ctx.stroke();
+		ctx.fill();	
 		
 		ctx.beginPath();
 		ctx.arc(mouseX, mouseY, MOUSE_RADIUS * blockWidth , 0, 2*Math.PI);
-		ctx.fillStyle = 'red';
+		ctx.fillStyle =  "rgba(100 ,160, 210, 1)";
 		ctx.fill();	
+		ctx.lineWidth = blockWidth/10;
+		ctx.stroke();
 		ctx.fillStyle = originColor;
+		ctx.strokeStyle = originColor2;
 	}
 };
 
@@ -487,8 +495,13 @@ function drawPlayer(x, y, style)
 	// Translate the coord
 	var cX = Math.round( scale* x),
 		cY = Math.round( scale * y);
-	ctx.fillStyle = style;
-	ctx.fillRect(cX - playerSize/2+paddingX, cY-playerSize/2+paddingY, playerSize, playerSize);
+	ctx.strokeStyle = style;
+	ctx.fillStyle = "rgba(120 ,120, 120, 0.6)";
+	ctx.beginPath();
+	ctx.arc(cX+paddingX, cY+paddingY, playerSize/2 , 0, 2*Math.PI);
+	ctx.fill();	
+	ctx.lineWidth = playerSize/5;
+	ctx.stroke();
 	
 }
 
