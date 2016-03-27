@@ -20,6 +20,7 @@ var roomCount = 1,
 	test = 0;
 var doorTimeOut;
 
+var doors = [];
 
 /**************************************************
 ** GAME INITIALISATION
@@ -191,6 +192,9 @@ function onGoal(){
 		//send all players in this map
 		sendExistingPlayers(onGoalPlayer);
 
+		//send door Info in this map
+		sendDoorInfo(onGoalPlayer);
+
 		//send this player to other players
 		broadcasting(onGoalPlayer, "new player", {id: onGoalPlayer.id, x: onGoalPlayer.getX(), y: onGoalPlayer.getY()});
 
@@ -235,6 +239,9 @@ function backToLast(){
 		//send all players in this map
 		sendExistingPlayers(backPlayer);
 
+		//send door Info in this map
+		sendDoorInfo(backPlayer);
+
 		//send this player to other players
 		broadcasting(backPlayer, "new player", {id: backPlayer.id, x: backPlayer.getX(), y: backPlayer.getY()});
 
@@ -259,15 +266,16 @@ function doorOpen(data){
 	//get doorId
 	var doorId = data.id;
 
-	clearDoorTimeOut(doorId);
+	clearDoorTimeOut(doorId, currentPlayer);
 	
 	broadcastAll(currentPlayer, "door open", {id: doorId});
 
 	var timeOut = setTimeout(function(cmd, data) {
   		broadcastAll(currentPlayer, "door close", {id: doorId});
-  		clearDoorTimeOut(doorId);
+  		clearDoorTimeOut(doorId, currentPlayer);
 	}, 10000, "door close", doorId);
-	doorTimeOut.push([doorId, timeOut]);
+
+	doorTimeOut.push([currentPlayer.getRoomIndex(), currentPlayer.getMapIndex(), doorId, timeOut]);
 
 }
 
@@ -336,17 +344,31 @@ function roomBalancing(player){
 	player.setRoomIndex(minPlayerIndex);
 }
 
-function clearDoorTimeOut(id){
-	for (i = 0; i < doorTimeOut.length; i++) {
-		if (doorTimeOut[i][0] == id && doorTimeOut[i][1] != null){
-			clearTimeout(doorTimeOut[i][1]);
+function clearDoorTimeOut(id, currentPlayer){
+	for (var i = 0; i < doorTimeOut.length; i++) {
+		if (doorTimeOut[i][0] == currentPlayer.getRoomIndex() && 
+			doorTimeOut[i][1] == currentPlayer.getMapIndex() &&
+			doorTimeOut[i][2] == id &&
+			doorTimeOut[i][3] != null){
+			clearTimeout(doorTimeOut[i][3]);
 			doorTimeOut.splice(i, 1);
+			break;
 		}
 	};
 }
 
 function showServerPlayerCount(){
 	util.log("Server Player Count: " + (playerList.length + 1));
+}
+
+function sendDoorInfo(onGoalPlayer){
+	for(var i = 0;i < doorTimeOut.length;i++){
+		if (doorTimeOut[i][0] == onGoalPlayer.getRoomIndex() && 
+			doorTimeOut[i][1] == onGoalPlayer.getMapIndex())
+		{
+			onGoalPlayer.getSocket().emit("door open", {id: doorTimeOut[i][2]});	
+		}
+	};
 }
 
 /**************************************************
