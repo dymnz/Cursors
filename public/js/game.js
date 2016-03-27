@@ -109,8 +109,8 @@ var setEventHandlers = function() {
 	canvas.addEventListener("touchend", touchHandler, false);
 
 	// Window resize
-	window.addEventListener("resize", onResize, false);
-	window.addEventListener("orientationchange", onResize, false);
+	window.addEventListener("resize", uiScaling, false);
+	window.addEventListener("orientationchange", uiScaling, false);
 
 	// Socket connection successful
 	socket.on("connect", onSocketConnected);
@@ -224,10 +224,6 @@ function touchHandler(e) {
 
 // Browser window resize
 function onResize(e) {
-	// Maximise the canvas
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-
 	uiScaling();
 };
 
