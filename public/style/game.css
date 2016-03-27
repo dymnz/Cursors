@@ -1,9 +1,36 @@
 body {
 	overflow: hidden;
-	background-color: #000000;
+	background-color: #FFFFFF;
 }
-
-
+#welcome {
+	margin: 0 auto 0 auto;
+	text-align: center;
+}
+#form_content{
+	display: inline-block;
+    	margin: 0 auto; 	
+}
+#button {
+	height: 20px;
+	width: 100px;
+	font-size: 16px;
+}
+tr {
+	padding: 10px 0 10px 0;
+}
+td {
+	font-weight: bold;
+	padding: 10px;
+	text-align: left;
+}
+input {
+	border: 2px #000000 solid; 
+	text-align: right;
+}
+#button {
+	border: 0px;
+	text-align: center;
+}
 
 canvas {
 	display: block;
