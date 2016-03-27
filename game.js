@@ -17,7 +17,7 @@ var socket,		// Socket controller
 
 var roomCount = 4,
 	mapCount = 24,
-	test = 6;
+	test = 0;
 var doorTimeOut;
 
 var doors = [];
