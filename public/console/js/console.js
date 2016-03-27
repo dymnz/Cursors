@@ -5,6 +5,8 @@ var canvas,			// Canvas DOM element
 	ctx,			// Canvas rendering context
 	keys,			// Keyboard input
 	localPlayer,	// Local player
+	localName,
+	localTeamId,
 	remotePlayers,	// Remote players
 	socket,			// Socket connection
 	mouseX,
@@ -14,9 +16,8 @@ var canvas,			// Canvas DOM element
 	lastX,
 	lastY,
 	RADIUS = 2,
-	MOUSE_RADIUS = 0.4;
-	mapIndex = 0;
-var scale,
+	MOUSE_RADIUS = 0.4,
+	scale,
 	playerSize,
 	mstartX = -1,
 	mstartY = -1;
@@ -25,44 +26,15 @@ var pixelPerBlock = 20;
 var remainingWidth, remainingHeight;
 var paddingX, paddingY;
 var doors = [];
+var maxRoomIndex = -1;
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
-/*function NextPage(){
-	mapIndex++;
-	socket.emit("mapChange",{mapIndex:mapIndex}); //change to next map after press the button
-}
-
-function PrePage(){
-	mapIndex--;
-	socket.emit("mapChange",{mapIndex:mapIndex); //change to previse map after press the button
-}
-
-function DoorAllOpen(){
-	for (i = 0 ; i<mapHeight ; i++){
-		for(r = 0 ; r<mapWidth ; r++){
-			var doorIndex=(maps[data.map])[i][r];
-	if(doorIndex>=100 && doorIndex<=109)
-			{
-				socket.emit("onDoorOpen",doorIndex); //door needs to be close after 10 second too.
-			}
-		}
-	}
-}
-
-function mapChoose(){
-	var mapIndex = document.getElementById("mapNumber").value;
-	socket.emit("mapChange",mapIndex); //change to the map to what was inputed
-}*/
-function init() {
+function init(name, team_id) {
 
 	// Declare the canvas and rendering context
 	canvas = document.getElementById("gameCanvas");
 	ctx = canvas.getContext("2d");
-
-	// Maximise the canvas
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
 
 	//Calculate width per block
 	uiScaling();
@@ -81,17 +53,23 @@ function init() {
 	//localPlayer.
 
 	// Initialise socket connection
-	socket = io.connect("http://localhost:8000", {port: 8000, transports: ["websocket"]});
+	socket = io.connect("http://127.0.0.1:8000", {port: 8000, transports: ["websocket"]});
 
 	// Initialise remote players array
 	remotePlayers = [];
 
 	// Start listening for events
+	localName=name;
+	localTeamId=team_id;
 	setEventHandlers();
 };
 
 
 function uiScaling() {
+	// Maximise the canvas
+	canvas.width = window.innerWidth+1;
+	canvas.height = window.innerHeight-50;
+
 	if (canvas.width/mapWidth >= canvas.height/mapHeight){
 		blockWidth = canvas.height/mapHeight;
 		remainingHeight = 0;
@@ -115,19 +93,9 @@ function uiScaling() {
 ** GAME EVENT HANDLERS
 **************************************************/
 var setEventHandlers = function() {
-	// Keyboard
-	window.addEventListener("keydown", onKeydown, false);
-	window.addEventListener("keyup", onKeyup, false);
-	canvas.addEventListener("mousemove", mouseHandler, false);
-	canvas.addEventListener("mousedown", mouseHandler, false);
-	canvas.addEventListener("mouseup", mouseHandler, false);
-	canvas.addEventListener("touchstart", touchHandler, false);
-	canvas.addEventListener("touchmove", touchHandler, false);
-	canvas.addEventListener("touchend", touchHandler, false);
-
 	// Window resize
-	window.addEventListener("resize", onResize, false);
-	window.addEventListener("orientationchange", onResize, false);
+	window.addEventListener("resize", uiScaling, false);
+	window.addEventListener("orientationchange", uiScaling, false);
 
 	// Socket connection successful
 	socket.on("connect", onSocketConnected);
@@ -152,6 +120,10 @@ var setEventHandlers = function() {
 
 	// Door close
 	socket.on("door close", onDoorClose);
+
+	socket.on("room change", onRoomChange);
+
+	socket.on("sendInit", onSendInit)
 };
 
 // Keyboard key down
@@ -168,78 +140,8 @@ function onKeyup(e) {
 	};
 };
 
-function mouseHandler(e) {
-	if(mstartX != -1 && e.type == "mousemove"){
-		e.preventDefault();
-		mouseX = (e.pageX - mstartX)/3 + mstartX;
-		mouseY = (e.pageY - mstartY)/3 + mstartY;
-		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
-		if(mouseLength > RADIUS * blockWidth){
-			mouseX = RADIUS* blockWidth *(mouseX-mstartX)/mouseLength + mstartX;
-			mouseY = RADIUS* blockWidth *(mouseY-mstartY)/mouseLength + mstartY;
-		}
-		vX = (mouseX - mstartX)/40/scale;
-		vY = (mouseY - mstartY)/40/scale;
-	}
-	else if(e.type == "mousedown"){
-		mstartX = e.pageX;
-		mstartY = e.pageY;
-		mouseX = mstartX;
-		mouseY = mstartY;
-		lastX=localPlayer.getX();
-		lastY=localPlayer.getY();
-		//buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
-	}
-	else if(e.type == "mouseup") {
-		e.preventDefault();
-		mstartX = -1;
-		if(Math.sqrt((localPlayer.getX()-lastX)*(localPlayer.getX()-lastX) + (localPlayer.getY()-lastY)*(localPlayer.getY()-lastY))<5)
-			buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
-		vX = 0;
-		vY = 0;
-	}
-}
-
-function touchHandler(e) {
-	if(e.type == "touchstart"){
-		mstartX = e.touches[0].pageX;
-		mstartY = e.touches[0].pageY;
-		mouseX = mstartX;
-		mouseY = mstartY;
-		lastX=localPlayer.getX();
-		lastY=localPlayer.getY();
-	}
-	else if(e.type == "touchmove"){
-		e.preventDefault();
-		mouseX = (e.touches[0].pageX - mstartX)/3 + mstartX;
-		mouseY = (e.touches[0].pageY - mstartY)/3 + mstartY;
-
-		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
-		if(mouseLength > RADIUS* blockWidth){
-			mouseX = RADIUS* blockWidth *(mouseX-mstartX)/mouseLength + mstartX;
-			mouseY = RADIUS* blockWidth *(mouseY-mstartY)/mouseLength + mstartY;
-		}
-		vX = (mouseX - mstartX)/40/scale;
-		vY = (mouseY - mstartY)/40/scale;
-	}
-	else if(e.type == "touchend"){
-		e.preventDefault();
-		if(Math.sqrt((localPlayer.getX()-lastX)*(localPlayer.getX()-lastX) + (localPlayer.getY()-lastY)*(localPlayer.getY()-lastY))<5)
-			buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
-
-		mstartX = -1;
-		mstartY = -1;
-		vX = 0;
-		vY = 0;
-	}
-}
-
 // Browser window resize
 function onResize(e) {
-	// Maximise the canvas
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-
 	uiScaling();
 };
 
@@ -248,7 +150,7 @@ function onSocketConnected() {
 	console.log("Connected to socket server");
 
 	// Send local player data to the game server
-	socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY()});
+	socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY(), name: localName, teamId:localTeamId});
 };
 
 // Socket disconnected
@@ -261,7 +163,7 @@ function onNewPlayer(data) {
 	console.log("New player connected: "+data.id);
 	console.log("New player is at " + data.x + " " + data.y);
 	// Initialise the new player
-	var newPlayer = new Player(data.x, data.y);
+	var newPlayer = new Player(data.x, data.y, localName, localTeamId);
 	newPlayer.id = data.id;
 
 	// Add new player to the remote players array
@@ -317,14 +219,10 @@ function onMapChange(data) {
 			var blockId = (maps[data.map])[i][r];
 			if(blockId===300)
 			{
-				localPlayer.setX(r*pixelPerBlock + Math.round(Math.random()*(pixelPerBlock)));
-				localPlayer.setY(i*pixelPerBlock + Math.round(Math.random()*(pixelPerBlock)));
+				localPlayer.setX(-1000);
+				localPlayer.setY(-1000);
 				localPlayer.setOriX(localPlayer.getX());
 				localPlayer.setOriY(localPlayer.getY());
-				console.log("x :" + localPlayer.getX() + "y :" + localPlayer.getY());
-				
-				// Send local player data to the game server
-				socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
 			}
 			else if(blockId>=100 && blockId<=109)
 			{
@@ -333,7 +231,7 @@ function onMapChange(data) {
 			}
 		}
 	}
-
+	GetInit();
 };
 
 
@@ -442,27 +340,35 @@ function draw() {
 	// Draw map
 	drawMap(localPlayer.getMap());
 
-	// Draw the local player
-	drawPlayer(localPlayer.getX(), localPlayer.getY(), 'red');
-
 	// Draw the remote players
 	var i;
 	for (i = 0; i < remotePlayers.length; i++) {
 		drawPlayer(remotePlayers[i].getX(), remotePlayers[i].getY(), 'grey');
 	};
 
+	// Draw the local player
+	drawPlayer(localPlayer.getX(), localPlayer.getY(), 'red');
+
 	// Draw gamepad	
 	if(mstartX != -1){
 		var originColor = ctx.fillStyle;
+		var originColor2 = ctx.strokeStyle;
 		ctx.beginPath();
 		ctx.arc(mstartX, mstartY, RADIUS * blockWidth , 0, 2*Math.PI);
+		ctx.fillStyle =  "rgba(70 ,130, 180, 0.3)";
+		ctx.strokeStyle =  "rgba(70 ,130, 180, 0.9)";
+		ctx.lineWidth = blockWidth/5;
 		ctx.stroke();
+		ctx.fill();	
 		
 		ctx.beginPath();
 		ctx.arc(mouseX, mouseY, MOUSE_RADIUS * blockWidth , 0, 2*Math.PI);
-		ctx.fillStyle = 'red';
+		ctx.fillStyle =  "rgba(100 ,160, 210, 1)";
 		ctx.fill();	
+		ctx.lineWidth = blockWidth/10;
+		ctx.stroke();
 		ctx.fillStyle = originColor;
+		ctx.strokeStyle = originColor2;
 	}
 };
 
@@ -509,8 +415,13 @@ function drawPlayer(x, y, style)
 	// Translate the coord
 	var cX = Math.round( scale* x),
 		cY = Math.round( scale * y);
-	ctx.fillStyle = style;
-	ctx.fillRect(cX - playerSize/2+paddingX, cY-playerSize/2+paddingY, playerSize, playerSize);
+	ctx.strokeStyle = style;
+	ctx.fillStyle = "rgba(120 ,120, 120, 0.6)";
+	ctx.beginPath();
+	ctx.arc(cX+paddingX, cY+paddingY, playerSize/2 , 0, 2*Math.PI);
+	ctx.fill();	
+	ctx.lineWidth = playerSize/5;
+	ctx.stroke();
 	
 }
 
@@ -634,15 +545,66 @@ function checkOnButton(x, y, map) {
 	return -1;
 }
 
-function buttonPushed(x, y, map) {
-	console.log("pushed");
+/*CONSOLE*/
+function updateHtml(){
+	document.getElementById("map").innerHTML = localPlayer.getMap();
+	document.getElementById("room").innerHTML = localPlayer.getRoom();
+}
 
-	socket.emit("push");
+function onRoomChange(data)
+{
+	onMapChange(data);
+	localPlayer.setRoom(data.room);
+}
 
-	var blockId = checkOnButton(x, y, map);
-	if(blockId != -1)
-	{
-		socket.emit("door open", {id: blockId-100});
-		console.log("door open sent");
+
+function GetInit() {
+	socket.emit("getInit");
+}
+
+function NextRoom(){
+	localPlayer.nextRoom();
+	socket.emit("change room to",{room:localPlayer.getRoom()}); //change to next map after press the button
+}
+
+function LastRoom(){
+	localPlayer.lastRoom();
+	socket.emit("change room to",{room:localPlayer.getRoom()}); //change to previse map after press the button
+}
+
+function NextMap(){
+	localPlayer.nextMap();
+	socket.emit("change map to",{map:localPlayer.getMap()}); //change to next map after press the button
+}
+
+function LastMap(){
+	localPlayer.lastMap();
+	socket.emit("change map to",{map:localPlayer.getMap()}); //change to previse map after press the button
+}
+
+function DoorAllOpen(){
+	for (i = 0 ; i<mapHeight ; i++){
+		for(r = 0 ; r<mapWidth ; r++){
+			var doorIndex=(maps[data.map])[i][r];
+	if(doorIndex>=100 && doorIndex<=109)
+			{
+				socket.emit("onDoorOpen",doorIndex); //door needs to be close after 10 second too.
+			}
+		}
 	}
 }
+
+function mapChoose(){
+	var mapIndex = document.getElementById("mapNumber").value;
+	socket.emit("mapChange",mapIndex); //change to the map to what was inputed
+}
+
+function onSendInit(data) {
+	console.log("map room " + data.map +"  " + data.room);
+	localPlayer.setMap(data.map);
+	localPlayer.setRoom(data.room);
+	maxRoomIndex = data.maxRoomIndex;
+	updateHtml();
+}
+
+
