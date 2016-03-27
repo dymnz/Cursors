@@ -592,7 +592,8 @@ function DoorAllOpen(){
 
 function mapChoose(){
 	var mapIndex = document.getElementById("mapNumber").value;
-	socket.emit("mapChange",mapIndex); //change to the map to what was inputed
+	if(mapIndex>=0 && mapIndex<maxMapIndex)
+		socket.emit("change map to", {map: mapIndex}); //change to the map to what was inputed
 }
 
 function onSendInit(data) {
