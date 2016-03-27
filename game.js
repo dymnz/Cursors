@@ -299,14 +299,14 @@ function doorOpen(data){
 //handle the "push" event
 function pushHint(){
 	// Find player in array
-	var movePlayer = playerById(this.id);
+	var pushPlayer = playerById(this.id);
 
 	// Player not found
-	if (!movePlayer) {
+	if (!pushPlayer) {
 		util.log("Player not found: "+this.id);
 		return;
 	};
-	broadcasting(movePlayer, "push", {id: movePlayer.id, x: movePlayer.getX(), y: movePlayer.getY()});
+	broadcasting(pushPlayer, "push", {id: pushPlayer.id});
 
 }
 
