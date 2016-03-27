@@ -278,7 +278,6 @@ function doorOpen(data){
 
 	var timeOut = setTimeout(function(cmd, data, roomIndex, mapIndex) {
   		broadcastAll(roomIndex, mapIndex, cmd, {id: data});
-  		util.log("Player at: " + roomIndex + "-" + mapIndex);
   		clearDoorTimeOut(doorId, roomIndex, mapIndex);
 
 	}, 10000, "door close", doorId, roomIndex, mapIndex);
