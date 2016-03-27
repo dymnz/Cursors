@@ -18,11 +18,11 @@
 				<table>
 				<tr>	
 					<td>Name:</td>
-					<td><input type="text" id="name"></td>
+					<td><input type="text" id="name" onkeydown = "if (event.keyCode == 13) document.getElementById('button').click();"></td>
 				</tr>
 				<tr>
 					<td>Team ID:</td>
-					<td><input type="text" id="team_id"></td>
+					<td><input type="text" id="team_id" onkeydown = "if (event.keyCode == 13) document.getElementById('button').click();"></td>
 				</tr>	
 				</table>
 				<input type="button" id="button" value="Enter!" onClick="submit();">
