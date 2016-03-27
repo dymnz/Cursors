@@ -88,7 +88,7 @@ function onSocketConnection(client) {
 
 // Socket client has disconnected
 function onClientDisconnect() {
-	util.log("Player has disconnected: "+this.id);
+	util.log("Player has disconnected: " + this.id + " Name: " + playerById(this.id).name);
 
 	var removePlayer = playerById(this.id);
 

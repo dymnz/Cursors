@@ -164,6 +164,7 @@ var Player = function(startX, startY, pname) {
 		setMap: setMap,
 		setAlreadyOnGoal: setAlreadyOnGoal,
 		update: update,
-		draw: draw
+		draw: draw,
+		name: name
 	}
 };

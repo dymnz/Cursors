@@ -63,7 +63,8 @@ var Player = function(startX, startY, pname) {
 		getRoomIndex: getRoomIndex,
 		getMapIndex: getMapIndex,
 		setSocket: setSocket,
-		getSocket: getSocket
+		getSocket: getSocket,
+		name: name
 	}
 };
 
