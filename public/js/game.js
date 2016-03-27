@@ -178,6 +178,7 @@ function mouseHandler(e) {
 }
 
 function touchHandler(e) {
+	e.preventDefault();	
 	if(e.type == "touchstart" ){
 		if(e.touches.length != 1) return;
 		mstartX = e.touches[0].pageX;
