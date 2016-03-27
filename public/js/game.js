@@ -153,8 +153,8 @@ function mouseHandler(e) {
 			mouseX = RADIUS* blockWidth *(mouseX-mstartX)/mouseLength + mstartX;
 			mouseY = RADIUS* blockWidth *(mouseY-mstartY)/mouseLength + mstartY;
 		}
-		vX = (mouseX - mstartX)/40/scale;
-		vY = (mouseY - mstartY)/40/scale;
+		vX = (mouseX - mstartX)/25/scale;
+		vY = (mouseY - mstartY)/25/scale;
 	}
 	else if(e.type == "mousedown"){
 		mstartX = e.pageX;
@@ -176,7 +176,7 @@ function mouseHandler(e) {
 }
 
 function touchHandler(e) {
-	if(e.type == "touchstart"){
+	if(e.type == "touchstart" && e.touches.length == 1){
 		mstartX = e.touches[0].pageX;
 		mstartY = e.touches[0].pageY;
 		mouseX = mstartX;
@@ -186,16 +186,16 @@ function touchHandler(e) {
 	}
 	else if(e.type == "touchmove"){
 		e.preventDefault();
-		mouseX = (e.touches[0].pageX - mstartX)/3 + mstartX;
-		mouseY = (e.touches[0].pageY - mstartY)/3 + mstartY;
+		mouseX = (e.touches[0].pageX - mstartX)/2 + mstartX;
+		mouseY = (e.touches[0].pageY - mstartY)/2 + mstartY;
 
 		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
 		if(mouseLength > RADIUS* blockWidth){
 			mouseX = RADIUS* blockWidth *(mouseX-mstartX)/mouseLength + mstartX;
 			mouseY = RADIUS* blockWidth *(mouseY-mstartY)/mouseLength + mstartY;
 		}
-		vX = (mouseX - mstartX)/40/scale;
-		vY = (mouseY - mstartY)/40/scale;
+		vX = (mouseX - mstartX)/25/scale;
+		vY = (mouseY - mstartY)/25/scale;
 	}
 	else if(e.type == "touchend"){
 		e.preventDefault();
