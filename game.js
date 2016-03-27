@@ -86,16 +86,15 @@ function onSocketConnection(client) {
 	//Listen for "door open" message
 	client.on("door open", doorOpen);
 
-<<<<<<< HEAD
 	//Push hint
 	client.on("push", pushHint);
-=======
+	
 	client.on("getInit", sendInit);
 
 	client.on("change map to", onChangeMapTo);
 
 	client.on("change room to", onChangeRoomTo);
->>>>>>> origin/master
+	
 
 	client.emit("connect");
 

@@ -278,7 +278,7 @@ function pushHint(data) {
 	};
 
 	// Update player flag
-	movePlayer.rippleFlag = true;
+	pushPlayer.rippleFlag = true;
 };
 
 // Remove player
