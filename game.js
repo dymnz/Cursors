@@ -17,7 +17,7 @@ var socket,		// Socket controller
 
 var roomCount = 1,
 	mapCount = 24,
-	test = 0;
+	test = 4;
 var doorTimeOut;
 
 var doors = [];
@@ -266,18 +266,22 @@ function backToLast(){
 function doorOpen(data){
 
 	var currentPlayer = playerById(this.id);
+	var mapIndex = currentPlayer.getMapIndex(),
+		roomIndex = currentPlayer.getRoomIndex();
 
 	//get doorId
 	var doorId = data.id;
 
-	clearDoorTimeOut(doorId, currentPlayer);
+	clearDoorTimeOut(doorId, roomIndex, mapIndex);
 	
-	broadcastAll(currentPlayer, "door open", {id: doorId});
+	broadcastAll(roomIndex, mapIndex, "door open", {id: doorId});
 
-	var timeOut = setTimeout(function(cmd, data) {
-  		broadcastAll(currentPlayer, "door close", {id: doorId});
-  		clearDoorTimeOut(doorId, currentPlayer);
-	}, 10000, "door close", doorId);
+	var timeOut = setTimeout(function(cmd, data, roomIndex, mapIndex) {
+  		broadcastAll(roomIndex, mapIndex, cmd, {id: data});
+  		util.log("Player at: " + roomIndex + "-" + mapIndex);
+  		clearDoorTimeOut(doorId, roomIndex, mapIndex);
+
+	}, 10000, "door close", doorId, roomIndex, mapIndex);
 
 	doorTimeOut.push([currentPlayer.getRoomIndex(), currentPlayer.getMapIndex(), doorId, timeOut]);
 
@@ -307,7 +311,7 @@ function removePlayerFromList(id){
 
 function broadcasting(currentPlayer, cmd, msg){
 	var i = currentPlayer.getRoomIndex(),
-		j = currentPlayer.getMapIndex()
+		j = currentPlayer.getMapIndex();
 
 	for(var index = 0;index < players[i][j].length;index++){
 		if(currentPlayer.id != players[i][j][index].id)
@@ -315,9 +319,9 @@ function broadcasting(currentPlayer, cmd, msg){
 	};
 }
 
-function broadcastAll(currentPlayer, cmd, msg){
-	var i = currentPlayer.getRoomIndex(),
-		j = currentPlayer.getMapIndex();
+function broadcastAll(roomIndex, mapIndex, cmd, msg){
+	var i = roomIndex,
+		j = mapIndex;
 
 	for(var index = 0;index < players[i][j].length;index++){
 		players[i][j][index].getSocket().emit(cmd, msg);
@@ -348,10 +352,10 @@ function roomBalancing(player){
 	player.setRoomIndex(minPlayerIndex);
 }
 
-function clearDoorTimeOut(id, currentPlayer){
+function clearDoorTimeOut(id, roomIndex, mapIndex){
 	for (var i = 0; i < doorTimeOut.length; i++) {
-		if (doorTimeOut[i][0] == currentPlayer.getRoomIndex() && 
-			doorTimeOut[i][1] == currentPlayer.getMapIndex() &&
+		if (doorTimeOut[i][0] == roomIndex && 
+			doorTimeOut[i][1] == mapIndex &&
 			doorTimeOut[i][2] == id &&
 			doorTimeOut[i][3] != null){
 			clearTimeout(doorTimeOut[i][3]);
