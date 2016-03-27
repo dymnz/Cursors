@@ -53,7 +53,7 @@ function init(name, team_id) {
 	//localPlayer.
 
 	// Initialise socket connection
-	socket = io.connect("http://127.0.0.1:8000", {port: 8000, transports: ["websocket"]});
+	socket = io.connect("http://140.113.68.53:8000", {port: 8000, transports: ["websocket"]});
 
 	// Initialise remote players array
 	remotePlayers = [];

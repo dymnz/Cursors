@@ -72,8 +72,9 @@ function uiScaling() {
 	else if(document.documentElement.msRequestFullscreen) document.documentElement.msRequestFullscreen();
 	else if(document.documentElement.mozRequestFullScreen) document.documentElement.mozRequestFullScreen();
 	else if(document.documentElement.webkitRequestFullscreen) document.documentElement.webkitRequestFullscreen();
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
+
+	canvas.width = window.innerWidth+1;
+	canvas.height = window.innerHeight+1;
 
 	if (canvas.width/mapWidth >= canvas.height/mapHeight){
 		blockWidth = canvas.height/mapHeight;
