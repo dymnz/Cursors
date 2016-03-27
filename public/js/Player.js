@@ -7,7 +7,9 @@ var Player = function(startX, startY) {
 		id,
 		moveAmount = 1,
 		map=-1,
-		playerSize;
+		playerSize,
+		oriX, oriY,
+		alreadyOnGoal = false;
 	
 	// Getters and setters
 	var getX = function() {
@@ -17,9 +19,18 @@ var Player = function(startX, startY) {
 	var getY = function() {
 		return y;
 	};
+	var getOriX = function() {
+		return oriX;
+	};
 
+	var getOriY = function() {
+		return oriY;
+	};
 	var getMap = function(){
 		return map;
+	}
+	var getAlreadyOnGoal = function () {
+		return alreadyOnGoal;
 	}
 
 	var setX = function(newX) {
@@ -29,36 +40,106 @@ var Player = function(startX, startY) {
 	var setY = function(newY) {
 		y = newY;
 	};
+	var setOriX = function(newX) {
+		oriX = newX;
+	};
+
+	var setOriY = function(newY) {
+		oriY = newY;
+	};
 
 	var setMap  = function(newMap) {
 		map = newMap;
 	}
+	var setAlreadyOnGoal = function (stat) {
+		alreadyOnGoal = stat;
+	}
 
 	// Update player position
-	var update = function(keys) {
+	var update = function(keys, vX, vY) {
 		// Previous position
 		var prevX = x,
 			prevY = y;
 
 		// Up key takes priority over down
 		if (keys.up) {
-			if (!isCollision(x, y-moveAmount, map))
+			if ((y-moveAmount>=0) && !isCollision(x, y-moveAmount, map))
 				y -= moveAmount;
 		} else if (keys.down) {
-			if (!isCollision(x, y+moveAmount, map))
+			if ((y+moveAmount<=pixelPerBlock*mapHeight) && !isCollision(x, y+moveAmount, map))
 				y += moveAmount;
 		};
 
 		// Left key takes priority over right
 		if (keys.left) {
-			if (!isCollision(x-moveAmount, y, map))
+			if ((x-moveAmount>=0) && !isCollision(x-moveAmount, y, map))
 				x -= moveAmount;
 		} else if (keys.right) {
-			if (!isCollision(x+moveAmount, y, map))
+			if ((x+moveAmount<=pixelPerBlock*mapWidth) && !isCollision(x+moveAmount, y, map))
 				x += moveAmount;
 		};
 
+		if ( ((y+vY>0) && (y+vY<pixelPerBlock*mapHeight) && !isCollision(x, y+vY, map)) )
+			y += vY;
+		else{
+			if(vY<0)
+			{
+				while(vY<0)
+				{
+					vY++;
+					if((y+vY>0) && (y+vY<pixelPerBlock*mapHeight) && !isCollision(x, y+(vY), map))
+					{
+						y+=vY;
+						break;
+					}				
+				}
+
+			}
+			else if(vY>0)
+			{
+				while(vY>0)
+				{
+					vY--;
+					if((y+vY>0) && (y+vY<pixelPerBlock*mapHeight )&& !isCollision(x, y+(vY), map))
+					{
+						y+=vY;
+						break;
+					}					
+				}
+	
+			}
+		}
+		if ((x+vX>0) && (x+vX<pixelPerBlock*mapWidth) && !isCollision(x+vX, y, map)) 
+			x += vX;
+		else {
+			if(vX<0)
+			{
+				while(vX<0){
+					vX++;
+					if((x+vX>0) && (x+vX<pixelPerBlock*mapWidth)&&!isCollision(x+(vX), y, map))
+					{
+						x+=vX;
+						break;
+					}					
+				}
+
+			}
+			else if(vX>0)
+			{
+				while(vX>0){
+					vX--;
+					if((x+vX>0) && (x+vX<pixelPerBlock*mapWidth)&&!isCollision(x+(vX), y, map))
+					{
+						x+=vX;
+						break;
+					}					
+				}
+
+			}
+		}
+
 		return (prevX != x || prevY != y) ? true : false;
+		
 	};
 
 	// Draw player
@@ -71,10 +152,16 @@ var Player = function(startX, startY) {
 	return {
 		getX: getX,
 		getY: getY,
+		getOriX: getOriX,
+		getOriY: getOriY,
 		getMap: getMap,
+		getAlreadyOnGoal: getAlreadyOnGoal,
 		setX: setX,
 		setY: setY,
+		setOriX: setOriX,
+		setOriY: setOriY,
 		setMap: setMap,
+		setAlreadyOnGoal: setAlreadyOnGoal,
 		update: update,
 		draw: draw
 	}
