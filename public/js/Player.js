@@ -11,7 +11,7 @@ var Player = function(startX, startY, pname, tid) {
 		map=-1,
 		playerSize,
 		oriX, oriY,
-		alreadyOnGoal = false,;
+		alreadyOnGoal = false;
 	
 	// Getters and setters
 	var getX = function() {

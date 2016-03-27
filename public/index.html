@@ -27,6 +27,7 @@
 				</table>
 				<input type="button" id="button" value="Enter!" onClick="submit();">
 			</div>
+			<p id="inform"></p>
 		</div>
 
 		<div class="myCanvas">
@@ -41,14 +42,18 @@
 		<script src="js/Map.js"></script>
 		<script>
 			// Initialise the game
-			function submitID() {
+
+			document.getElementById("team_id").value = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
+
+			function submit() {
 			var name=document.getElementById("name").value;
-			var teamID=document.getElementById("team_id").value;
-			if ( (name.replace(/^\s+|\s+$/g, '').length != 0) &&
-				teamId.replace(/^\s+|\s+$/g, '').length != 0)
+			var teamId=document.getElementById("team_id").value;
+			if(isNaN(teamId) || teamId.replace(/^\s+|\s+$/g, '').length != 5)
+				document.getElementById('inform').innerHTML = 'Team ID is a 5-digit number';
+			else if (name.replace(/^\s+|\s+$/g, '').length != 0)
 			{
 				document.getElementById('welcome').remove();
-				init(name, teamID);
+				init(name, teamId);
 				animate();
 		         	}
 		         	else
