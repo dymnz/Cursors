@@ -35,10 +35,6 @@ function init(name, team_id) {
 	canvas = document.getElementById("gameCanvas");
 	ctx = canvas.getContext("2d");
 
-	// Maximise the canvas
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-
 	//Calculate width per block
 	uiScaling();
 
@@ -69,6 +65,10 @@ function init(name, team_id) {
 
 
 function uiScaling() {
+	// Maximise the canvas
+	canvas.width = window.innerWidth+1;
+	canvas.height = window.innerHeight+1;
+
 	if (canvas.width/mapWidth >= canvas.height/mapHeight){
 		blockWidth = canvas.height/mapHeight;
 		remainingHeight = 0;
