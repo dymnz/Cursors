@@ -57,7 +57,11 @@ var setEventHandlers = function() {
 
 // New socket connection
 function onSocketConnection(client) {
-	util.log("New player has connected: "+client.id);
+	var ipAddr = client.request.connection.remoteAddress;
+
+	util.log("New player has connected: "+ client.id);
+	util.log("Connection from " + ipAddr);
+
 	showServerPlayerCount();
 
 	// Assign initial map for new player
