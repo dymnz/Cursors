@@ -258,12 +258,13 @@ function doorOpen(data){
 
 	//get doorId
 	var doorId = data.id;
-	
-	braodcastAll(currentPlayer, "door open", {id: doorId});
 
 	clearDoorTimeOut(doorId);
+	
+	broadcastAll(currentPlayer, "door open", {id: doorId});
+
 	var timeOut = setTimeout(function(cmd, data) {
-  		braodcastAll(currentPlayer, "door close", {id: doorId});
+  		broadcastAll(currentPlayer, "door close", {id: doorId});
   		clearDoorTimeOut(doorId);
 	}, 10000, "door close", doorId);
 	doorTimeOut.push([doorId, timeOut]);
@@ -294,7 +295,7 @@ function removePlayerFromList(id){
 
 function broadcasting(currentPlayer, cmd, msg){
 	var i = currentPlayer.getRoomIndex(),
-		j = currentPlayer.getMapIndex();
+		j = currentPlayer.getMapIndex()
 
 	for(var index = 0;index < players[i][j].length;index++){
 		if(currentPlayer.id != players[i][j][index].id)
@@ -302,7 +303,7 @@ function broadcasting(currentPlayer, cmd, msg){
 	};
 }
 
-function braodcastAll(currentPlayer, cmd, msg){
+function broadcastAll(currentPlayer, cmd, msg){
 	var i = currentPlayer.getRoomIndex(),
 		j = currentPlayer.getMapIndex();
 
