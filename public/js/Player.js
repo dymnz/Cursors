@@ -2,11 +2,11 @@
 ** GAME PLAYER CLASS
 **************************************************/
 var Player = function(startX, startY, pname, tid) {
-	var x = startX,
+	var 	x = startX,
 		y = startY,
 		id,
 		name = pname,
-		teamId = tid;
+		teamId = tid,
 		moveAmount = 1,
 		map=-1,
 		playerSize,
