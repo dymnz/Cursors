@@ -15,7 +15,7 @@ var socket,		// Socket controller
 	players,	// Array of connected players
 	playerList;	// Array of ID-player pairs
 
-var roomCount = 2,
+var roomCount = 1,
 	mapCount = 24,
 	test = 0;
 var doorTimeOut;
@@ -290,7 +290,7 @@ function doorOpen(data){
   		broadcastAll(roomIndex, mapIndex, cmd, {id: data});
   		clearDoorTimeOut(doorId, roomIndex, mapIndex);
 
-	}, 10000, "door close", doorId, roomIndex, mapIndex);
+	}, 3000, "door close", doorId, roomIndex, mapIndex);
 
 	doorTimeOut.push([currentPlayer.getRoomIndex(), currentPlayer.getMapIndex(), doorId, timeOut]);
 
