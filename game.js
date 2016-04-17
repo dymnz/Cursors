@@ -126,9 +126,9 @@ function onClientDisconnect() {
 // New player has joined
 function onNewPlayer(data) {
 	// Create a new player
-	util.log("New player " + this.id + " Name: " + data.name);
+	util.log("New player " + this.id + " Name: " + data.name + " team id: " + data.teamId);
 
-	var newPlayer = new Player(data.x, data.y, data.name);
+	var newPlayer = new Player(data.x, data.y, data.name, data.teamId);
 	newPlayer.id = this.id;
 	newPlayer.setSocket(this);
 
@@ -141,7 +141,7 @@ function onNewPlayer(data) {
 
 	// Broadcast new player to connected socket clients
 	//this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
-	broadcasting(newPlayer, "new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
+	broadcasting(newPlayer, "new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), teamId: newPlayer.getTeamId()});
 
 	// Send existing players to the new player
 	var i, existingPlayer,
@@ -149,7 +149,7 @@ function onNewPlayer(data) {
 		k = newPlayer.getMapIndex();
 	for (i = 0; i < players[j][k].length; i++) {
 		existingPlayer = players[j][k][i];
-		this.emit("new player", {id: existingPlayer.id, x: existingPlayer.getX(), y: existingPlayer.getY()});
+		this.emit("new player", {id: existingPlayer.id, x: existingPlayer.getX(), y: existingPlayer.getY(),teamId: existingPlayer.getTeamId()});
 	};
 		
 	// Add new player to the players array

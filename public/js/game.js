@@ -246,7 +246,9 @@ function onNewPlayer(data) {
 	console.log("New player connected: "+data.id);
 	console.log("New player is at " + data.x + " " + data.y);
 	// Initialise the new player
-	var newPlayer = new Player(data.x, data.y, localName, localTeamId);
+	var placeholderName = "penis";
+	var newPlayer = new Player(data.x, data.y, placeholderName, data.teamId);
+	console.log("id" + localTeamId + " " + data.teamId);
 	newPlayer.id = data.id;
 
 	// Add new player to the remote players array
@@ -444,17 +446,27 @@ function draw() {
 	var originColor = ctx.fillStyle;
 	var originColor2 = ctx.strokeStyle;
 
-	
-	var originColor = ctx.fillStyle;
-	var originColor2 = ctx.strokeStyle;
 	// Draw the remote players
 	var i;
+	var colorOtherBorder = 'grey'; var colorOtherFill = 'grey';
+	var colorTeamFill = '#99ddff'; var colorTeamBorder = '#99ddff';
 	for (i = 0; i < remotePlayers.length; i++) {
-		drawPlayer(remotePlayers[i], 'grey', remotePlayers[i].rippleFlag);
+		if (remotePlayers[i].getTeamId() == localTeamId)
+		{
+			colorFill = colorTeamFill;
+			colorBorder = colorTeamBorder;
+		}
+		else
+		{
+			colorFill = colorOtherFill;
+			colorBorder = colorOtherBorder;
+		}
+		drawPlayer(remotePlayers[i], colorFill, colorBorder);
 	};
 
 	// Draw the local player
-	drawPlayer(localPlayer, 'red', localPlayer.rippleFlag);
+	var colorSelfFill = '#66ff66'; var colorSelfBorder = '#66ff66';
+	drawPlayer(localPlayer, colorSelfFill, colorSelfBorder);
 
 	// Draw gamepad	
 	if(mstartX != -1){
@@ -497,32 +509,35 @@ function drawMap(map) {
 			// Button
 			else if (blockId>=200 && blockId<=209){
 				ctx.fillStyle = findStyle(blockId);
-				drawBlock(i, r);
+				//drawBlock(i, r, false);
 				drawCircle(i, r);					
 			}
 			// Goal
-			else if (blockId == 999 || blockId == 1){
+			else if (blockId == 999){
 				ctx.fillStyle = findStyle(blockId);
-				drawBlock(i, r);
+				drawBlock(i, r, false);
+			}
+			else if (blockId == 1 || blockId == 600){
+				ctx.fillStyle = findStyle(blockId);
+				drawBlock(i, r, true);
 			}
 			//400 back to last, 500 back to origin
 			else if (blockId ==  400 || blockId ==500){
 				ctx.fillStyle = findStyle(blockId);
-				drawBlock(i, r);
+				drawBlock(i, r, false);			
 			}
 			
 		}
 	}
 }
-
-function drawPlayer(player, style)
+function drawPlayer(player, styleFill, styleBorder)
 {
 	// Translate the coord
 	var x = player.getX(), y = player.getY();
 	var cX = Math.round( scale* x),
 		cY = Math.round( scale * y);
-	ctx.strokeStyle = style;
-	ctx.fillStyle = "rgba(120 ,120, 120, 0.6)";
+	ctx.strokeStyle = styleBorder;
+	ctx.fillStyle = styleFill;
 	ctx.beginPath();
 	ctx.arc(cX+paddingX, cY+paddingY, playerSize/2 , 0, 2*Math.PI);
 	ctx.fill();	
@@ -543,15 +558,26 @@ function drawPlayer(player, style)
 	}
 }
 
-function drawBlock(i, r)
+function drawBlock(i, r, withBorder)
 {
-	ctx.fillRect(r*blockWidth+1+paddingX, i*blockWidth+1+paddingY, blockWidth-2, blockWidth-2);
+	//ctx.fillRect(r*blockWidth+1+paddingX, i*blockWidth+1+paddingY, blockWidth-2, blockWidth-2);
+	ctx.fillRect(r*blockWidth+paddingX+1, i*blockWidth+paddingY+1, blockWidth-2, blockWidth-2);
+
+	if(withBorder == true)
+	{
+		ctx.beginPath();
+		ctx.fillStyle = 'black';
+		ctx.lineWidth=1;
+		ctx.rect(r*blockWidth+paddingX, i*blockWidth+paddingY, blockWidth, blockWidth);
+		ctx.stroke();
+	}
+
 }
 
 function drawCross(i, r)
 {
 	ctx.fillStyle = 'black';
-	ctx.lineWidth=3;
+	ctx.lineWidth=3*scale;
 	ctx.beginPath();
 	ctx.moveTo(r*blockWidth+paddingX+4,i*blockWidth+paddingY+4);
 	ctx.lineTo(r*blockWidth+paddingX + blockWidth-4,i*blockWidth+paddingY+blockWidth-4);
@@ -560,16 +586,23 @@ function drawCross(i, r)
 	ctx.moveTo(r*blockWidth+paddingX+blockWidth-4,i*blockWidth+paddingY+4);
 	ctx.lineTo(r*blockWidth+paddingX+4,i*blockWidth+paddingY+blockWidth-4);
 	ctx.stroke();
+	ctx.beginPath();
+	ctx.fillStyle = 'black';
+	ctx.lineWidth=2*scale;
+	ctx.rect(r*blockWidth+paddingX, i*blockWidth+paddingY, blockWidth, blockWidth);
+	ctx.stroke();
 }
 
 function drawCircle(i, r) {
+	ctx.lineWidth=2*scale;
+	ctx.beginPath();
+	ctx.arc(r*blockWidth+paddingX + blockWidth/2, i*blockWidth+paddingY+blockWidth/2 ,blockWidth/2,0,2*Math.PI);
+	ctx.fill();
 	ctx.fillStyle = 'black';
-	ctx.lineWidth=3;
 	ctx.beginPath();
 	ctx.arc(r*blockWidth+paddingX + blockWidth/2, i*blockWidth+paddingY+blockWidth/2 ,blockWidth/2,0,2*Math.PI);
 	ctx.stroke();
 }
-
 /**************************************************
 ** GAME HELPER FUNCTIONS
 **************************************************/
@@ -608,13 +641,15 @@ function isCollision(x, y, map){
 		return true;
 	//console.log("i :" + i, "r: "+ r);
 	var blockId = (maps[map])[i][r];
-	if(blockId===1)
+	if(blockId==1)
 		return true;
 	if(blockId>=100 && blockId<=109)
 	{
 		if(!isDoorOpen(blockId))
 			return true;
 	}
+	if(blockId==600)
+		return false;
 	return false;
 }
 function findStyle(id) {

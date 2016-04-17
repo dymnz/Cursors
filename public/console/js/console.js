@@ -53,7 +53,7 @@ function init(name, team_id) {
 	//localPlayer.
 
 	// Initialise socket connection
-	socket = io.connect("http://140.113.68.53:8000", {port: 8000, transports: ["websocket"]});
+	socket = io.connect("http://127.0.0.1:8000", {port: 8000, transports: ["websocket"]});
 
 	// Initialise remote players array
 	remotePlayers = [];
@@ -330,20 +330,19 @@ function draw() {
 
 	// Draw map
 	drawMap(localPlayer.getMap());
+	
+	var originColor = ctx.fillStyle;
+	var originColor2 = ctx.strokeStyle;
 
 	// Draw the remote players
 	var i;
+	var colorOtherBorder = 'grey'; var colorOtherFill = 'grey';
+	var colorTeamFill = '#99ddff'; var colorTeamBorder = '#99ddff';
 	for (i = 0; i < remotePlayers.length; i++) {
-		drawPlayer(remotePlayers[i].getX(), remotePlayers[i].getY(), 'grey');
+		drawPlayer(remotePlayers[i], colorOtherFill, colorOtherBorder);
 	};
-
-	// Draw the local player
-	drawPlayer(localPlayer.getX(), localPlayer.getY(), 'red');
-
 	// Draw gamepad	
 	if(mstartX != -1){
-		var originColor = ctx.fillStyle;
-		var originColor2 = ctx.strokeStyle;
 		ctx.beginPath();
 		ctx.arc(mstartX, mstartY, RADIUS * blockWidth , 0, 2*Math.PI);
 		ctx.fillStyle =  "rgba(70 ,130, 180, 0.3)";
@@ -358,9 +357,9 @@ function draw() {
 		ctx.fill();	
 		ctx.lineWidth = blockWidth/10;
 		ctx.stroke();
-		ctx.fillStyle = originColor;
-		ctx.strokeStyle = originColor2;
 	}
+	ctx.fillStyle = originColor;
+	ctx.strokeStyle = originColor2;
 };
 
 function drawMap(map) {
@@ -383,48 +382,75 @@ function drawMap(map) {
 			// Button
 			else if (blockId>=200 && blockId<=209){
 				ctx.fillStyle = findStyle(blockId);
-				drawBlock(i, r);
+				//drawBlock(i, r, false);
 				drawCircle(i, r);					
 			}
 			// Goal
-			else if (blockId == 999 || blockId == 1){
+			else if (blockId == 999){
 				ctx.fillStyle = findStyle(blockId);
-				drawBlock(i, r);
+				drawBlock(i, r, false);
+			}
+			else if (blockId == 1 || blockId == 600){
+				ctx.fillStyle = findStyle(blockId);
+				drawBlock(i, r, true);
 			}
 			//400 back to last, 500 back to origin
 			else if (blockId ==  400 || blockId ==500){
 				ctx.fillStyle = findStyle(blockId);
-				drawBlock(i, r);
+				drawBlock(i, r, false);			
 			}
 			
 		}
 	}
 }
-
-function drawPlayer(x, y, style)
+function drawPlayer(player, styleFill, styleBorder)
 {
 	// Translate the coord
+	var x = player.getX(), y = player.getY();
 	var cX = Math.round( scale* x),
 		cY = Math.round( scale * y);
-	ctx.strokeStyle = style;
-	ctx.fillStyle = "rgba(120 ,120, 120, 0.6)";
+	ctx.strokeStyle = styleBorder;
+	ctx.fillStyle = styleFill;
 	ctx.beginPath();
 	ctx.arc(cX+paddingX, cY+paddingY, playerSize/2 , 0, 2*Math.PI);
 	ctx.fill();	
 	ctx.lineWidth = playerSize/5;
 	ctx.stroke();
-	
+	if(player.rippleFlag){
+		console.log("drawing ripple...");
+		player.clickedRipple += RIPPLE_DELTA;
+		ctx.strokeStyle = "rgba(50, 50, 50, 0.8)";
+		ctx.beginPath();
+		ctx.lineWidth = 2;
+		ctx.arc(cX+paddingX, cY+paddingY, player.clickedRipple*blockWidth, 0, 2*Math.PI);
+		ctx.stroke();
+		if(player.clickedRipple > MAX_RIPPLE_SIZE){
+			player.rippleFlag = false;
+			player.clickedRipple = 0;
+		}
+	}
 }
 
-function drawBlock(i, r)
+function drawBlock(i, r, withBorder)
 {
-	ctx.fillRect(r*blockWidth+1+paddingX, i*blockWidth+1+paddingY, blockWidth-2, blockWidth-2);
+	//ctx.fillRect(r*blockWidth+1+paddingX, i*blockWidth+1+paddingY, blockWidth-2, blockWidth-2);
+	ctx.fillRect(r*blockWidth+paddingX+1, i*blockWidth+paddingY+1, blockWidth-2, blockWidth-2);
+
+	if(withBorder == true)
+	{
+		ctx.beginPath();
+		ctx.fillStyle = 'black';
+		ctx.lineWidth=1;
+		ctx.rect(r*blockWidth+paddingX, i*blockWidth+paddingY, blockWidth, blockWidth);
+		ctx.stroke();
+	}
+
 }
 
 function drawCross(i, r)
 {
 	ctx.fillStyle = 'black';
-	ctx.lineWidth=3;
+	ctx.lineWidth=3*scale;
 	ctx.beginPath();
 	ctx.moveTo(r*blockWidth+paddingX+4,i*blockWidth+paddingY+4);
 	ctx.lineTo(r*blockWidth+paddingX + blockWidth-4,i*blockWidth+paddingY+blockWidth-4);
@@ -433,15 +459,24 @@ function drawCross(i, r)
 	ctx.moveTo(r*blockWidth+paddingX+blockWidth-4,i*blockWidth+paddingY+4);
 	ctx.lineTo(r*blockWidth+paddingX+4,i*blockWidth+paddingY+blockWidth-4);
 	ctx.stroke();
+	ctx.beginPath();
+	ctx.fillStyle = 'black';
+	ctx.lineWidth=2*scale;
+	ctx.rect(r*blockWidth+paddingX, i*blockWidth+paddingY, blockWidth, blockWidth);
+	ctx.stroke();
 }
 
 function drawCircle(i, r) {
+	ctx.lineWidth=2*scale;
+	ctx.beginPath();
+	ctx.arc(r*blockWidth+paddingX + blockWidth/2, i*blockWidth+paddingY+blockWidth/2 ,blockWidth/2,0,2*Math.PI);
+	ctx.fill();
 	ctx.fillStyle = 'black';
-	ctx.lineWidth=3;
 	ctx.beginPath();
 	ctx.arc(r*blockWidth+paddingX + blockWidth/2, i*blockWidth+paddingY+blockWidth/2 ,blockWidth/2,0,2*Math.PI);
 	ctx.stroke();
 }
+
 
 /**************************************************
 ** GAME HELPER FUNCTIONS

@@ -1,10 +1,11 @@
 /**************************************************
 ** GAME PLAYER CLASS
 **************************************************/
-var Player = function(startX, startY, pname) {
+var Player = function(startX, startY, pname, tid) {
 	var x = startX,
 		y = startY,
 		id,
+		teamId = tid,
 		name = pname,
 		roomIndex,
 		mapIndex,
@@ -26,7 +27,9 @@ var Player = function(startX, startY, pname) {
 	var setY = function(newY) {
 		y = newY;
 	};
-
+	var getTeamId = function() {
+		return teamId;
+	};
 	var setRoomIndex = function(newIndex){
 		roomIndex = newIndex;
 	};
@@ -58,6 +61,7 @@ var Player = function(startX, startY, pname) {
 		setX: setX,
 		setY: setY,
 		id: id,
+		getTeamId: getTeamId,
 		setRoomIndex: setRoomIndex,
 		setMapIndex: setMapIndex,
 		getRoomIndex: getRoomIndex,

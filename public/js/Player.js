@@ -27,6 +27,10 @@ var Player = function(startX, startY, pname, tid) {
 		return oriX;
 	};
 
+	var getTeamId = function() {
+		return teamId;
+	};
+
 	var getOriY = function() {
 		return oriY;
 	};
@@ -159,6 +163,7 @@ var Player = function(startX, startY, pname, tid) {
 		getOriX: getOriX,
 		getOriY: getOriY,
 		getMap: getMap,
+		getTeamId: getTeamId,
 		getAlreadyOnGoal: getAlreadyOnGoal,
 		setX: setX,
 		setY: setY,
