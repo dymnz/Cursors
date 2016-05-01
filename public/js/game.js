@@ -7,6 +7,7 @@ var canvas,			// Canvas DOM element
 	localPlayer,	// Local player
 	localName,
 	localTeamId,
+	role,
 	remotePlayers,	// Remote players
 	socket,			// Socket connection
 	mouseX,
@@ -16,8 +17,8 @@ var canvas,			// Canvas DOM element
 	lastX,
 	lastY,
 	RADIUS = 2,
-	MOUSE_RADIUS = 0.4;
-	RIPPLE_DELTA = 0.1;
+	MOUSE_RADIUS = 0.4,
+	RIPPLE_DELTA = 0.1,
 	MAX_RIPPLE_SIZE = 0.4;
 var scale,
 	playerSize,
@@ -41,7 +42,7 @@ function connectionInit(){
 
 	//add new member to team Memberlist
 	socket.on("memberAdd",onMemberAdd);
-
+	role = "nobody";
 
 }
 
@@ -59,7 +60,7 @@ function init(name, team_id) {
 
 	// Calculate a random start position for the local player
 	// The minus 5 (half a player size) stops the player being
-	// placed right on the egde of the screen
+	// placed right on the edge of the screen
 	var startX = Math.round(Math.random()*(canvas.width-5)),
 		startY = Math.round(Math.random()*(canvas.height-5));
 
@@ -77,7 +78,7 @@ function init(name, team_id) {
 	setEventHandlers();
 };
 
-function CheckTeamID(){
+function checkTeamID(){
 
 	var name=document.getElementById("name").value;
 	var teamId=document.getElementById("team_id").value;
@@ -100,6 +101,7 @@ function onCheckIDReturn(data){
 		showMemberPage();
 	}else{		
 		document.getElementById('inform').innerHTML = 'The team has been full';
+		document.getElementById("team_id").value = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
 	}
 }
 
@@ -144,7 +146,7 @@ function onMemberDelete(){
 
 function leaderStart(){
 	
-	socket.emit???//let server know the team is going to depart;
+	socket.emit("teamStart", {teamId:localTeamId});//let server know the team is going to depart;
 	init();
 	animate();	
 }
@@ -158,7 +160,7 @@ function memberStart(){
 function showMemberPage(){
 	role = "Member";
 	document.getElementById('welcome').hide();
-	socket.emit???//sent the server "I am one of the member";
+	socket.emit("member", {name:localName});//sent the server "I am one of the member";
 	// then the server may sent kick or depart event;
 }
 
