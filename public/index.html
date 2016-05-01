@@ -14,7 +14,6 @@
 	</head>
 	
 	<body class = "light-blue lighten-1">
-
 		<div class="row v-align" id="welcome">
 			<h1 class="center-align white-text">
 				balls
@@ -56,9 +55,13 @@
 		<script>
 			// Initialise the game
 
+
+
 			document.getElementById("gameCanvas").width = 0;
 			document.getElementById("gameCanvas").height = 0;
 			document.getElementById("team_id").value = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
+
+
 
 			function submit() {
 			var name=document.getElementById("name").value;
@@ -70,6 +73,7 @@
 				document.getElementById('welcome').remove();
 				init(name, teamId);
 				animate();
+				go = false;
 		         	}
 		         	else
 		         		document.getElementById('inform').innerHTML = 'Name cannot be empty';
