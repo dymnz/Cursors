@@ -160,7 +160,7 @@ function memberStart(){
 function showMemberPage(){
 	role = "Member";
 	document.getElementById('welcome').hide();
-	socket.emit("member", {name:localName});//sent the server "I am one of the member";
+	socket.emit("member", {name:localName, teamId:localTeamId});//sent the server "I am one of the member";
 	// then the server may sent kick or depart event;
 }
 
