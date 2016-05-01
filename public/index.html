@@ -10,7 +10,14 @@
 		
 		<link rel="stylesheet" href="style/reset.css">
 		<link rel="stylesheet" href="style/game.css">
+		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+		<script src="js/requestAnimationFrame.js"></script>
+		<script src="js/Keys.js"></script>
+		<script src="js/Player.js"></script>
+		<script src="js/game.js"></script>
+		<script src="js/Map.js"></script>
 	</head>
+
 	
 	<body>
 		<div id="welcome">
@@ -30,35 +37,35 @@
 			<p id="inform"></p>
 		</div>
 
+		<div id="joinTeam">
+			<div id="joinTeamContent">
+				<h1 id="joinTeamTitle">Join Team</h1>
+				<ol id="teamMemberList" type="1">
+
+				</ol>
+				<input type="button" id="joinTeamButton" value="Join!" onClick="gameStart();">
+			</div>
+		</div>
+
 		<div class="myCanvas">
 			<canvas id="gameCanvas"></canvas>	
 		</div>
-		
-		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-		<script src="js/requestAnimationFrame.js"></script>
-		<script src="js/Keys.js"></script>
-		<script src="js/Player.js"></script>
-		<script src="js/game.js"></script>
-		<script src="js/Map.js"></script>
+
 		<script>
 			// Initialise the game
+			document.getElementById('joinTeam').style.display = "none";
 
 			document.getElementById("team_id").value = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
 
+			document.getElementById("joinTeamTitle").innerHTML = "Join Team " + document.getElementById("team_id").value; 
+
+			//connect to server
+			connectionInit();
+
 			function submit() {
-			var name=document.getElementById("name").value;
-			var teamId=document.getElementById("team_id").value;
-			if(isNaN(teamId) || teamId.replace(/^\s+|\s+$/g, '').length != 5)
-				document.getElementById('inform').innerHTML = 'Team ID is a 5-digit number';
-			else if (name.replace(/^\s+|\s+$/g, '').length != 0)
-			{
-				document.getElementById('welcome').remove();
-				init(name, teamId);
-				animate();
-		         	}
-		         	else
-		         		document.getElementById('inform').innerHTML = 'Name cannot be empty';
+		   		checkTeamID();
 		   	}
 		</script>
+
 	</body>
 </html>

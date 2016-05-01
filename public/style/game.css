@@ -6,9 +6,17 @@ body {
 	margin: 0 auto 0 auto;
 	text-align: center;
 }
+#joinTeam{
+	margin: 0 auto 0 auto;
+	text-align: center;
+}
 #form_content{
 	display: inline-block;
     	margin: 0 auto; 	
+}
+#joinTeamContent{
+	display: inline-block;
+    	margin: 0 auto;
 }
 #button {
 	height: 20px;

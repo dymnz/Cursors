@@ -31,6 +31,20 @@ var doors = [];
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
+
+function connectionInit(){
+	// Initialise socket connection
+	socket = io.connect("http://127.0.0.1:8000", {port: 8000, transports: ["websocket"]});
+
+	//event handler
+	socket.on("checkIDReturn", onCheckIDReturn);
+
+	//add new member to team Memberlist
+	socket.on("memberAdd",onMemberAdd);
+
+
+}
+
 function init(name, team_id) {
 
 	// Declare the canvas and rendering context
@@ -53,8 +67,6 @@ function init(name, team_id) {
 	localPlayer = new Player(startX, startY);
 	//localPlayer.
 
-	// Initialise socket connection
-	socket = io.connect("http://127.0.0.1:8000", {port: 8000, transports: ["websocket"]});
 
 	// Initialise remote players array
 	remotePlayers = [];
@@ -65,6 +77,102 @@ function init(name, team_id) {
 	setEventHandlers();
 };
 
+function CheckTeamID(){
+
+	var name=document.getElementById("name").value;
+	var teamId=document.getElementById("team_id").value;
+	localName = name;
+	localTeamId = teamId;
+
+	if(isNaN(teamId) || teamId.replace(/^\s+|\s+$/g, '').length != 5)
+		document.getElementById('inform').innerHTML = 'Team ID is a 5-digit number';
+	else if (name.replace(/^\s+|\s+$/g, '').length != 0)
+		socket.emit("checkTeamID", {teamId:localTeamId});
+	else
+        document.getElementById('inform').innerHTML = 'Name cannot be empty';
+}
+
+function onCheckIDReturn(data){
+
+	if(data.exist==false){
+		showLeaderPage();
+	}else if(data.numOfTeammate<6){
+		showMemberPage();
+	}else{		
+		document.getElementById('inform').innerHTML = 'The team has been full';
+	}
+}
+
+
+/*******************************************/
+// on click function of joinbutton
+function gameStart(){
+
+	if(role=="Leader") leaderStart();
+	if(role=="Member") memberStart();//do nothing;
+
+}
+
+/********************Leader Event*********************/
+
+function showLeaderPage(){
+	role = "Leader";
+	document.getElementById('welcome').style.display = "none";
+
+	socket.emit("createTeam", {name:localName, teamId:localTeamId});
+	//sent create Room message and leader name to server;
+	//then the server will let events which relate to "Being A Leader" on.
+
+	document.getElementById('joinTeam').style.display = "block";
+}
+
+function onMemberAdd(data){
+
+	//do something show the teammate name;
+	var x = document.createElement("LI");
+    var t = document.createTextNode(data.name);
+    x.appendChild(t);
+    document.getElementById("teamMemberList").appendChild(x);
+    //TODO
+}
+
+function onMemberDelete(){
+
+//do something delete the teammate name;
+
+}
+
+function leaderStart(){
+	
+	socket.emit???//let server know the team is going to depart;
+	init();
+	animate();	
+}
+
+/*******************member event**********************/
+
+function memberStart(){
+//do nothing
+}
+
+function showMemberPage(){
+	role = "Member";
+	document.getElementById('welcome').hide();
+	socket.emit???//sent the server "I am one of the member";
+	// then the server may sent kick or depart event;
+}
+
+function onKickedByLeader(){
+	document.getElementById('welcome').display();
+}
+
+
+function onDepartNotice(){
+	init();
+	animate();
+}
+
+/***********************endOfNewFunction*******************/
 
 function uiScaling() {
 	// Maximise the canvas
@@ -446,7 +554,9 @@ function draw() {
 	var originColor = ctx.fillStyle;
 	var originColor2 = ctx.strokeStyle;
 
+
 	// Draw the remote players
+
 	var i;
 	var colorOtherBorder = 'grey'; var colorOtherFill = 'grey';
 	var colorTeamFill = '#99ddff'; var colorTeamBorder = '#99ddff';
