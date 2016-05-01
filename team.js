@@ -42,7 +42,7 @@ function onCheckTeamID(data){
 }
 
 function onGetMemberList(data){
-
+	var id = data.teamId;
 }
 
 function onMemberDisconnect(data){
