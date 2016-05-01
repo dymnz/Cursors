@@ -6,6 +6,7 @@ var util = require("util"),					// Utility resources (logging, object inspection
 		"transports": ["websocket"]
 	}),				// Socket.IO
 	Player = require("./Player").Player;	// Player class
+var Team = require('./team');
 
 
 /**************************************************
@@ -21,8 +22,6 @@ var roomCount = 1,
 var doorTimeOut;
 
 var doors = [];
-
-var teamIDList = [];
 
 /**************************************************
 ** GAME INITIALISATION
@@ -46,6 +45,8 @@ function init() {
 
 	// Start listening for events
 	setEventHandlers();
+
+	Team.teamInit();
 };
 
 
@@ -96,9 +97,6 @@ function onSocketConnection(client) {
 	client.on("change map to", onChangeMapTo);
 
 	client.on("change room to", onChangeRoomTo);
-
-	//check whether team id is on the list
-	client.on("checkTeamID", onCheckTeamID);
 	
 
 	client.emit("connect");
@@ -463,22 +461,6 @@ function onChangeRoomTo(data) {
 
 	//push this player in the players
 	players[onGoalPlayer.getRoomIndex()][onGoalPlayer.getMapIndex()].push(onGoalPlayer);
-
-}
-
-function onCheckTeamID(data){
-	var id = data.teamId;
-	var flag = false;
-	for(var i = 0;i < teamIDList.length;i++){
-		if(teamIDList[i][0] == id){
-			flag = true;
-			this.emit("checkIDReturn", {exist:flag, numOfTeammate:teamIDList[i][1]});
-			break;
-		}
-	}
-	if(!flag){
-		this.emit("checkIDReturn", {exist:flag, numOfTeammate:1});
-	}
 
 }
 
