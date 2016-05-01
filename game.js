@@ -477,8 +477,6 @@ function onCheckTeamID(data){
 		}
 	}
 	if(!flag){
-		var pair = [data.teamId, 1];
-		teamIDList.push(pair);
 		this.emit("checkIDReturn", {exist:flag, numOfTeammate:1});
 	}
 
