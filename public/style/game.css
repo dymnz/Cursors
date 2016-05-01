@@ -1,42 +1,22 @@
 body {
-	overflow: hidden;
+	font-family: Verdana, Sans-serif;
 	background-color: #FFFFFF;
 }
-#welcome {
+
+h1{
+	 letter-spacing: 2px;
+}
+form{
 	margin: 0 auto 0 auto;
-	text-align: center;
-}
-#form_content{
-	display: inline-block;
-    	margin: 0 auto; 	
-}
-#button {
-	height: 20px;
-	width: 100px;
-	font-size: 16px;
+	border-radius: 5%;
 }
 
-#inform {
-	color: #FF0000;
-	margin: 10px;
+input{
+	font-style: #fafafa;
+	border-radius: 5%;
 }
 
-tr {
-	padding: 10px 0 10px 0;
-}
-td {
-	font-weight: bold;
-	padding: 10px;
-	text-align: left;
-}
-input {
-	border: 2px #000000 solid; 
-	text-align: right;
-}
-#button {
-	border: 0px;
-	text-align: center;
-}
+
 
 canvas {
 	display: block;
