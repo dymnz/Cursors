@@ -98,7 +98,7 @@ function onSocketConnection(client) {
 
 	client.on("change room to", onChangeRoomTo);
 
-	Team.setTeamEventHandler();
+	Team.setTeamEventHandler(client);
 	
 
 	client.emit("connect");

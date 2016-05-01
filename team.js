@@ -11,7 +11,7 @@ module.exports = {
 		}
 	},
 
-	setTeamEventHandler: function(){
+	setTeamEventHandler: function(client){
 		//check whether team id is on the list
 		client.on("checkTeamID", onCheckTeamID);
 
@@ -43,8 +43,11 @@ function onCheckTeamID(data){
 
 function onGetMemberList(data){
 	var id = data.teamId;
+	for(var i = 0;i < teamIDList[id][2].length;i++){
+		this.emit("memberList", {member:teamIDList[id][2][i]});
+	}
 }
 
 function onMemberDisconnect(data){
-
+	
 }
