@@ -46,7 +46,7 @@ function connectionInit(){
 
 }
 
-function init(name, team_id) {
+function init() {
 
 	// Declare the canvas and rendering context
 	canvas = document.getElementById("gameCanvas");
@@ -73,8 +73,6 @@ function init(name, team_id) {
 	remotePlayers = [];
 
 	// Start listening for events
-	localName=name;
-	localTeamId=team_id;
 	setEventHandlers();
 };
 
@@ -88,7 +86,7 @@ function checkTeamID(){
 	if(isNaN(teamId) || teamId.replace(/^\s+|\s+$/g, '').length != 5)
 		document.getElementById('inform').innerHTML = 'Team ID is a 5-digit number';
 	else if (name.replace(/^\s+|\s+$/g, '').length != 0)
-		socket.emit("checkTeamID", {teamId:localTeamId});
+		socket.emit("checkTeamID", {teamId:localTeamId, name:localName});
 	else
         document.getElementById('inform').innerHTML = 'Name cannot be empty';
 }
@@ -121,7 +119,7 @@ function showLeaderPage(){
 	role = "Leader";
 	document.getElementById('welcome').style.display = "none";
 
-	socket.emit("createTeam", {name:localName, teamId:localTeamId});
+	socket.emit("getMemberList", {name:localName, teamId:localTeamId});
 	//sent create Room message and leader name to server;
 	//then the server will let events which relate to "Being A Leader" on.
 
@@ -147,8 +145,11 @@ function onMemberDelete(){
 function leaderStart(){
 	
 	socket.emit("teamStart", {teamId:localTeamId});//let server know the team is going to depart;
+	document.getElementById('joinTeam').style.display = "none";
 	init();
-	animate();	
+	socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY(), name: localName, teamId:localTeamId});
+	console.log("localTeamId: "+localTeamId);
+	animate();		
 }
 
 /*******************member event**********************/
@@ -160,7 +161,7 @@ function memberStart(){
 function showMemberPage(){
 	role = "Member";
 	document.getElementById('welcome').hide();
-	socket.emit("member", {name:localName});//sent the server "I am one of the member";
+	socket.emit("showMemberList", {name:localName});//sent the server "I am one of the member";
 	// then the server may sent kick or depart event;
 }
 
@@ -343,7 +344,7 @@ function onSocketConnected() {
 	console.log("Connected to socket server");
 
 	// Send local player data to the game server
-	socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY(), name: localName, teamId:localTeamId});
+	//socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY(), name: localName, teamId:localTeamId});
 };
 
 // Socket disconnected
@@ -642,6 +643,7 @@ function drawMap(map) {
 		}
 	}
 }
+
 function drawPlayer(player, styleFill, styleBorder)
 {
 	// Translate the coord
@@ -764,6 +766,7 @@ function isCollision(x, y, map){
 		return false;
 	return false;
 }
+
 function findStyle(id) {
 	var i;
 	for(i = 0; i<stylelist.length ; i++)
