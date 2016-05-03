@@ -16,7 +16,11 @@ input{
 	border-radius: 5%;
 }
 
-
+.essential{
+	font-family: "Courier New", monospace;
+	overflow: hidden;
+	white-space: pre;
+}
 
 canvas {
 	display: block;
