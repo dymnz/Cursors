@@ -711,3 +711,5 @@ function buttonPushed(x, y, map) {
 		socket.emit("door open", {id: blockId-100});
 	}
 }
+
+

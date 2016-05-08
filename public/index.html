@@ -24,16 +24,16 @@
 			    
 			      <div class="row blue-grey-text text-darken-4">
 			        <div class="input-field col s12">
-			    	<input placeholder="" id="name" type="text" name="name" onkeydown = "if (event.keyCode == 13) document.getElementById('button').click();" class="validate right-align blue-grey-text text-darken-4">
+			    	<input placeholder=" " id="name" type="text" name="name" onkeydown = "if (event.keyCode == 13) document.getElementById('button').click();" class="validate right-align blue-grey-text text-darken-4">
 			    	<label class="grey-text text-darken-4" for="name">Name</label>			
 			        </div>
 			          	<div class="input-field col s12">
-			              <input placeholder="" id="team_id" type="text"onkeydown = "if (event.keyCode == 13) document.getElementById('button').click();" class="validate right-align">
+			              <input placeholder=" " id="team_id" type="text"onkeydown = "if (event.keyCode == 13) document.getElementById('button').click();" class="validate right-align">
 			              <label class="grey-text text-darken-4" for="first_name">Team ID</label>
 			        </div>
 			      </div>
 			     <div class="row center-align">	
-				<a class="waves-effect waves-light btn-large green accent-2" onClick="submit();">Enter</a>
+				<a class="waves-effect waves-light btn-large green accent-2" id="enterButton" type="sumit">Enter</a>
 				</div>
 				<p class="center-align flow-text deep-orange-text" id="inform"></p>
 				
@@ -110,6 +110,11 @@
 		<script>
 			// Initialise the game
 
+			$('#enterButton').click(function(){
+    				submit();
+    				return false;
+			});
+		
 
 
 			document.getElementById("gameCanvas").width = 0;
@@ -117,22 +122,21 @@
 			document.getElementById("team_id").value = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
 
 
-
 			function submit() {
-			var name=document.getElementById("name").value;
-			var teamId=document.getElementById("team_id").value;
-			if(isNaN(teamId) || teamId.replace(/^\s+|\s+$/g, '').length != 5)
-				document.getElementById('inform').innerHTML = 'Team ID is a 5-digit number';
-			else if (name.replace(/^\s+|\s+$/g, '').length != 0)
-			{
-				document.getElementById('welcome').remove();
-				init(name, teamId);
-				animate();
-				go = false;
-		         	}
-		         	else
-		         		document.getElementById('inform').innerHTML = 'Name cannot be empty';
-		   	}
+				var name=document.getElementById("name").value;
+				var teamId=document.getElementById("team_id").value;
+				if(isNaN(teamId) || teamId.replace(/^\s+|\s+$/g, '').length != 5)
+					document.getElementById('inform').innerHTML = 'Team ID is a 5-digit number';
+				else if (name.replace(/^\s+|\s+$/g, '').length != 0)
+				{
+					document.getElementById('welcome').remove();
+					init(name, teamId);
+					animate();
+					go = false;
+				}
+			     	else
+			     		document.getElementById('inform').innerHTML = 'Name cannot be empty';
+			}
 		</script>
 	</body>
 
