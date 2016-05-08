@@ -6,16 +6,20 @@ body {
 h1{
 	 letter-spacing: 2px;
 }
-form{
-	margin: 0 auto 0 auto;
-	border-radius: 5%;
-}
+
 
 input{
 	font-style: #fafafa;
 	border-radius: 5%;
 }
 
+#area{
+	border-radius: 7%;	
+}
+
+#enterButton{
+	border-radius: 10%;		
+}
 .essential{
 	font-family: "Courier New", monospace;
 	font-size: 1px;

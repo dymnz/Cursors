@@ -20,16 +20,16 @@
 			</h1>	
 			<div class="row"  >
 			    <form >
-			    <div class="col s10 offset-s1 l4 offset-l4 m4 offset-m4 white">
+			    <div class="col s10 offset-s1 l4 offset-l4 m6 offset-m3 white" id="area">
 			    
 			      <div class="row blue-grey-text text-darken-4">
 			        <div class="input-field col s12">
-			    	<input placeholder=" " id="name" type="text" name="name" onkeydown = "if (event.keyCode == 13) document.getElementById('button').click();" class="validate right-align blue-grey-text text-darken-4">
-			    	<label class="grey-text text-darken-4" for="name">Name</label>			
+			    	<input placeholder="" id="name" type="text" name="name"  class="right-align">
+			    	<label class="" for="name">Name</label>			
 			        </div>
 			          	<div class="input-field col s12">
-			              <input placeholder=" " id="team_id" type="text"onkeydown = "if (event.keyCode == 13) document.getElementById('button').click();" class="validate right-align">
-			              <label class="grey-text text-darken-4" for="first_name">Team ID</label>
+			              <input placeholder="" id="team_id" type="number" class="right-align">
+			              <label class="" for="team_id">Team ID</label>
 			        </div>
 			      </div>
 			     <div class="row center-align">	
@@ -114,8 +114,14 @@
     				submit();
     				return false;
 			});
-		
 
+			$('#name, #team_id').keypress(function (e) {
+				if (e.which == 13) {
+					$('#enterButton').click();
+			    		return false;
+			  	}
+			});
+		
 
 			document.getElementById("gameCanvas").width = 0;
 			document.getElementById("gameCanvas").height = 0;
