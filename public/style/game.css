@@ -20,7 +20,7 @@ input{
 #enterButton{
 	border-radius: 10%;		
 }
-.essential{
+#essential{
 	font-family: "Courier New", monospace;
 	font-size: 1vw;
 	overflow: hidden;
