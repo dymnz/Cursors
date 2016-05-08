@@ -18,6 +18,7 @@ input{
 
 .essential{
 	font-family: "Courier New", monospace;
+	font-size: 1px;
 	overflow: hidden;
 	white-space: pre;
 }
