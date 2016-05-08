@@ -22,10 +22,12 @@ input{
 }
 .essential{
 	font-family: "Courier New", monospace;
-	font-size: 1px;
+	font-size: 1vw;
 	overflow: hidden;
 	white-space: pre;
+	display: inline-block;
 }
+
 
 canvas {
 	display: block;
