@@ -6,6 +6,8 @@ var util = require("util"),					// Utility resources (logging, object inspection
 		"transports": ["websocket"]
 	}),				// Socket.IO
 	Player = require("./Player").Player;	// Player class
+var Team = require('./team');
+
 
 /**************************************************
 ** GAME VARIABLES
@@ -43,6 +45,8 @@ function init() {
 
 	// Start listening for events
 	setEventHandlers();
+
+	Team.teamInit();
 };
 
 
@@ -92,7 +96,10 @@ function onSocketConnection(client) {
 
 	client.on("change map to", onChangeMapTo);
 
-	client.on("change room to", onChangeRoomTo);	
+	client.on("change room to", onChangeRoomTo);
+
+	Team.setTeamEventHandler(client);
+	
 
 	client.emit("connect");
 

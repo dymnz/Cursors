@@ -29,47 +29,64 @@ var pixelPerBlock = 20;
 var remainingWidth, remainingHeight;
 var paddingX, paddingY;
 var doors = [];
-var teamSocket;
-
-var serverAddr = "http://127.0.0.1";
-
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
 
 function connectionInit(){
-
-	teamSocket = io.connect(serverAddr + ":8001", {port: 8001, transports: ["websocket"]})
+	// Initialise socket connection
+	socket = io.connect("http://127.0.0.1:8000", {port: 8000, transports: ["websocket"]});
 
 	//event handler
-	teamSocket.on("checkIDReturn", onCheckIDReturn);
+	socket.on("checkIDReturn", onCheckIDReturn);
 
 	//add new member to team Memberlist
-	teamSocket.on("memberList",onMemberList);
-
-	teamSocket.on("gameStart", onDepartNotice);
-
-	teamSocket.on("memberDisconnect", onMemberDelete);
-
-	teamSocket.on("memberAdd", onMemberAdd);
-
-	teamSocket.on("changeRole", onChangeRole);
-
+	socket.on("memberAdd",onMemberAdd);
 	role = "nobody";
 
 }
 
+function init() {
+
+	// Declare the canvas and rendering context
+	canvas = document.getElementById("gameCanvas");
+	ctx = canvas.getContext("2d");
+
+	//Calculate width per block
+	uiScaling();
+
+	// Initialise keyboard controls
+	keys = new Keys();
+
+	// Calculate a random start position for the local player
+	// The minus 5 (half a player size) stops the player being
+	// placed right on the edge of the screen
+	var startX = Math.round(Math.random()*(canvas.width-5)),
+		startY = Math.round(Math.random()*(canvas.height-5));
+
+	// Initialise the local player
+	localPlayer = new Player(startX, startY);
+	//localPlayer.
+
+
+	// Initialise remote players array
+	remotePlayers = [];
+
+	// Start listening for events
+	setEventHandlers();
+};
+
 function checkTeamID(){
 
-	var name = document.getElementById("name").value;
-	var teamId = document.getElementById("team_id").value;
+	var name=document.getElementById("name").value;
+	var teamId=document.getElementById("team_id").value;
 	localName = name;
 	localTeamId = teamId;
 
 	if(isNaN(teamId) || teamId.replace(/^\s+|\s+$/g, '').length != 5)
 		document.getElementById('inform').innerHTML = 'Team ID is a 5-digit number';
 	else if (name.replace(/^\s+|\s+$/g, '').length != 0)
-		teamSocket.emit("checkTeamID", {teamId:localTeamId, name:localName});
+		socket.emit("checkTeamID", {teamId:localTeamId, name:localName});
 	else
         document.getElementById('inform').innerHTML = 'Name cannot be empty';
 }
@@ -101,46 +118,38 @@ function gameStart(){
 function showLeaderPage(){
 	role = "Leader";
 	document.getElementById('welcome').style.display = "none";
-	document.getElementById("joinTeamTitle").innerHTML = "Join Team " + localTeamId; 
 
-	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
+	socket.emit("getMemberList", {name:localName, teamId:localTeamId});
 	//sent create Room message and leader name to server;
 	//then the server will let events which relate to "Being A Leader" on.
 
 	document.getElementById('joinTeam').style.display = "block";
 }
 
-function onMemberList(data){
+function onMemberAdd(data){
 
 	//do something show the teammate name;
-
-	//clear the previous list
-	document.getElementById("teamMemberList").innerHTML = "";
-
-	var dataObj = JSON.parse(data);
-	for(var i = 0;i < dataObj.length;i++){
-		var x = document.createElement("li");
-    	var t = document.createTextNode(dataObj[i]);
-    	x.appendChild(t);
-    	document.getElementById("teamMemberList").appendChild(x);
-	}
+	var x = document.createElement("LI");
+    var t = document.createTextNode(data.name);
+    x.appendChild(t);
+    document.getElementById("teamMemberList").appendChild(x);
+    //TODO
 }
 
 function onMemberDelete(){
-	//update new member list
-	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
-}
 
-function onMemberAdd(){
-	//update new member list
-	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
+//do something delete the teammate name;
+
 }
 
 function leaderStart(){
 	
-	teamSocket.emit("teamStart", {teamId:localTeamId});//let server know the team is going to depart;
+	socket.emit("teamStart", {teamId:localTeamId});//let server know the team is going to depart;
 	document.getElementById('joinTeam').style.display = "none";
-
+	init();
+	socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY(), name: localName, teamId:localTeamId});
+	console.log("localTeamId: "+localTeamId);
+	animate();		
 }
 
 /*******************member event**********************/
@@ -151,13 +160,9 @@ function memberStart(){
 
 function showMemberPage(){
 	role = "Member";
-	document.getElementById('welcome').style.display = "none";
-	document.getElementById("joinTeamTitle").innerHTML = "Join Team " + localTeamId; 
-
-	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
-	//sent the server "I am one of the member";
+	document.getElementById('welcome').hide();
+	socket.emit("showMemberList", {name:localName});//sent the server "I am one of the member";
 	// then the server may sent kick or depart event;
-	document.getElementById('joinTeam').style.display = "block";
 }
 
 function onKickedByLeader(){
@@ -169,46 +174,6 @@ function onDepartNotice(){
 	init();
 	animate();
 }
-
-function onChangeRole(){
-	showLeaderPage();
-}
-
-/***********************endOfNewFunction*******************/
-function init() {
-
-	// Initialise socket connection
-	socket = io.connect(serverAddr + ":8000", {port: 8000, transports: ["websocket"]});
-
-
-	// Declare the canvas and rendering context
-	canvas = document.getElementById("gameCanvas");
-
-	ctx = canvas.getContext("2d");
-
-	//Calculate width per block
-	uiScaling();
-
-	// Initialise keyboard controls
-	keys = new Keys();
-
-	// Calculate a random start position for the local player
-	// The minus 5 (half a player size) stops the player being
-	// placed right on the edge of the screen
-	var startX = Math.round(Math.random()*(canvas.width-5)),
-		startY = Math.round(Math.random()*(canvas.height-5));
-
-	// Initialise the local player
-	localPlayer = new Player(startX, startY);
-	//localPlayer.
-
-
-	// Initialise remote players array
-	remotePlayers = [];
-
-	// Start listening for events
-	setEventHandlers();
-};
 
 
 
@@ -379,7 +344,7 @@ function onSocketConnected() {
 	console.log("Connected to socket server");
 
 	// Send local player data to the game server
-	socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY(), name: localName, teamId:localTeamId});
+	//socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY(), name: localName, teamId:localTeamId});
 };
 
 // Socket disconnected

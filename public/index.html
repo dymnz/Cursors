@@ -87,6 +87,8 @@
 			document.getElementById("gameCanvas").height = 0;
 			document.getElementById("team_id").value = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
 
+			document.getElementById("joinTeamTitle").innerHTML = "Join Team " + document.getElementById("team_id").value; 
+
 			//connect to server
 			connectionInit();
 
