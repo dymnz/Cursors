@@ -183,6 +183,7 @@ function init() {
 
 	// Declare the canvas and rendering context
 	canvas = document.getElementById("gameCanvas");
+
 	ctx = canvas.getContext("2d");
 
 	//Calculate width per block
@@ -579,7 +580,7 @@ function draw() {
 		return;
 
 	// Wipe the canvas clean
-	ctx.fillStyle = 'black';
+	ctx.fillStyle = '#b3e5fc';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	ctx.fillStyle = 'white';
@@ -859,3 +860,5 @@ function buttonPushed(x, y, map) {
 		socket.emit("door open", {id: blockId-100});
 	}
 }
+
+
