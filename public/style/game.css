@@ -1,7 +1,8 @@
 body {
-	overflow: hidden;
+	font-family: Verdana, Sans-serif;
 	background-color: #FFFFFF;
 }
+
 #welcome {
 	margin: 0 auto 0 auto;
 	text-align: center;
@@ -24,27 +25,32 @@ body {
 	font-size: 16px;
 }
 
-#inform {
-	color: #FF0000;
-	margin: 10px;
+
+h1{
+	 letter-spacing: 2px;
 }
 
-tr {
-	padding: 10px 0 10px 0;
+
+input{
+	font-style: #fafafa;
+	border-radius: 5%;
 }
-td {
-	font-weight: bold;
-	padding: 10px;
-	text-align: left;
+
+#area{
+	border-radius: 7%;	
 }
-input {
-	border: 2px #000000 solid; 
-	text-align: right;
+
+#enterButton{
+	border-radius: 10%;		
 }
-#button {
-	border: 0px;
-	text-align: center;
+#essential{
+	font-family: "Courier New", monospace;
+	font-size: 1vw;
+	overflow: hidden;
+	white-space: pre;
+	display: inline-block;
 }
+
 
 canvas {
 	display: block;

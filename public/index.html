@@ -10,31 +10,47 @@
 		
 		<link rel="stylesheet" href="style/reset.css">
 		<link rel="stylesheet" href="style/game.css">
+<<<<<<< HEAD
 		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 		<script src="js/requestAnimationFrame.js"></script>
 		<script src="js/Keys.js"></script>
 		<script src="js/Player.js"></script>
 		<script src="js/game.js"></script>
 		<script src="js/Map.js"></script>
+
+  		<link rel="stylesheet" href="style/materialize.min.css">  
+
 	</head>
 
 	
-	<body>
-		<div id="welcome">
-			<div id="form_content">
-				<table>
-				<tr>	
-					<td>Name:</td>
-					<td><input type="text" id="name" onkeydown = "if (event.keyCode == 13) document.getElementById('button').click();"></td>
-				</tr>
-				<tr>
-					<td>Team ID:</td>
-					<td><input type="text" id="team_id" onkeydown = "if (event.keyCode == 13) document.getElementById('button').click();"></td>
-				</tr>	
-				</table>
-				<input type="button" id="button" value="Enter!" onClick="submit();">
-			</div>
-			<p id="inform"></p>
+	<body class = "light-blue lighten-1">
+		<div class="row" id="welcome">
+			<h1 class="center-align white-text">
+				balls
+			</h1>	
+			<div class="row"  >
+			    <form >
+			    <div class="col s10 offset-s1 l4 offset-l4 m6 offset-m3 white" id="area">
+			    
+			      <div class="row blue-grey-text text-darken-4">
+			        <div class="input-field col s12">
+			    	<input placeholder="" id="name" type="text" name="name"  class="right-align">
+			    	<label class="" for="name">Name</label>			
+			        </div>
+			          	<div class="input-field col s12">
+			              <input placeholder="" id="team_id" type="number" class="right-align">
+			              <label class="" for="team_id">Team ID</label>
+			        </div>
+			      </div>
+			     <div class="row center-align">	
+				<a class="waves-effect waves-light btn-large green accent-3" id="enterButton" type="sumit">Enter</a>
+				</div>
+				<p class="center-align flow-text deep-orange-text" id="inform"></p>
+				
+				</div>
+			    </form>		
+			  </div>
+			  <div class="center-align col s12 light-blue-text text-lighten-1" id="essential"></div>
 		</div>
 
 		<div id="joinTeam">
@@ -51,10 +67,36 @@
 			<canvas id="gameCanvas"></canvas>	
 		</div>
 
+		
+		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+		<script src="js/requestAnimationFrame.js"></script>
+		<script src="js/Keys.js"></script>
+		<script src="js/Player.js"></script>
+		<script src="js/game.js"></script>
+		<script src="js/Map.js"></script>
+		<script type="text/javascript" src="js/jquery-2.2.3.min.js"></script>
+  		<script src="js/materialize.min.js"></script>
 		<script>
 			// Initialise the game
 			document.getElementById('joinTeam').style.display = "none";
 
+			
+
+			$('#enterButton').click(function(){
+    				submit();
+    				return false;
+			});
+
+			$('#name, #team_id').keypress(function (e) {
+				if (e.which == 13) {
+					$('#enterButton').click();
+			    		return false;
+			  	}
+			});
+		
+
+			document.getElementById("gameCanvas").width = 0;
+			document.getElementById("gameCanvas").height = 0;
 			document.getElementById("team_id").value = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
 
 			//connect to server
@@ -63,7 +105,22 @@
 			function submit() {
 		   		checkTeamID();
 		   	}
+
+			$('#essential').html(strVar);
+			var showing = false;
+			$('#essential').click(function(){
+				if(!showing){
+					$("#essential").attr("class", "center-align col s12 light-blue-text text-lighten-2");	
+					showing = true;
+				}
+				else{
+					$("#essential").attr("class", "center-align col s12 light-blue-text text-lighten-1");	
+					showing = false;
+				}
+			});
+
 		</script>
 
 	</body>
+
 </html>
