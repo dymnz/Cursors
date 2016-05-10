@@ -5,12 +5,11 @@
 	<head>
 		<meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no"/>
 
-		<title>A multiplayer game built using HTML5 canvas and WebSockets</title>
+		<title>balls.oo</title>
 		<meta charset="utf-8">
 		
 		<link rel="stylesheet" href="style/reset.css">
 		<link rel="stylesheet" href="style/game.css">
-<<<<<<< HEAD
 		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 		<script src="js/requestAnimationFrame.js"></script>
 		<script src="js/Keys.js"></script>
@@ -19,7 +18,6 @@
 		<script src="js/Map.js"></script>
 
   		<link rel="stylesheet" href="style/materialize.min.css">  
-
 	</head>
 
 	
@@ -42,25 +40,33 @@
 			              <label class="" for="team_id">Team ID</label>
 			        </div>
 			      </div>
-			     <div class="row center-align">	
-				<a class="waves-effect waves-light btn-large green accent-3" id="enterButton" type="sumit">Enter</a>
+			    	 <div class="row center-align">	
+				<a class="waves-effect waves-light btn-large green accent-3" id="enterButton" type="sumit">Join</a>
 				</div>
 				<p class="center-align flow-text deep-orange-text" id="inform"></p>
 				
-				</div>
+			</div>
 			    </form>		
 			  </div>
 			  <div class="center-align col s12 light-blue-text text-lighten-1" id="essential"></div>
 		</div>
 
-		<div id="joinTeam">
-			<div id="joinTeamContent">
-				<h1 id="joinTeamTitle">Join Team</h1>
-				<ol id="teamMemberList" type="1">
-
-				</ol>
-				<input type="button" id="joinTeamButton" value="Join!" onClick="gameStart();">
-			</div>
+		<div class="row" id="joinTeam" >
+			<div class="row" id="joinTeamContent">
+				<h1 class="center-align white-text" id="joinTeamTitle">Team</h1>
+				<div class="col s10 offset-s1 l4 offset-l4 m6 offset-m3 white" id="teamMemberListContainer">
+					<div class="row">						
+						<ul class="" id="teamMemberList">
+						</ul>						
+					</div>
+					<div class="row">
+						<div class="center-align">
+						<a class="waves-effect waves-light btn-large green accent-3" type="submit" id="joinTeamButton"> Go </a>
+						</div>
+					</div>	
+				</div>
+				
+			</div>	
 		</div>
 
 		<div class="myCanvas">
@@ -78,9 +84,11 @@
   		<script src="js/materialize.min.js"></script>
 		<script>
 			// Initialise the game
-			document.getElementById('joinTeam').style.display = "none";
-
 			
+
+			$('#joinTeamButton').click(function(){
+				gameStart();
+			});
 
 			$('#enterButton').click(function(){
     				submit();

@@ -101,7 +101,7 @@ function gameStart(){
 function showLeaderPage(){
 	role = "Leader";
 	document.getElementById('welcome').style.display = "none";
-	document.getElementById("joinTeamTitle").innerHTML = "Join Team " + localTeamId; 
+	document.getElementById("joinTeamTitle").innerHTML = "#" + localTeamId; 
 
 	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
 	//sent create Room message and leader name to server;
@@ -119,10 +119,12 @@ function onMemberList(data){
 
 	var dataObj = JSON.parse(data);
 	for(var i = 0;i < dataObj.length;i++){
-		var x = document.createElement("li");
-    	var t = document.createTextNode(dataObj[i]);
-    	x.appendChild(t);
-    	document.getElementById("teamMemberList").appendChild(x);
+		var x = document.createElement("h5");
+		x.innerHTML=dataObj[i];
+    		//var t = document.createTextNode(dataObj[i]);
+    		//x.appendChild(t);
+    		x.className="row blue-grey-text text-darken-4";
+    		document.getElementById("teamMemberList").appendChild(x);
 	}
 }
 

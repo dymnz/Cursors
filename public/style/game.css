@@ -7,24 +7,20 @@ body {
 	margin: 0 auto 0 auto;
 	text-align: center;
 }
+
 #joinTeam{
-	margin: 0 auto 0 auto;
-	text-align: center;
+	display: none;
 }
-#form_content{
-	display: inline-block;
-    	margin: 0 auto; 	
-}
-#joinTeamContent{
-	display: inline-block;
-    	margin: 0 auto;
-}
+
 #button {
 	height: 20px;
 	width: 100px;
 	font-size: 16px;
 }
 
+#joinTeamButton{
+	font-size: 16px;	
+}
 
 h1{
 	 letter-spacing: 2px;
@@ -38,6 +34,11 @@ input{
 
 #area{
 	border-radius: 7%;	
+}
+
+#teamMemberListContainer{
+	border-radius: 7%;
+	margin-top: 10px;
 }
 
 #enterButton{
