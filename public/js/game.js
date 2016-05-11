@@ -37,6 +37,10 @@ var serverAddr = "http://127.0.0.1";
 ** GAME INITIALISATION
 **************************************************/
 
+//TODO delete the button from member page
+//TODO fix function when leader left
+
+
 function connectionInit(){
 
 	teamSocket = io.connect(serverAddr + ":8001", {port: 8001, transports: ["websocket"]})
@@ -154,7 +158,7 @@ function memberStart(){
 function showMemberPage(){
 	role = "Member";
 	document.getElementById('welcome').style.display = "none";
-	document.getElementById("joinTeamTitle").innerHTML = "Join Team " + localTeamId; 
+	document.getElementById("joinTeamTitle").innerHTML = "#" + localTeamId; 
 
 	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
 	//sent the server "I am one of the member";
