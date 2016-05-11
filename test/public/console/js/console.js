@@ -7,7 +7,6 @@ var canvas,			// Canvas DOM element
 	localPlayer,	// Local player
 	localName,
 	localTeamId,
-	role,
 	remotePlayers,	// Remote players
 	socket,			// Socket connection
 	mouseX,
@@ -18,12 +17,7 @@ var canvas,			// Canvas DOM element
 	lastY,
 	RADIUS = 2,
 	MOUSE_RADIUS = 0.4,
-	RIPPLE_DELTA = 0.1,
-	MAX_RIPPLE_SIZE = 0.4,
-	baseMapUrl;
-var scale,
-	canvasImage,
-	baseMap,
+	scale,
 	playerSize,
 	mstartX = -1,
 	mstartY = -1;
@@ -32,174 +26,14 @@ var pixelPerBlock = 20;
 var remainingWidth, remainingHeight;
 var paddingX, paddingY;
 var doors = [];
-var teamSocket;
-
-var serverAddr = "http://127.0.0.1";
-
+var maxRoomIndex = -1;
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
-
-//TODO delete the button from member page
-//TODO fix function when leader left
-
-
-function connectionInit(){
-
-	teamSocket = io.connect(serverAddr + ":8001", {port: 8001, transports: ["websocket"]})
-
-	//event handler
-	teamSocket.on("checkIDReturn", onCheckIDReturn);
-
-	//add new member to team Memberlist
-	teamSocket.on("memberList",onMemberList);
-
-	teamSocket.on("gameStart", onDepartNotice);
-
-	teamSocket.on("memberDisconnect", onMemberDelete);
-
-	teamSocket.on("memberAdd", onMemberAdd);
-
-	teamSocket.on("changeRole", onChangeRole);
-
-	role = "nobody";
-
-}
-
-function checkTeamID(){
-
-	var name = document.getElementById("name").value;
-	var teamId = document.getElementById("team_id").value;
-	localName = name;
-	localTeamId = teamId;
-
-	if(isNaN(teamId) || teamId.replace(/^\s+|\s+$/g, '').length != 5)
-		document.getElementById('inform').innerHTML = 'Team ID is a 5-digit number';
-	else if (name.replace(/^\s+|\s+$/g, '').length != 0)
-		teamSocket.emit("checkTeamID", {teamId:localTeamId, name:localName});
-	else
-        document.getElementById('inform').innerHTML = 'Name cannot be empty';
-}
-
-function onCheckIDReturn(data){
-
-	if(data.exist==false){
-		showLeaderPage();
-	}else if(data.numOfTeammate<6){
-		showMemberPage();
-	}else{		
-		document.getElementById('inform').innerHTML = 'The team has been full';
-		document.getElementById("team_id").value = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
-	}
-}
-
-
-/*******************************************/
-// on click function of joinbutton
-function gameStart(){
-
-	if(role=="Leader") leaderStart();
-	if(role=="Member") memberStart();//do nothing;
-
-}
-
-/********************Leader Event*********************/
-
-function showLeaderPage(){
-	role = "Leader";
-	document.getElementById('welcome').style.display = "none";
-	document.getElementById("joinTeamTitle").innerHTML = "#" + localTeamId; 
-
-	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
-	//sent create Room message and leader name to server;
-	//then the server will let events which relate to "Being A Leader" on.
-
-	document.getElementById('joinTeam').style.display = "block";
-	document.getElementById('joinTeamButton').style.display = "block";
-}
-
-function onMemberList(data){
-
-	//do something show the teammate name;
-
-	//clear the previous list
-
-	console.log("onMemberList");
-	document.getElementById("teamMemberList").innerHTML = "";
-
-	var dataObj = JSON.parse(data);
-	for(var i = 0;i < dataObj.length;i++){
-		var x = document.createElement("h5");
-		x.innerHTML=dataObj[i];
-		console.log(dataObj[i]);
-    		x.className="row blue-grey-text text-darken-4";
-    		document.getElementById("teamMemberList").appendChild(x);
-	}
-}
-
-function onMemberDelete(){
-	//update new member list
-	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
-}
-
-function onMemberAdd(){
-	//update new member list
-	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
-}
-
-function leaderStart(){
-	
-	teamSocket.emit("teamStart", {teamId:localTeamId});//let server know the team is going to depart;
-	document.getElementById('joinTeam').style.display = "none";
-
-}
-
-/*******************member event**********************/
-
-function memberStart(){
-//do nothing
-
-}
-
-function showMemberPage(){
-	role = "Member";
-	document.getElementById('welcome').style.display = "none";
-	document.getElementById("joinTeamTitle").innerHTML = "#" + localTeamId; 
-
-	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
-	//sent the server "I am one of the member";
-	// then the server may sent kick or depart event;
-	document.getElementById('joinTeam').style.display = "block";
-	document.getElementById('joinTeamButton').style.display = "none";
-	
-}
-
-function onKickedByLeader(){
-	document.getElementById('welcome').display();
-}
-
-
-function onDepartNotice(){
-	document.getElementById('joinTeam').style.display = "none";
-	init();
-	animate();
-}
-
-function onChangeRole(){
-	showLeaderPage();
-}
-
-/***********************endOfNewFunction*******************/
-function init() {
-
-	// Initialise socket connection
-	socket = io.connect(serverAddr + ":8000", {port: 8000, transports: ["websocket"]});
-
+function init(name, team_id) {
 
 	// Declare the canvas and rendering context
 	canvas = document.getElementById("gameCanvas");
-	canvasImage = document.getElementById("canvasImage");
-
 	ctx = canvas.getContext("2d");
 
 	//Calculate width per block
@@ -210,7 +44,7 @@ function init() {
 
 	// Calculate a random start position for the local player
 	// The minus 5 (half a player size) stops the player being
-	// placed right on the edge of the screen
+	// placed right on the egde of the screen
 	var startX = Math.round(Math.random()*(canvas.width-5)),
 		startY = Math.round(Math.random()*(canvas.height-5));
 
@@ -218,25 +52,23 @@ function init() {
 	localPlayer = new Player(startX, startY);
 	//localPlayer.
 
+	// Initialise socket connection
+	socket = io.connect("http://127.0.0.1:8000", {port: 8000, transports: ["websocket"]});
 
 	// Initialise remote players array
 	remotePlayers = [];
 
 	// Start listening for events
+	localName=name;
+	localTeamId=team_id;
 	setEventHandlers();
 };
 
 
-
 function uiScaling() {
 	// Maximise the canvas
-	if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
-	else if(document.documentElement.msRequestFullscreen) document.documentElement.msRequestFullscreen();
-	else if(document.documentElement.mozRequestFullScreen) document.documentElement.mozRequestFullScreen();
-	else if(document.documentElement.webkitRequestFullscreen) document.documentElement.webkitRequestFullscreen();
-
 	canvas.width = window.innerWidth+1;
-	canvas.height = window.innerHeight+1;
+	canvas.height = window.innerHeight-50;
 
 	if (canvas.width/mapWidth >= canvas.height/mapHeight){
 		blockWidth = canvas.height/mapHeight;
@@ -253,39 +85,14 @@ function uiScaling() {
 	paddingY = Math.round(remainingHeight/2);
 	scale = blockWidth/pixelPerBlock;
 	playerSize = Math.round(scale * blockWidth/10);	
-	if(playerSize < 10)
-		playerSize = 10;
-
-
-	if(localPlayer!=null && localPlayer.getMap()!=-1){
-		ctx.fillStyle = '#b3e5fc';
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-		ctx.fillStyle = 'white';
-		ctx.fillRect(paddingX, paddingY, canvas.width-remainingWidth, canvas.height-remainingHeight);
-
-		// Draw map
-		drawMap(localPlayer.getMap());
-		baseMapUrl = canvas.toDataURL();
-		canvasImage.src = baseMapUrl;
-		ctx.save();
-	}
+	if(playerSize < 5)
+		playSize = 5;
 }
 
 /**************************************************
 ** GAME EVENT HANDLERS
 **************************************************/
 var setEventHandlers = function() {
-	// Keyboard
-	window.addEventListener("keydown", onKeydown, false);
-	window.addEventListener("keyup", onKeyup, false);
-	canvas.addEventListener("mousemove", mouseHandler, false);
-	canvas.addEventListener("mousedown", mouseHandler, false);
-	canvas.addEventListener("mouseup", mouseHandler, false);
-	canvas.addEventListener("touchstart", touchHandler, false);
-	canvas.addEventListener("touchmove", touchHandler, false);
-	canvas.addEventListener("touchend", touchHandler, false);
-
 	// Window resize
 	window.addEventListener("resize", uiScaling, false);
 	window.addEventListener("orientationchange", uiScaling, false);
@@ -301,9 +108,6 @@ var setEventHandlers = function() {
 	
 	// Player move message received
 	socket.on("move player", onMovePlayer);
-	
-	// Player push message received
-	socket.on("push", pushHint);
 
 	// Player removed message received
 	socket.on("remove player", onRemovePlayer);
@@ -316,6 +120,10 @@ var setEventHandlers = function() {
 
 	// Door close
 	socket.on("door close", onDoorClose);
+
+	socket.on("room change", onRoomChange);
+
+	socket.on("sendInit", onSendInit)
 };
 
 // Keyboard key down
@@ -331,74 +139,6 @@ function onKeyup(e) {
 		keys.onKeyUp(e);
 	};
 };
-
-function mouseHandler(e) {
-	if(mstartX != -1 && e.type == "mousemove"){
-		e.preventDefault();
-		mouseX = (e.pageX - mstartX)/3 + mstartX;
-		mouseY = (e.pageY - mstartY)/3 + mstartY;
-		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
-		if(mouseLength > RADIUS * blockWidth){
-			mouseX = RADIUS* blockWidth *(mouseX-mstartX)/mouseLength + mstartX;
-			mouseY = RADIUS* blockWidth *(mouseY-mstartY)/mouseLength + mstartY;
-		}
-		vX = (mouseX - mstartX)/25/scale;
-		vY = (mouseY - mstartY)/25/scale;
-	}
-	else if(e.type == "mousedown"){
-		mstartX = e.pageX;
-		mstartY = e.pageY;
-		mouseX = mstartX;
-		mouseY = mstartY;
-		lastX=localPlayer.getX();
-		lastY=localPlayer.getY();
-		//buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
-	}
-	else if(e.type == "mouseup") {
-		e.preventDefault();
-		mstartX = -1;
-		if(Math.sqrt((localPlayer.getX()-lastX)*(localPlayer.getX()-lastX) + (localPlayer.getY()-lastY)*(localPlayer.getY()-lastY))<5)
-			buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
-		vX = 0;
-		vY = 0;
-	}
-}
-
-function touchHandler(e) {
-	e.preventDefault();	
-	if(e.type == "touchstart" ){
-		if(e.touches.length != 1) return;
-		mstartX = e.touches[0].pageX;
-		mstartY = e.touches[0].pageY;
-		mouseX = mstartX;
-		mouseY = mstartY;
-		lastX=localPlayer.getX();
-		lastY=localPlayer.getY();
-	}
-	else if(e.type == "touchmove"){
-		e.preventDefault();
-		mouseX = (e.touches[0].pageX - mstartX)/2 + mstartX;
-		mouseY = (e.touches[0].pageY - mstartY)/2 + mstartY;
-
-		var mouseLength = Math.sqrt((mouseX-mstartX)*(mouseX-mstartX) + (mouseY-mstartY)*(mouseY-mstartY));
-		if(mouseLength > RADIUS* blockWidth){
-			mouseX = RADIUS* blockWidth *(mouseX-mstartX)/mouseLength + mstartX;
-			mouseY = RADIUS* blockWidth *(mouseY-mstartY)/mouseLength + mstartY;
-		}
-		vX = (mouseX - mstartX)/25/scale;
-		vY = (mouseY - mstartY)/25/scale;
-	}
-	else if(e.type == "touchend"){
-		e.preventDefault();
-		if(Math.sqrt((localPlayer.getX()-lastX)*(localPlayer.getX()-lastX) + (localPlayer.getY()-lastY)*(localPlayer.getY()-lastY))<5)
-			buttonPushed(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
-
-		mstartX = -1;
-		mstartY = -1;
-		vX = 0;
-		vY = 0;
-	}
-}
 
 // Browser window resize
 function onResize(e) {
@@ -423,9 +163,7 @@ function onNewPlayer(data) {
 	console.log("New player connected: "+data.id);
 	console.log("New player is at " + data.x + " " + data.y);
 	// Initialise the new player
-	var placeholderName = "penis";
-	var newPlayer = new Player(data.x, data.y, placeholderName, data.teamId);
-	console.log("id" + localTeamId + " " + data.teamId);
+	var newPlayer = new Player(data.x, data.y, localName, localTeamId);
 	newPlayer.id = data.id;
 
 	// Add new player to the remote players array
@@ -445,20 +183,6 @@ function onMovePlayer(data) {
 	// Update player position
 	movePlayer.setX(data.x);
 	movePlayer.setY(data.y);
-};
-
-// Player pushing
-function pushHint(data) {
-	var pushPlayer = playerById(data.id);
-
-	// Player not found
-	if (!pushPlayer) {
-		console.log("Player not found: "+data.id);
-		return;
-	};
-
-	// Update player flag
-	pushPlayer.rippleFlag = true;
 };
 
 // Remove player
@@ -495,14 +219,10 @@ function onMapChange(data) {
 			var blockId = (maps[data.map])[i][r];
 			if(blockId===300)
 			{
-				localPlayer.setX(r*pixelPerBlock + Math.round(Math.random()*(pixelPerBlock)));
-				localPlayer.setY(i*pixelPerBlock + Math.round(Math.random()*(pixelPerBlock)));
+				localPlayer.setX(-1000);
+				localPlayer.setY(-1000);
 				localPlayer.setOriX(localPlayer.getX());
 				localPlayer.setOriY(localPlayer.getY());
-				console.log("x :" + localPlayer.getX() + "y :" + localPlayer.getY());
-				
-				// Send local player data to the game server
-				socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
 			}
 			else if(blockId>=100 && blockId<=109)
 			{
@@ -511,20 +231,7 @@ function onMapChange(data) {
 			}
 		}
 	}
-
-		// Wipe the canvas clean
-	ctx.fillStyle = '#b3e5fc';
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-	ctx.fillStyle = 'white';
-	ctx.fillRect(paddingX, paddingY, canvas.width-remainingWidth, canvas.height-remainingHeight);
-
-	// Draw map
-	drawMap(localPlayer.getMap());
-	baseMapUrl = canvas.toDataURL();
-	canvasImage.src = baseMapUrl;
-	ctx.save();
-
+	GetInit();
 };
 
 
@@ -566,7 +273,6 @@ function onDoorClose(data) {
 ** GAME ANIMATION LOOP
 **************************************************/
 function animate() {
-	update();
 	draw();
 
 	// Request a new animation frame using Paul Irish's shim
@@ -577,14 +283,6 @@ function animate() {
 /**************************************************
 ** GAME UPDATE
 **************************************************/
-function update() {
-	// Update local player and check for change
-	if (localPlayer.update(keys, vX, vY)) {
-		// Send local player data to the game server
-		socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
-	};
-	checkTile(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());
-};
 
 function checkTile(x, y, map) {
 	if (map==-1)
@@ -623,36 +321,26 @@ function draw() {
 	if(localPlayer.getMap()===-1)
 		return;
 
+	// Wipe the canvas clean
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	ctx.fillStyle = 'white';
+	ctx.fillRect(paddingX, paddingY, canvas.width-remainingWidth, canvas.height-remainingHeight);
+
+	// Draw map
+	drawMap(localPlayer.getMap());
 	
-	ctx.drawImage(canvasImage,0,0);
-	drawDoors(localPlayer.getMap());
 	var originColor = ctx.fillStyle;
 	var originColor2 = ctx.strokeStyle;
 
-
 	// Draw the remote players
-
 	var i;
 	var colorOtherBorder = 'grey'; var colorOtherFill = 'grey';
 	var colorTeamFill = '#99ddff'; var colorTeamBorder = '#99ddff';
 	for (i = 0; i < remotePlayers.length; i++) {
-		if (remotePlayers[i].getTeamId() == localTeamId)
-		{
-			colorFill = colorTeamFill;
-			colorBorder = colorTeamBorder;
-		}
-		else
-		{
-			colorFill = colorOtherFill;
-			colorBorder = colorOtherBorder;
-		}
-		drawPlayer(remotePlayers[i], colorFill, colorBorder);
+		drawPlayer(remotePlayers[i], colorOtherFill, colorOtherBorder);
 	};
-
-	// Draw the local player
-	var colorSelfFill = '#66ff66'; var colorSelfBorder = '#66ff66';
-	drawPlayer(localPlayer, colorSelfFill, colorSelfBorder);
-
 	// Draw gamepad	
 	if(mstartX != -1){
 		ctx.beginPath();
@@ -680,8 +368,19 @@ function drawMap(map) {
 	for (i = 0 ; i<mapHeight ; i++){
 		for(r = 0 ; r<mapWidth ; r++){
 			var blockId = (maps[map])[i][r];
+
+			// Doors
+			if(blockId>=100 && blockId<=109){
+				ctx.fillStyle = findStyle(blockId);
+				if(!isDoorOpen(blockId))
+				{
+					drawBlock(i, r);
+					drawCross(i, r);
+				}
+				
+			}
 			// Button
-			if (blockId>=200 && blockId<=209){
+			else if (blockId>=200 && blockId<=209){
 				ctx.fillStyle = findStyle(blockId);
 				//drawBlock(i, r, false);
 				drawCircle(i, r);					
@@ -704,26 +403,6 @@ function drawMap(map) {
 		}
 	}
 }
-
-function drawDoors(map) {
-	for (i = 0 ; i<mapHeight ; i++){
-		for(r = 0 ; r<mapWidth ; r++){
-			var blockId = (maps[map])[i][r];
-
-			// Doors
-			if(blockId>=100 && blockId<=109){
-				ctx.fillStyle = findStyle(blockId);
-				if(!isDoorOpen(blockId))
-				{
-					drawBlock(i, r);
-					drawCross(i, r);
-				}
-				
-			}
-		}
-	}
-}
-
 function drawPlayer(player, styleFill, styleBorder)
 {
 	// Translate the coord
@@ -797,6 +476,8 @@ function drawCircle(i, r) {
 	ctx.arc(r*blockWidth+paddingX + blockWidth/2, i*blockWidth+paddingY+blockWidth/2 ,blockWidth/2,0,2*Math.PI);
 	ctx.stroke();
 }
+
+
 /**************************************************
 ** GAME HELPER FUNCTIONS
 **************************************************/
@@ -835,18 +516,15 @@ function isCollision(x, y, map){
 		return true;
 	//console.log("i :" + i, "r: "+ r);
 	var blockId = (maps[map])[i][r];
-	if(blockId==1)
+	if(blockId===1)
 		return true;
 	if(blockId>=100 && blockId<=109)
 	{
 		if(!isDoorOpen(blockId))
 			return true;
 	}
-	if(blockId==600)
-		return false;
 	return false;
 }
-
 function findStyle(id) {
 	var i;
 	for(i = 0; i<stylelist.length ; i++)
@@ -893,17 +571,72 @@ function checkOnButton(x, y, map) {
 	return -1;
 }
 
-function buttonPushed(x, y, map) {
-	console.log("pushed");
+/*CONSOLE*/
+function updateHtml(){
+	document.getElementById("map").innerHTML = localPlayer.getMap();
+	document.getElementById("room").innerHTML = localPlayer.getRoom();
+}
 
-	socket.emit("push");
-	localPlayer.rippleFlag = true;
+function onRoomChange(data)
+{
+	localPlayer.setRoom(data.room);
+	onMapChange(data);
+	console.log("onRoomChange " + data.map +" " + data.room);
+}
 
-	var blockId = checkOnButton(x, y, map);
-	if(blockId != -1)
-	{
-		socket.emit("door open", {id: blockId-100});
+
+function GetInit() {
+	socket.emit("getInit");
+}
+
+function NextRoom(){
+	localPlayer.nextRoom();
+	console.log("NextRoom "+localPlayer.getRoom());
+	socket.emit("change room to",{room:localPlayer.getRoom()}); //change to next map after press the button
+}
+
+function LastRoom(){
+	localPlayer.lastRoom();
+	socket.emit("change room to",{room:localPlayer.getRoom()}); //change to previse map after press the button
+}
+
+function NextMap(){
+	localPlayer.nextMap();
+	socket.emit("change map to",{map:localPlayer.getMap()}); //change to next map after press the button
+}
+
+function LastMap(){
+	localPlayer.lastMap();
+	socket.emit("change map to",{map:localPlayer.getMap()}); //change to previse map after press the button
+}
+
+function DoorAllOpen(){
+	var mapIndex = localPlayer.getMap();
+	var openedDoor = [];
+	for (i = 0 ; i<mapHeight ; i++){
+		for(r = 0 ; r<mapWidth ; r++){
+			var id=(maps[mapIndex])[i][r];
+			if(openedDoor.indexOf(id)==-1 && id>=100 && id<=109){
+				openedDoor.push(id);
+				socket.emit("door open", {id: id});
+				console.log("sent door open " + id + " mapIndex:" + mapIndex);
+			}
+		}
 	}
+}
+
+function mapChoose(){
+	var mapIndex = document.getElementById("mapNumber").value;
+	if(mapIndex>=0 && mapIndex<maxMapIndex)
+		socket.emit("change map to", {map: mapIndex}); //change to the map to what was inputed
+}
+
+function onSendInit(data) {
+	localPlayer.setMap(data.map);
+	localPlayer.setRoom(data.room);
+	maxRoomIndex = data.maxRoomIndex;
+	console.log("map room " + data.map +"  " + data.room + " maxRoomIndex " +maxRoomIndex);
+	updateHtml();
 }
 
 

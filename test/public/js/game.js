@@ -34,7 +34,7 @@ var paddingX, paddingY;
 var doors = [];
 var teamSocket;
 
-var serverAddr = "http://127.0.0.1";
+var serverAddr = "http://nctuece.ddns.net";
 
 /**************************************************
 ** GAME INITIALISATION
@@ -116,6 +116,7 @@ function showLeaderPage(){
 
 	document.getElementById('joinTeam').style.display = "block";
 	document.getElementById('joinTeamButton').style.display = "block";
+	gameStart();
 }
 
 function onMemberList(data){
@@ -255,7 +256,6 @@ function uiScaling() {
 	playerSize = Math.round(scale * blockWidth/10);	
 	if(playerSize < 10)
 		playerSize = 10;
-
 
 	if(localPlayer!=null && localPlayer.getMap()!=-1){
 		ctx.fillStyle = '#b3e5fc';
@@ -581,6 +581,7 @@ function update() {
 	// Update local player and check for change
 	if (localPlayer.update(keys, vX, vY)) {
 		// Send local player data to the game server
+
 		socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
 	};
 	checkTile(localPlayer.getX(), localPlayer.getY(), localPlayer.getMap());

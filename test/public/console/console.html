@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+	<head>
+	<meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no"/>
+		<title>A multiplayer game built using HTML5 canvas and WebSockets</title>
+		<meta charset="utf-8">
+		
+		<link rel="stylesheet" href="style/reset.css">
+		<link rel="stylesheet" href="style/game.css">
+	</head>
+	
+	<body>
+		<div class="console">
+			<table>
+			<tr>
+				<td>
+					room:<span id="room"></span>
+					map: <span id="map"></span>
+				</td>
+				<td>
+					<input type="button" id="room last" value="last room" onClick="LastRoom()">	
+				</td>	
+				<td>
+					<input type="button" id="room next" value="next room" onClick="NextRoom()">	
+				</td>	
+				<td>
+					<input type="button" id="map last" value="last map" onClick="LastMap()">	
+				</td>	
+				<td>
+					<input type="button" id="map next" value="next map" onClick="NextMap();">
+				</td>
+				<td>
+					<input type="button" id="DoorAllOpen" value="Open all door" onClick="DoorAllOpen()">
+				</td>
+			</tr>
+			</table>
+		</div>
+		<div class="myCanvas">
+			<canvas id="gameCanvas"></canvas>	
+		</div>
+		
+		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+		<script src="js/requestAnimationFrame.js"></script>
+		<script src="js/Keys.js"></script>
+		<script src="js/Player.js"></script>
+		<script src="js/Map.js"></script>
+		<script src="js/console.js"></script>
+		<script>
+			init("ssss", 123);
+			animate();
+		</script>
+	</body>
+</html>

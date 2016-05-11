@@ -1,0 +1,17 @@
+body {
+	overflow: hidden;
+	background-color: #FFFFFF;
+}
+
+canvas {
+	display: block;
+	margin: 0 auto 0 auto;
+}
+
+.console {
+	font-size: 12px;
+}
+
+td {
+	margin: 0 10px 0 0 ;
+}
