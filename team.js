@@ -55,7 +55,7 @@ var setTeamEventHandler = function(client){
 
 function onCheckTeamID(data){
 	var id = data.teamId;
-	if(teamIDList[id][0]){
+	if(id != undefined && teamIDList[id][0]){
 		this.emit("checkIDReturn", {exist:true, numOfTeammate:teamIDList[id][1]});
 		if(teamIDList[id][1] < 6){
 				teamIDList[id][1]++;
@@ -65,7 +65,7 @@ function onCheckTeamID(data){
 				sendMemberAddinfo(id, this.id);
 		}
 
-	}else{
+	}else if(id != undefined){
 		teamIDList[id][0] = true;
 		teamIDList[id][1] = 1;
 		teamIDList[id][2].push(data.name);
@@ -80,7 +80,8 @@ function onCheckTeamID(data){
 
 function onGetMemberList(data){
 	var id = data.teamId;
-	this.emit("memberList",JSON.stringify(teamIDList[id][2]));
+	if(id != undefined)
+		this.emit("memberList",JSON.stringify(teamIDList[id][2]));
 }
 
 function onMemberDisconnect(){
@@ -132,7 +133,7 @@ function onMemberDisconnect(){
 
 function onTeamStart(data) {
 	var id = data.teamId;
-	if(teamIDList[id][0]){
+	if(id != undefined && teamIDList[id][0]){
 		for(var i = 0;i < teamIDList[id][3].length;i++){
 			teamIDList[id][3][i].emit("gameStart");
 		}
