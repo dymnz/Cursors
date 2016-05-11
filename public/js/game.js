@@ -19,8 +19,11 @@ var canvas,			// Canvas DOM element
 	RADIUS = 2,
 	MOUSE_RADIUS = 0.4,
 	RIPPLE_DELTA = 0.1,
-	MAX_RIPPLE_SIZE = 0.4;
+	MAX_RIPPLE_SIZE = 0.4,
+	baseMapUrl;
 var scale,
+	canvasImage,
+	baseMap,
 	playerSize,
 	mstartX = -1,
 	mstartY = -1;
@@ -112,6 +115,7 @@ function showLeaderPage(){
 	//then the server will let events which relate to "Being A Leader" on.
 
 	document.getElementById('joinTeam').style.display = "block";
+	document.getElementById('joinTeamButton').style.display = "block";
 }
 
 function onMemberList(data){
@@ -119,14 +123,15 @@ function onMemberList(data){
 	//do something show the teammate name;
 
 	//clear the previous list
+
+	console.log("onMemberList");
 	document.getElementById("teamMemberList").innerHTML = "";
 
 	var dataObj = JSON.parse(data);
 	for(var i = 0;i < dataObj.length;i++){
 		var x = document.createElement("h5");
 		x.innerHTML=dataObj[i];
-    		//var t = document.createTextNode(dataObj[i]);
-    		//x.appendChild(t);
+		console.log(dataObj[i]);
     		x.className="row blue-grey-text text-darken-4";
     		document.getElementById("teamMemberList").appendChild(x);
 	}
@@ -153,6 +158,7 @@ function leaderStart(){
 
 function memberStart(){
 //do nothing
+
 }
 
 function showMemberPage(){
@@ -164,6 +170,8 @@ function showMemberPage(){
 	//sent the server "I am one of the member";
 	// then the server may sent kick or depart event;
 	document.getElementById('joinTeam').style.display = "block";
+	document.getElementById('joinTeamButton').style.display = "none";
+	
 }
 
 function onKickedByLeader(){
@@ -172,6 +180,7 @@ function onKickedByLeader(){
 
 
 function onDepartNotice(){
+	document.getElementById('joinTeam').style.display = "none";
 	init();
 	animate();
 }
@@ -189,6 +198,7 @@ function init() {
 
 	// Declare the canvas and rendering context
 	canvas = document.getElementById("gameCanvas");
+	canvasImage = document.getElementById("canvasImage");
 
 	ctx = canvas.getContext("2d");
 
@@ -487,6 +497,19 @@ function onMapChange(data) {
 		}
 	}
 
+		// Wipe the canvas clean
+	ctx.fillStyle = '#b3e5fc';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	ctx.fillStyle = 'white';
+	ctx.fillRect(paddingX, paddingY, canvas.width-remainingWidth, canvas.height-remainingHeight);
+
+	// Draw map
+	drawMap(localPlayer.getMap());
+	baseMapUrl = canvas.toDataURL();
+	canvasImage.src = baseMapUrl;
+	ctx.save();
+
 };
 
 
@@ -585,16 +608,9 @@ function draw() {
 	if(localPlayer.getMap()===-1)
 		return;
 
-	// Wipe the canvas clean
-	ctx.fillStyle = '#b3e5fc';
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-	ctx.fillStyle = 'white';
-	ctx.fillRect(paddingX, paddingY, canvas.width-remainingWidth, canvas.height-remainingHeight);
-
-	// Draw map
-	drawMap(localPlayer.getMap());
 	
+	ctx.drawImage(canvasImage,0,0);
+	drawDoors(localPlayer.getMap());
 	var originColor = ctx.fillStyle;
 	var originColor2 = ctx.strokeStyle;
 
@@ -649,19 +665,8 @@ function drawMap(map) {
 	for (i = 0 ; i<mapHeight ; i++){
 		for(r = 0 ; r<mapWidth ; r++){
 			var blockId = (maps[map])[i][r];
-
-			// Doors
-			if(blockId>=100 && blockId<=109){
-				ctx.fillStyle = findStyle(blockId);
-				if(!isDoorOpen(blockId))
-				{
-					drawBlock(i, r);
-					drawCross(i, r);
-				}
-				
-			}
 			// Button
-			else if (blockId>=200 && blockId<=209){
+			if (blockId>=200 && blockId<=209){
 				ctx.fillStyle = findStyle(blockId);
 				//drawBlock(i, r, false);
 				drawCircle(i, r);					
@@ -681,6 +686,25 @@ function drawMap(map) {
 				drawBlock(i, r, false);			
 			}
 			
+		}
+	}
+}
+
+function drawDoors(map) {
+	for (i = 0 ; i<mapHeight ; i++){
+		for(r = 0 ; r<mapWidth ; r++){
+			var blockId = (maps[map])[i][r];
+
+			// Doors
+			if(blockId>=100 && blockId<=109){
+				ctx.fillStyle = findStyle(blockId);
+				if(!isDoorOpen(blockId))
+				{
+					drawBlock(i, r);
+					drawCross(i, r);
+				}
+				
+			}
 		}
 	}
 }

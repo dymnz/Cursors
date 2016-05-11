@@ -110,15 +110,18 @@ function onMemberDisconnect(){
 		}
 
 		for(var i = 0;i < teamIDList[tid][3].length;i++){
-			if(teamIDList[tid][3][i] == this.id){
+			
+			if(teamIDList[tid][3][i].id == this.id){
 				teamIDList[tid][2].splice(i, 1);
 				teamIDList[tid][3].splice(i, 1);
 				break;
 			}
+			else 
+				console.log("asdasd");
 		}
 
 		for(var i = 0;i < teamIDList[tid][3].length;i++){
-			if(teamIDList[tid][3][i] != this.id){
+			if(teamIDList[tid][3][i].id != this.id){
 				teamIDList[tid][3][i].emit("memberDisconnect");
 			}
 		}

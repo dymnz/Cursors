@@ -52,6 +52,9 @@ input{
 	display: inline-block;
 }
 
+img {
+	display: none;
+}
 
 canvas {
 	display: block;
