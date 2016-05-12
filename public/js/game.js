@@ -124,14 +124,13 @@ function onMemberList(data){
 
 	//clear the previous list
 
-	console.log("onMemberList");
 	document.getElementById("teamMemberList").innerHTML = "";
 
 	var dataObj = JSON.parse(data);
 	for(var i = 0;i < dataObj.length;i++){
 		var x = document.createElement("h5");
 		x.innerHTML=dataObj[i];
-		console.log(dataObj[i]);
+		
     		x.className="row blue-grey-text text-darken-4";
     		document.getElementById("teamMemberList").appendChild(x);
 	}
@@ -420,12 +419,9 @@ function onSocketDisconnect() {
 
 // New player
 function onNewPlayer(data) {
-	console.log("New player connected: "+data.id);
-	console.log("New player is at " + data.x + " " + data.y);
 	// Initialise the new player
 	var placeholderName = "penis";
 	var newPlayer = new Player(data.x, data.y, placeholderName, data.teamId);
-	console.log("id" + localTeamId + " " + data.teamId);
 	newPlayer.id = data.id;
 
 	// Add new player to the remote players array
@@ -477,7 +473,7 @@ function onRemovePlayer(data) {
 
 // Map change
 function onMapChange(data) {
-	console.log("Map changed " + data.map);
+	
 
 	// Set the map 
 	localPlayer.setMap(data.map);
@@ -499,7 +495,7 @@ function onMapChange(data) {
 				localPlayer.setY(i*pixelPerBlock + Math.round(Math.random()*(pixelPerBlock)));
 				localPlayer.setOriX(localPlayer.getX());
 				localPlayer.setOriY(localPlayer.getY());
-				console.log("x :" + localPlayer.getX() + "y :" + localPlayer.getY());
+				
 				
 				// Send local player data to the game server
 				socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
@@ -533,7 +529,7 @@ function onDoorOpen(data) {
 
 	var doorIndex = findDoorById(id);
 
-	console.log("Door open with id: " + id + " and door index: "+ doorIndex);
+	
 	if(doorIndex == -1)
 		console.log("Door index error: onDoorOpen");
 	else if (doors[doorIndex][1] == "close")
@@ -570,7 +566,7 @@ function animate() {
 	draw();
 
 	// Request a new animation frame using Paul Irish's shim
-	window.requestAnimFrame(animate);
+	window.requestAnimationFrame(animate);
 };
 
 
@@ -738,7 +734,7 @@ function drawPlayer(player, styleFill, styleBorder)
 	ctx.lineWidth = playerSize/5;
 	ctx.stroke();
 	if(player.rippleFlag){
-		console.log("drawing ripple...");
+		
 		player.clickedRipple += RIPPLE_DELTA;
 		ctx.strokeStyle = "rgba(50, 50, 50, 0.8)";
 		ctx.beginPath();
@@ -894,7 +890,7 @@ function checkOnButton(x, y, map) {
 }
 
 function buttonPushed(x, y, map) {
-	console.log("pushed");
+	
 
 	socket.emit("push");
 	localPlayer.rippleFlag = true;
