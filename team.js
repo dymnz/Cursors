@@ -17,6 +17,7 @@ function init(){
 		teamIDList[i][1] = 0;		//number of team member
 		teamIDList[i][2] = [];		//names of members
 		teamIDList[i][3] = [];		//sockets of members
+		teamIDList[i][4] = false; 	//the team has already started
 	}
 
 	idPair = [];
@@ -80,8 +81,11 @@ function onCheckTeamID(data){
 
 function onGetMemberList(data){
 	var id = data.teamId;
-	if(id != undefined)
+	if(id != undefined){
 		this.emit("memberList",JSON.stringify(teamIDList[id][2]));
+		if(teamIDList[id][4] == true)
+			this.emit("gameStart");
+	}
 }
 
 function onMemberDisconnect(){
@@ -137,6 +141,7 @@ function onTeamStart(data) {
 		for(var i = 0;i < teamIDList[id][3].length;i++){
 			teamIDList[id][3][i].emit("gameStart");
 		}
+		teamIDList[id][4] = true;
 	}
 }
 
