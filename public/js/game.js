@@ -40,9 +40,14 @@ var serverAddr = "http://127.0.0.1";
 ** GAME INITIALISATION
 **************************************************/
 
-//TODO delete the button from member page
-//TODO fix function when leader left
 
+
+
+//TODO log the Name and TeamID for the first five person who reached the end.
+	// Let the first five person change to five special maps
+	// the others will be moved to the same map
+//TODO animation for the last map
+//TODO credit roll
 
 function connectionInit(){
 
