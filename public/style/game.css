@@ -52,6 +52,11 @@ input{
 	display: inline-block;
 }
 
+#credit_roll {
+	display: none;
+}
+
+
 img {
 	display: none;
 }
