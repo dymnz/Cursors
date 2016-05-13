@@ -7,7 +7,6 @@ var util = require("util"),					// Utility resources (logging, object inspection
 	}),				// Socket.IO
 	Player = require("./Player").Player;	// Player class
 
-
 /**************************************************
 ** GAME VARIABLES
 **************************************************/
@@ -93,8 +92,7 @@ function onSocketConnection(client) {
 
 	client.on("change map to", onChangeMapTo);
 
-	client.on("change room to", onChangeRoomTo);
-	
+	client.on("change room to", onChangeRoomTo);	
 
 	client.emit("connect");
 

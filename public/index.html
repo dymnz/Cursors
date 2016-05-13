@@ -5,13 +5,21 @@
 	<head>
 		<meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no"/>
 
-		<title>A multiplayer game built using HTML5 canvas and WebSockets</title>
+		<title>balls.oo</title>
 		<meta charset="utf-8">
 		
 		<link rel="stylesheet" href="style/reset.css">
 		<link rel="stylesheet" href="style/game.css">
+		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+		<script src="js/requestAnimationFrame.js"></script>
+		<script src="js/Keys.js"></script>
+		<script src="js/Player.js"></script>
+		<script src="js/game.js"></script>
+		<script src="js/Map.js"></script>
+
   		<link rel="stylesheet" href="style/materialize.min.css">  
 	</head>
+
 	
 	<body class = "light-blue lighten-1">
 		<div class="row" id="welcome">
@@ -32,19 +40,41 @@
 			              <label class="" for="team_id">Team ID</label>
 			        </div>
 			      </div>
-			     <div class="row center-align">	
-				<a class="waves-effect waves-light btn-large green accent-3" id="enterButton" type="sumit">Enter</a>
+			    	 <div class="row center-align">	
+				<a class="waves-effect waves-light btn-large green accent-3" id="enterButton" type="sumit">Join</a>
 				</div>
 				<p class="center-align flow-text deep-orange-text" id="inform"></p>
 				
-				</div>
+			</div>
 			    </form>		
 			  </div>
 			  <div class="center-align col s12 light-blue-text text-lighten-1" id="essential"></div>
 		</div>
+
+		<div class="row" id="joinTeam" >
+			<div class="row" id="joinTeamContent">
+				<h1 class="center-align white-text" id="joinTeamTitle">Team</h1>
+				<div class="col s10 offset-s1 l4 offset-l4 m6 offset-m3 white" id="teamMemberListContainer">
+					<div class="row">						
+						<ul class="" id="teamMemberList">
+						</ul>						
+					</div>
+					<div class="row">
+						<div class="center-align">
+						<a class="waves-effect waves-light btn-large green accent-3" type="submit" id="joinTeamButton">Press me when everyone is ready!</a>
+						</div>
+					</div>	
+				</div>
+				
+			</div>	
+		</div>
+		<div class="row" id="credit_roll" >
+			
+		</div>
 		<div class="myCanvas">
 			<canvas id="gameCanvas"></canvas>	
 		</div>
+		<img id="canvasImage">
 		
 		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 		<script src="js/requestAnimationFrame.js"></script>
@@ -56,8 +86,11 @@
   		<script src="js/materialize.min.js"></script>
 		<script>
 			// Initialise the game
-
 			
+
+			$('#joinTeamButton').click(function(){
+				gameStart();
+			});
 
 			$('#enterButton').click(function(){
     				submit();
@@ -76,22 +109,13 @@
 			document.getElementById("gameCanvas").height = 0;
 			document.getElementById("team_id").value = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
 
+			//connect to server
+			connectionInit();
 
 			function submit() {
-				var name=$("#name").val();
-				var teamId=$("#team_id").val();
-				if(isNaN(teamId) || teamId.replace(/^\s+|\s+$/g, '').length != 5)
-					$('#inform').html('Team ID is a 5-digit number');
-				else if (name.replace(/^\s+|\s+$/g, '').length != 0)
-				{
-					$('#welcome').remove();
-					init(name, teamId);
-					animate();
-				}
-			     	else
-			     		$('#inform').html('Name cannot be empty');
-			}
-			
+		   		checkTeamID();
+		   	}
+
 			$('#essential').html(strVar);
 			var showing = false;
 			$('#essential').click(function(){
@@ -104,7 +128,9 @@
 					showing = false;
 				}
 			});
+
 		</script>
+
 	</body>
 
 </html>

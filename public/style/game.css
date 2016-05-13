@@ -3,6 +3,25 @@ body {
 	background-color: #FFFFFF;
 }
 
+#welcome {
+	margin: 0 auto 0 auto;
+	text-align: center;
+}
+
+#joinTeam{
+	display: none;
+}
+
+#button {
+	height: 20px;
+	width: 100px;
+	font-size: 16px;
+}
+
+#joinTeamButton{
+	font-size: 16px;	
+}
+
 h1{
 	 letter-spacing: 2px;
 }
@@ -17,6 +36,11 @@ input{
 	border-radius: 7%;	
 }
 
+#teamMemberListContainer{
+	border-radius: 7%;
+	margin-top: 10px;
+}
+
 #enterButton{
 	border-radius: 10%;		
 }
@@ -28,6 +52,14 @@ input{
 	display: inline-block;
 }
 
+#credit_roll {
+	display: none;
+}
+
+
+img {
+	display: none;
+}
 
 canvas {
 	display: block;
