@@ -121,8 +121,7 @@ function onMemberDisconnect(){
 				teamIDList[tid][3].splice(i, 1);
 				break;
 			}
-			else 
-				console.log("asdasd");
+
 		}
 
 		for(var i = 0;i < teamIDList[tid][3].length;i++){
