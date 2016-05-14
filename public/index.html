@@ -97,9 +97,11 @@
     				return false;
 			});
 
+			var hasEntered = false;
 			$('#name, #team_id').keypress(function (e) {
-				if (e.which == 13) {
+				if (e.which == 13 && hasEntered == false) {
 					$('#enterButton').click();
+					hasEntered = true;
 			    		return false;
 			  	}
 			});
