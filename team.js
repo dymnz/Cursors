@@ -117,6 +117,7 @@ function onMemberDisconnect(){
 		}
 
 		teamIDList[tid][1]--;
+		serverNum[teamIDList[tid][5]]--;
 
 		if(teamIDList[tid][1] == 0){
 			teamIDList[tid][0] = false;
