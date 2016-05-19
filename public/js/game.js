@@ -119,7 +119,7 @@ function showLeaderPage(){
 	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
 	//sent create Room message and leader name to server;
 	//then the server will let events which relate to "Being A Leader" on.
-	if(!gameIsStarted)
+	if(!gameIsStarted){
 		document.getElementById('joinTeam').style.display = "block";
 		document.getElementById('joinTeamButton').style.display = "block";
 	}
