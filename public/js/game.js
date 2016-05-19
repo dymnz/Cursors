@@ -35,6 +35,8 @@ var doors = [];
 var teamSocket;
 
 var serverAddr = "http://127.0.0.1";
+
+var gameIsStarted = false;
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
@@ -117,9 +119,10 @@ function showLeaderPage(){
 	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
 	//sent create Room message and leader name to server;
 	//then the server will let events which relate to "Being A Leader" on.
-
-	document.getElementById('joinTeam').style.display = "block";
-	document.getElementById('joinTeamButton').style.display = "block";
+	if(!gameIsStarted)
+		document.getElementById('joinTeam').style.display = "block";
+		document.getElementById('joinTeamButton').style.display = "block";
+	}
 }
 
 function onMemberList(data){
@@ -184,6 +187,7 @@ function onKickedByLeader(){
 
 function onDepartNotice(){
 	document.getElementById('joinTeam').style.display = "none";
+	gameIsStarted = true;
 	init();
 	animate();
 }
