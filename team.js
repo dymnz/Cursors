@@ -64,6 +64,9 @@ function onCheckTeamID(data){
 				teamIDList[id][3].push(this);
 				idPair.push([this.id, id]);
 				sendMemberAddinfo(id, this.id);
+
+				if(teamIDList[id][4] == true)
+					this.emit("gameStart");
 		}
 
 	}else if(id != undefined){
@@ -83,8 +86,6 @@ function onGetMemberList(data){
 	var id = data.teamId;
 	if(id != undefined){
 		this.emit("memberList",JSON.stringify(teamIDList[id][2]));
-		if(teamIDList[id][4] == true)
-			this.emit("gameStart");
 	}
 }
 
