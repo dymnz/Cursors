@@ -36,6 +36,7 @@ var teamSocket;
 
 var serverAddr = "http://127.0.0.1";
 
+var gameStartFlag = false;
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
@@ -184,9 +185,13 @@ function onKickedByLeader(){
 
 
 function onDepartNotice(){
-	document.getElementById('joinTeam').style.display = "none";
-	init();
-	animate();
+	if(!gameStartFlag)
+	{
+		document.getElementById('joinTeam').style.display = "none";
+		gameStartFlag = true;
+		init();
+		animate();
+	}
 }
 
 function onChangeRole(){
