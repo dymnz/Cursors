@@ -185,10 +185,10 @@ function onKickedByLeader(){
 }
 
 
-function onDepartNotice(){
+function onDepartNotice(data){
 	document.getElementById('joinTeam').style.display = "none";
 	gameIsStarted = true;
-	init();
+	init(data.port);
 	animate();
 }
 
@@ -197,10 +197,10 @@ function onChangeRole(){
 }
 
 /***********************endOfNewFunction*******************/
-function init() {
+function init(p) {
 
 	// Initialise socket connection
-	socket = io.connect(serverAddr + ":8000", {port: 8000, transports: ["websocket"]});
+	socket = io.connect(serverAddr + ":" + p, {port: p, transports: ["websocket"]});
 
 
 	// Declare the canvas and rendering context
