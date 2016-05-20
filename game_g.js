@@ -14,7 +14,9 @@ var socket,		// Socket controller
 	players,	// Array of connected players
 	playerList;	// Array of ID-player pairs
 
-var consoleList;// array of ID-Console pairs
+var consoleList;// Array of ID-Console pairs
+
+var goalPlayerList// Array of on goal Players
 
 var roomCount = 1,
 	mapCount = 22,
@@ -44,6 +46,7 @@ function init() {
 
 	playerList = [];
 	consoleList = [];
+	goalPlayerList = [];
 
 	doorTimeOut = [];
 
@@ -104,7 +107,9 @@ function onSocketConnection(client) {
 
 	client.on("change room to", onChangeRoomTo);
 
-	client.on("get server info", onGetServerInfo);	
+	client.on("get server info", onGetServerInfo);
+
+	client.on("gameover", onGameOver);	
 
 	client.emit("connect");
 
@@ -245,6 +250,7 @@ function onGoal(){
 		// add "successful"
 		//this.emit("map change", {map: mapIndex});
 		broadcastAllConsoles("success", {server:"g",teamId:onGoalPlayer.getTeamId(),name: onGoalPlayer.name});
+		goalPlayerList.push(onGoalPlayer);
 	}
 
 	util.log("Player " + this.id + " is at Map:" + mapIndex);
@@ -503,7 +509,8 @@ function onChangeRoomTo(data) {
 
 }
 
-function broadcastAllConsoles(cmd, msg){
+function broadcastAllConsoles(cmd, msg)
+{
 	for(var i = 0;i < consoleList.length;i++){
 		consoleList[i].getSocket().emit(cmd, msg);
 	}
@@ -513,6 +520,29 @@ function broadcastAllConsoles(cmd, msg){
 function onGetServerInfo()
 {
 	this.emit("map info", JSON.stringify(mapNum));
+}
+
+function onGameOver()
+{
+	var num = 0;
+	var chosenPlayer = [];
+	var flag = false;
+	for(var i = mapCount - 1;i >= 0;i--){
+		for(var j = 0;j < players[0][i].length;j++){
+			if(num < 2){
+				num++;
+				chosenPlayer.push(players[0][i][j]);
+			}else{
+				flag = true;
+				break;
+			}
+		}
+		if(flag){
+			break;
+		}
+	}
+
+	broadcastAllConsoles("chosen players", JSON.stringify(chosenPlayer));
 }
 
 
