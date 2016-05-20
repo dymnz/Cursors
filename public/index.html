@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html class="light-blue lighten-1" lang="en">
 
 	<head>
 		<meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no"/>
@@ -22,7 +22,7 @@
 
 	
 	<body class = "light-blue lighten-1">
-		<div class="row" id="welcome">
+		<div class="row light-blue lighten-1" id="welcome">
 			<h1 class="center-align white-text">
 				balls
 			</h1>	
@@ -48,7 +48,7 @@
 			</div>
 			    </form>		
 			  </div>
-			  <div class="center-align col s12 light-blue-text text-lighten-1" id="essential"></div>
+			  <div class="center-align col s12 light-blue-text text-lighten-1 light-blue lighten-1" id="essential"></div>
 		</div>
 
 		<div class="row" id="joinTeam" >
@@ -157,7 +157,7 @@
   		<script src="js/materialize.min.js"></script>
 		<script>
 			// Initialise the game
-			showCredit();
+			
 
 			$('#joinTeamButton').click(function(){
 				gameStart();
@@ -212,13 +212,13 @@
 					showing = false;
 				}
 			});
-			/*
+			
 			window.addEventListener( "keypress", doKeyDown, false )
 			function doKeyDown(e) {
 				if(e.keyCode == 13)
-					socket.emit("on goal");
+					showCredit();
 			}
-			*/
+			
 		</script>
 
 	</body>
