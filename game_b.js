@@ -14,9 +14,13 @@ var socket,		// Socket controller
 	players,	// Array of connected players
 	playerList;	// Array of ID-player pairs
 
+var consoleList;// array of ID-Console pairs
+
 var roomCount = 1,
-	mapCount = 24,
+	mapCount = 22,
 	test = 0;
+var mapNum = [];
+
 var doorTimeOut;
 
 var doors = [];
@@ -34,11 +38,17 @@ function init() {
 			players[i][j] = [];
 	}
 
+	for(var i = 0;i < mapCount;i++){
+		mapNum[i] = 0;
+	}
+
 	playerList = [];
+	consoleList = [];
+
 	doorTimeOut = [];
 
 	// Set up Socket.IO to listen on port 8000
-	socket = io.listen(8004);
+	socket = io.listen(8003);
 
 
 	// Start listening for events
@@ -92,7 +102,9 @@ function onSocketConnection(client) {
 
 	client.on("change map to", onChangeMapTo);
 
-	client.on("change room to", onChangeRoomTo);	
+	client.on("change room to", onChangeRoomTo);
+
+	client.on("get server info", onGetServerInfo);	
 
 	client.emit("connect");
 
@@ -113,8 +125,13 @@ function onClientDisconnect() {
 	// Remove player from players array
 	var i = removePlayer.getRoomIndex(),
 		j = removePlayer.getMapIndex();
+	mapNum[j]--;
 	players[i][j].splice(players[i][j].indexOf(removePlayer), 1);
 	removePlayerFromList(removePlayer.id);
+
+	if(removePlayer.getTeamId() == 123){
+		removeConsoleFromList(removePlayer.id);
+	}
 
 	// Broadcast removed player to connected socket clients
 	//this.broadcast.emit("remove player", {id: this.id});
@@ -133,9 +150,15 @@ function onNewPlayer(data) {
 	var pair = [this.id, newPlayer];
 	playerList.push(pair);
 
+	if(data.teamId == 123){
+		consoleList.push(pair);
+	}
+
 	//set Room and map
 	roomBalancing(newPlayer);
 	newPlayer.setMapIndex(test);
+	mapNum[test]++;
+
 
 	// Broadcast new player to connected socket clients
 	//this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
@@ -190,9 +213,13 @@ function onGoal(){
 
 	var mapIndex = onGoalPlayer.getMapIndex();
 
+	mapNum[mapIndex]--;
+
 	if(mapIndex < mapCount - 1){
 		//go to the next map
 		mapIndex++;
+		mapNum[mapIndex]++;
+
 		this.emit("map change", {map: mapIndex});
 
 		var i = onGoalPlayer.getRoomIndex(),
@@ -216,7 +243,8 @@ function onGoal(){
 	//if has reached the last map
 	}else if(mapIndex === mapCount - 1){
 		// add "successful"
-		this.emit("map change", {map: mapIndex});
+		//this.emit("map change", {map: mapIndex});
+		broadcastAllConsoles("success", {server:"b",teamId:onGoalPlayer.getTeamId(),name: onGoalPlayer.name});
 	}
 
 	util.log("Player " + this.id + " is at Map:" + mapIndex);
@@ -236,9 +264,14 @@ function backToLast(){
 	broadcasting(backPlayer, "remove player", {id: this.id});
 
 	var mapIndex = backPlayer.getMapIndex();
+
+	mapNum[mapIndex]--;
+
 	if(mapIndex > 0){
 		//go to the previous map
 		mapIndex--;
+		mapNum[mapIndex]++;
+
 		this.emit("map change", {map: mapIndex});
 
 		//remove the player from current map
@@ -325,8 +358,19 @@ function playerById(id) {
 function removePlayerFromList(id){
 	var i;
 	for (i = 0; i < playerList.length; i++) {
-		if (playerList[i][0] == id)
+		if (playerList[i][0] == id){
 			playerList.splice(i, 1);
+			break;
+		}
+	};
+}
+
+function removeConsoleFromList(id){
+	for(var i = 0;i < consoleList.length;i++){
+		if(consoleList[i][0] == id){
+			consoleList.splice(i, 1);
+			break;
+		}
 	};
 }
 
@@ -457,6 +501,18 @@ function onChangeRoomTo(data) {
 	//push this player in the players
 	players[onGoalPlayer.getRoomIndex()][onGoalPlayer.getMapIndex()].push(onGoalPlayer);
 
+}
+
+function broadcastAllConsoles(cmd, msg){
+	for(var i = 0;i < consoleList.length;i++){
+		consoleList[i].getSocket().emit(cmd, msg);
+	}
+}
+
+/*special console*/
+function onGetServerInfo()
+{
+	this.emit("map info", JSON.stringify(mapNum));
 }
 
 
