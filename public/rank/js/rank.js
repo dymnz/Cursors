@@ -1,5 +1,6 @@
 
-var serverAddrs = ["http://127.0.0.1", "http://127.0.0.1", "http://127.0.0.1"];
+var serverPorts = [8000, 8002, 8003];
+var serverAddrs = "http://nctuece.ddns.net";
 var serverColors = ['#ff0000', '#00ff00', '#0000ff'];
 var serverMemeberCounts = [];
 
@@ -21,7 +22,7 @@ var requestInterval = 1000;
 function init(){
 
 	for(var i = 0 ; i < serverCount ; i++)
-		sockets.push(io.connect(serverAddrs[i] + ":8000", {port: 8000, transports: ["websocket"]}));
+		sockets.push(io.connect(serverAddrs + ":" + serverPorts[i], {port: serverPorts[i], transports: ["websocket"]}));
 
 	canvas = document.getElementById("gameCanvas");
 	context = canvas.getContext("2d");
