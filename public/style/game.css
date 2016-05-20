@@ -56,6 +56,10 @@ input{
 	display: none;
 }
 
+#starting_inform {
+	font-size: 5px;
+}
+
 
 img {
 	display: none;

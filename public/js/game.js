@@ -81,6 +81,8 @@ function checkTeamID(){
 
 	if(isNaN(teamId) || teamId.replace(/^\s+|\s+$/g, '').length != 5)
 		document.getElementById('inform').innerHTML = 'Team ID is a 5-digit number';
+	else if(teamId<10000)
+		document.getElementById('inform').innerHTML = 'Team ID has to be larger than 10000';
 	else if (name.replace(/^\s+|\s+$/g, '').length != 0)
 		teamSocket.emit("checkTeamID", {teamId:localTeamId, name:localName});
 	else

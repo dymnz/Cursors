@@ -15,7 +15,7 @@ var socket,		// Socket controller
 	playerList;	// Array of ID-player pairs
 
 var roomCount = 1,
-	mapCount = 24,
+	mapCount = 22,
 	test = 0;
 var doorTimeOut;
 
