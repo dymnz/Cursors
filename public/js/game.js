@@ -34,7 +34,7 @@ var paddingX, paddingY;
 var doors = [];
 var teamSocket;
 
-var serverAddr = "http://127.0.0.1";
+var serverAddr = "http://nctuece.ddns.net";
 
 var gameIsStarted = false;
 /**************************************************
@@ -54,6 +54,8 @@ function connectionInit(){
 
 	teamSocket = io.connect(serverAddr + ":8001", {port: 8001, transports: ["websocket"]})
 
+
+	
 	//event handler
 	teamSocket.on("checkIDReturn", onCheckIDReturn);
 
@@ -204,6 +206,19 @@ function init(p) {
 	// Initialise socket connection
 	socket = io.connect(serverAddr + ":" + p, {port: p, transports: ["websocket"]});
 
+	switch(p)
+	{
+		case 8000:
+			stylelist[0][1] = '#ff6666';
+			break;
+		case 8002:
+			stylelist[0][1] = '#11d4d4';
+			break;
+		case 8003:
+			stylelist[0][1] = '#4da6ff';
+			break;
+	}
+
 
 	// Declare the canvas and rendering context
 	canvas = document.getElementById("gameCanvas");
@@ -325,6 +340,8 @@ var setEventHandlers = function() {
 
 	// Door close
 	socket.on("door close", onDoorClose);
+
+	socket.on("credit roll", showCredit);
 };
 
 // Keyboard key down

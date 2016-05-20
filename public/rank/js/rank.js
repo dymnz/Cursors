@@ -1,15 +1,26 @@
 
 var serverAddrs = ["http://127.0.0.1", "http://127.0.0.1", "http://127.0.0.1"];
+var serverColors = ['#ff0000', '#00ff00', '#0000ff'];
+var serverMemeberCounts = [];
+
 var sockets = [];
 var canvas, context;
-var mapWidth = 20, mapHeight = 3;
+var  mapCount = 22, mapHeight = 4, serverCount = 3, mapWidth = mapCount + 1;
 var remainingWidth, remainingHeight;
 var paddingX, paddingY;
+var blockWidth, blockHeight;
+var requestInterval = 1000;
+
+	var testMemberCounts = [5, 10, 20, 30, 2,
+	0, 10, 20, 30, 2,
+	0, 10, 20, 30, 2,
+	0, 10, 20, 30, 2,
+	0, 10];
 
 
 function init(){
 
-	for(var i = 0 ; i < serverAddrs.length ; i++)
+	for(var i = 0 ; i < serverCount ; i++)
 		sockets.push(io.connect(serverAddrs[i] + ":8000", {port: 8000, transports: ["websocket"]}));
 
 	canvas = document.getElementById("gameCanvas");
@@ -17,40 +28,107 @@ function init(){
 
 	window.addEventListener("resize", uiScaling, false);
 
-	window.setTimeout(1000, askForData);
+	window.setTimeout(askForData, requestInterval);
+
+	for(var i=0 ; i<sockets.length ; i++)
+		sockets[i].on("map info", onMapInfo);
+
+	uiScaling();
 }
 
 function askForData() {
-	window.setTimeout(1000, askForData);
-}
+	window.setTimeout(askForData, requestInterval);
+	
 
-function updateRankList() {
-		
-}
+	for(var i=0 ; i<sockets.length ; i++)
+		sockets[i].emit("get server info");
 
-function drawPivot() {
 	
 }
 
+function updateRankList() {
+	animate();
+}
+
+function onMapInfo(data) {
+	var socketIndex = findSocketIndexWithSocket(this);
+	var memberCounts = JSON.parse(data);
+
+
+	//TODO remove
+	//memberCounts = testMemberCounts;
+	//randMem();
+
+	serverMemeberCounts[socketIndex] = memberCounts;
+
+	updateRankList();
+	
+}
+function randMem() {
+
+	var temp;
+	var index;
+	for(var i=0 ; i<2*mapCount ; i++)
+	{
+		index = Math.floor(Math.random() * mapCount);
+		temp = testMemberCounts[index];
+		testMemberCounts[index] = testMemberCounts[0];
+		testMemberCounts[0] = temp;
+
+	}
+	
+}
+
+function drawPivot() {
+	context.fillStyle = 'black';
+	for(var i=1 ; i<mapWidth ; i++)
+	{
+		if(i==1 || i%5==0 || i==mapCount)
+			drawWord(0, i, i.toString());
+	}
+}
+
 function animate() {
-	ctx.fillStyle = '#b3e5fc';
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	context.fillStyle = 'white';
+	context.fillRect(0, 0, canvas.width, canvas.height);
+	
+	
+	drawPivot();
 
-	ctx.fillStyle = 'white';
-	ctx.fillRect(paddingX, paddingY, canvas.width-remainingWidth, canvas.height-remainingHeight);
+	var circleRadius;
+	for(var i=0 ; i<serverCount ; i++)
+	{
+		context.fillStyle = serverColors[i];
+		context.strokeStyle = serverColors[i];
+		for(var r=0 ; r<mapCount ; r++)
+		{
+			//console.log(serverCount + " " +serverMemeberCounts[2].length);
+			circleRadius = calculateCircleRadius(blockWidth, serverMemeberCounts[i][r]);
+			console.log("c" + circleRadius);
+			drawCircle(i+1, r+1, circleRadius);
+		}
+	}	
+}
 
-	drawCircle(3, 4, 20);
+function calculateCircleRadius(maxWidth, count) {		
+	var upperBound = 10;
+	return Math.round(count/20*maxWidth);
 }
 
 function drawCircle(row, col, radius) {
-	ctx.lineWidth=2*scale;
-	ctx.beginPath();
-	ctx.arc(col*blockWidth+paddingX + blockWidth/2, row*blockWidth+paddingY+blockWidth/2 ,blockWidth/2,0,2*Math.PI);
-	ctx.fill();
-	ctx.fillStyle = 'black';
-	ctx.beginPath();
-	ctx.arc(col*blockWidth+paddingX + blockWidth/2, row*blockWidth+paddingY+blockWidth/2 ,blockWidth/2,0,2*Math.PI);
-	ctx.stroke();
+	
+	context.lineWidth=2;
+	context.beginPath();
+	context.arc(col*blockWidth, row*blockHeight ,radius/2,0,2*Math.PI);
+	context.fill();
+	context.beginPath();
+	context.arc(col*blockWidth, row*blockHeight ,radius/2,0,2*Math.PI);
+	context.stroke();
+}
+
+function drawWord(row, col, word) {
+	
+	context.fillText(word ,col*blockWidth ,row*blockHeight + fontSize);
 }
 
 
@@ -60,22 +138,17 @@ function uiScaling() {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 
-	if (canvas.width/mapWidth >= canvas.height/mapHeight){
-		blockWidth = canvas.height/mapHeight;
-		remainingHeight = 0;
-		remainingWidth = canvas.width - blockWidth*mapWidth;
-	}
-	else{
-		blockWidth = canvas.width/mapWidth;
-		remainingHeight = canvas.height - blockWidth*mapHeight;
-		remainingWidth = 0;
-	}
+	blockHeight = Math.round(canvas.height/mapHeight);
+	blockWidth = Math.round(canvas.width/mapWidth);
+	fontSize = blockWidth/2;
+	
+	context.font = fontSize.toString() + "px Arial";
+}
 
-	paddingX = Math.round(remainingWidth/2);
-	paddingY = Math.round(remainingHeight/2);
-
-	playerSize = Math.round(scale * blockWidth/10);	
-	if(playerSize < 10)
-		playerSize = 10;
-
+function findSocketIndexWithSocket(socket)
+{
+  for(var i=0 ; i<sockets.length ; i++)
+            if(sockets[i]==socket)
+                return i;
+  return -1;
 }

@@ -27,6 +27,8 @@ var remainingWidth, remainingHeight;
 var paddingX, paddingY;
 var doors = [];
 var maxRoomIndex = -1;
+
+var p = 8000;
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
@@ -53,7 +55,21 @@ function init(name, team_id) {
 	//localPlayer.
 
 	// Initialise socket connection
-	socket = io.connect("http://127.0.0.1:8000", {port: 8000, transports: ["websocket"]});
+	socket = io.connect("http://127.0.0.1:" + p, {port: p, transports: ["websocket"]});
+
+
+	switch(p)
+	{
+		case 8000:
+			stylelist[0][1] = '#ff6666';
+			break;
+		case 8002:
+			stylelist[0][1] = '#11d4d4';
+			break;
+		case 8003:
+			stylelist[0][1] = '#4da6ff';
+			break;
+	}
 
 	// Initialise remote players array
 	remotePlayers = [];
@@ -622,7 +638,7 @@ function NextRoom(){
 
 function LastRoom(){
 	localPlayer.lastRoom();
-	socket.emit("change room to",{room:localPlayer.getRoom()}); //change to previse map after press the button
+	socket.emit("credit roll"); //change to previse map after press the button
 }
 
 function NextMap(){

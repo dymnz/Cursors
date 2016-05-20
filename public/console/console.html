@@ -20,19 +20,13 @@
 					map: <span id="map"></span>
 				</td>
 				<td>
-					<input type="button" id="room last" value="last room" onClick="LastRoom()">	
-				</td>	
-				<td>
-					<input type="button" id="room next" value="next room" onClick="NextRoom()">	
+					<input type="button" id="credit" value="credit_roll" onClick="LastRoom()">	
 				</td>	
 				<td>
 					<input type="button" id="map last" value="last map" onClick="LastMap()">	
 				</td>	
 				<td>
 					<input type="button" id="map next" value="next map" onClick="NextMap();">
-				</td>
-				<td>
-					<input type="button" id="DoorAllOpen" value="Open all door" onClick="DoorAllOpen()">
 				</td>
 			</tr>
 			</table>
@@ -50,6 +44,13 @@
 		<script>
 			init("ssss", 123);
 			animate();
+
+
+			window.addEventListener( "keypress", doKeyDown, false )
+			function doKeyDown(e) {
+				if(e.keyCode == 13)
+					DoorAllOpen();
+			}
 		</script>
 	</body>
 </html>
