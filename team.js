@@ -9,7 +9,7 @@ var idPair;
 var socket; //socket handler
 
 var serverNum = [];
-var serverList = [8000, 8002, 8003, 8004, 8005];
+var serverList = [8000, 8002, 8003];
 
 function init(){
 	for(var i = 0;i < 100000;i++){
