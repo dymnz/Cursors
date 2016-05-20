@@ -15,7 +15,7 @@ var socket,		// Socket controller
 	playerList;	// Array of ID-player pairs
 
 var roomCount = 1,
-	mapCount = 22,
+	mapCount = 24,
 	test = 0;
 var doorTimeOut;
 
@@ -38,7 +38,7 @@ function init() {
 	doorTimeOut = [];
 
 	// Set up Socket.IO to listen on port 8000
-	socket = io.listen(8000);
+	socket = io.listen(8002);
 
 
 	// Start listening for events

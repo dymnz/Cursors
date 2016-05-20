@@ -61,11 +61,16 @@
 					</div>
 					<div class="row">
 						<div class="center-align">
-						<a class="waves-effect waves-light btn-large green accent-3" type="submit" id="joinTeamButton">Press me when everyone is ready!</a>
+						<a class="waves-effect waves-light btn-large green accent-3" type="submit" id="joinTeamButton">Start</a>
+						<span>
+							
+						</span>
 						</div>
 					</div>	
+					<div class="row center-align" id="starting_inform">
+						Press start when everyone is ready!
+					</div>
 				</div>
-				
 			</div>	
 		</div>
 
@@ -207,7 +212,13 @@
 					showing = false;
 				}
 			});
-
+			/*
+			window.addEventListener( "keypress", doKeyDown, false )
+			function doKeyDown(e) {
+				if(e.keyCode == 13)
+					socket.emit("on goal");
+			}
+			*/
 		</script>
 
 	</body>

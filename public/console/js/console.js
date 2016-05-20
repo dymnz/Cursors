@@ -364,25 +364,26 @@ function draw() {
 
 function drawMap(map) {
 	var i, r;
+	var drawLaterId = [];
+	var drawLaterX = [];
+	var drawLaterY = [];
 
 	for (i = 0 ; i<mapHeight ; i++){
 		for(r = 0 ; r<mapWidth ; r++){
 			var blockId = (maps[map])[i][r];
-
+			ctx.strokeStyle = 'black';
 			// Doors
 			if(blockId>=100 && blockId<=109){
-				ctx.fillStyle = findStyle(blockId);
-				if(!isDoorOpen(blockId))
-				{
-					drawBlock(i, r);
-					drawCross(i, r);
-				}
-				
+				drawLaterX.push(r);
+				drawLaterY.push(i);
+				drawLaterId.push(blockId);
 			}
 			// Button
 			else if (blockId>=200 && blockId<=209){
+				drawLaterX.push(r);
+				drawLaterY.push(i);
+				drawLaterId.push(blockId);
 				ctx.fillStyle = findStyle(blockId);
-				//drawBlock(i, r, false);
 				drawCircle(i, r);					
 			}
 			// Goal
@@ -392,6 +393,7 @@ function drawMap(map) {
 			}
 			else if (blockId == 1 || blockId == 600){
 				ctx.fillStyle = findStyle(blockId);
+				ctx.strokeStyle = ctx.fillStyle;
 				drawBlock(i, r, true);
 			}
 			//400 back to last, 500 back to origin
@@ -401,6 +403,30 @@ function drawMap(map) {
 			}
 			
 		}
+	}
+
+	ctx.strokeStyle = 'black';
+	var x, y, i, blockId;
+	for(i=0 ; i<drawLaterId.length ; i++)
+	{
+		
+		y = drawLaterY[i];
+		x = drawLaterX[i]
+		blockId = drawLaterId[i];
+
+		ctx.fillStyle = findStyle(blockId);
+		if(blockId>=100 && blockId<=109){
+			if(!isDoorOpen(blockId))
+			{
+				drawBlock(y, x, false);
+				drawCross(y, x);
+			}
+		}
+		// Button
+		else if (blockId>=200 && blockId<=209){	
+			drawCircle(y, x);					
+		}
+
 	}
 }
 function drawPlayer(player, styleFill, styleBorder)
@@ -439,7 +465,6 @@ function drawBlock(i, r, withBorder)
 	if(withBorder == true)
 	{
 		ctx.beginPath();
-		ctx.fillStyle = 'black';
 		ctx.lineWidth=1;
 		ctx.rect(r*blockWidth+paddingX, i*blockWidth+paddingY, blockWidth, blockWidth);
 		ctx.stroke();
@@ -450,7 +475,7 @@ function drawBlock(i, r, withBorder)
 function drawCross(i, r)
 {
 	ctx.fillStyle = 'black';
-	ctx.lineWidth=3*scale;
+	ctx.lineWidth=2*scale;
 	ctx.beginPath();
 	ctx.moveTo(r*blockWidth+paddingX+4,i*blockWidth+paddingY+4);
 	ctx.lineTo(r*blockWidth+paddingX + blockWidth-4,i*blockWidth+paddingY+blockWidth-4);

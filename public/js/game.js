@@ -36,6 +36,7 @@ var teamSocket;
 
 var serverAddr = "http://127.0.0.1";
 
+var gameIsStarted = false;
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
@@ -80,6 +81,8 @@ function checkTeamID(){
 
 	if(isNaN(teamId) || teamId.replace(/^\s+|\s+$/g, '').length != 5)
 		document.getElementById('inform').innerHTML = 'Team ID is a 5-digit number';
+	else if(teamId<10000)
+		document.getElementById('inform').innerHTML = 'Team ID has to be larger than 10000';
 	else if (name.replace(/^\s+|\s+$/g, '').length != 0)
 		teamSocket.emit("checkTeamID", {teamId:localTeamId, name:localName});
 	else
@@ -118,9 +121,10 @@ function showLeaderPage(){
 	teamSocket.emit("getMemberList", {name:localName, teamId:localTeamId});
 	//sent create Room message and leader name to server;
 	//then the server will let events which relate to "Being A Leader" on.
-
-	document.getElementById('joinTeam').style.display = "block";
-	document.getElementById('joinTeamButton').style.display = "block";
+	if(!gameIsStarted){
+		document.getElementById('joinTeam').style.display = "block";
+		document.getElementById('joinTeamButton').style.display = "block";
+	}
 }
 
 function onMemberList(data){
@@ -183,9 +187,10 @@ function onKickedByLeader(){
 }
 
 
-function onDepartNotice(){
+function onDepartNotice(data){
 	document.getElementById('joinTeam').style.display = "none";
-	init();
+	gameIsStarted = true;
+	init(data.port);
 	animate();
 }
 
@@ -194,10 +199,10 @@ function onChangeRole(){
 }
 
 /***********************endOfNewFunction*******************/
-function init() {
+function init(p) {
 
 	// Initialise socket connection
-	socket = io.connect(serverAddr + ":8000", {port: 8000, transports: ["websocket"]});
+	socket = io.connect(serverAddr + ":" + p, {port: p, transports: ["websocket"]});
 
 
 	// Declare the canvas and rendering context
@@ -682,6 +687,7 @@ function drawMap(map) {
 		for(r = 0 ; r<mapWidth ; r++){
 			var blockId = (maps[map])[i][r];
 			// Button
+			ctx.strokeStyle = 'black';
 			if (blockId>=200 && blockId<=209){
 				ctx.fillStyle = findStyle(blockId);
 				//drawBlock(i, r, false);
@@ -694,6 +700,7 @@ function drawMap(map) {
 			}
 			else if (blockId == 1 || blockId == 600){
 				ctx.fillStyle = findStyle(blockId);
+				ctx.strokeStyle = ctx.fillStyle;
 				drawBlock(i, r, true);
 			}
 			//400 back to last, 500 back to origin
@@ -712,6 +719,7 @@ function drawDoors(map) {
 			var blockId = (maps[map])[i][r];
 
 			// Doors
+			ctx.strokeStyle = 'black';
 			if(blockId>=100 && blockId<=109){
 				ctx.fillStyle = findStyle(blockId);
 				if(!isDoorOpen(blockId))
@@ -761,7 +769,7 @@ function drawBlock(i, r, withBorder)
 	if(withBorder == true)
 	{
 		ctx.beginPath();
-		ctx.fillStyle = 'black';
+		
 		ctx.lineWidth=1;
 		ctx.rect(r*blockWidth+paddingX, i*blockWidth+paddingY, blockWidth, blockWidth);
 		ctx.stroke();

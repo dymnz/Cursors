@@ -8,6 +8,8 @@ var teamIDList = [];
 var idPair;
 var socket; //socket handler
 
+var serverNum = [];
+var serverList = [8000, 8002, 8003, 8004, 8005];
 
 function init(){
 	for(var i = 0;i < 100000;i++){
@@ -18,6 +20,11 @@ function init(){
 		teamIDList[i][2] = [];		//names of members
 		teamIDList[i][3] = [];		//sockets of members
 		teamIDList[i][4] = false; 	//the team has already started
+		teamIDList[i][5] = 0;		//Server index
+	}
+
+	for(var i = 0;i < serverList.length;i++){
+		serverNum[i] = 0;
 	}
 
 	idPair = [];
@@ -64,6 +71,9 @@ function onCheckTeamID(data){
 				teamIDList[id][3].push(this);
 				idPair.push([this.id, id]);
 				sendMemberAddinfo(id, this.id);
+
+				if(teamIDList[id][4] == true)
+					this.emit("gameStart", {port: serverList[teamIDList[id][5]]});
 		}
 
 	}else if(id != undefined){
@@ -83,8 +93,6 @@ function onGetMemberList(data){
 	var id = data.teamId;
 	if(id != undefined){
 		this.emit("memberList",JSON.stringify(teamIDList[id][2]));
-		if(teamIDList[id][4] == true)
-			this.emit("gameStart");
 	}
 }
 
@@ -109,6 +117,7 @@ function onMemberDisconnect(){
 		}
 
 		teamIDList[tid][1]--;
+		serverNum[teamIDList[tid][5]]--;
 
 		if(teamIDList[tid][1] == 0){
 			teamIDList[tid][0] = false;
@@ -137,8 +146,11 @@ function onMemberDisconnect(){
 function onTeamStart(data) {
 	var id = data.teamId;
 	if(id != undefined && teamIDList[id][0]){
+		var index = serverBalancing();
+		teamIDList[id][5] = index;
 		for(var i = 0;i < teamIDList[id][3].length;i++){
-			teamIDList[id][3][i].emit("gameStart");
+			teamIDList[id][3][i].emit("gameStart", {port: serverList[index]});
+			serverNum[index]++;
 		}
 		teamIDList[id][4] = true;
 	}
@@ -151,5 +163,22 @@ function sendMemberAddinfo(tid, id){
 		}
 	}
 }
+
+
+function serverBalancing(){
+	var minPlayerNum = 9007199254740991, minServerIndex = 0;
+	var i;
+
+	for(i = 0;i < serverNum.length;i++){
+		if(serverNum[i] < minPlayerNum){
+			minPlayerNum = serverNum[i];
+			minServerIndex = i;
+		}
+		
+	};
+
+	return minServerIndex;
+}
+
 
 init();

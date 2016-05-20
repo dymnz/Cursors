@@ -59,6 +59,10 @@ input{
 	width: 100%;
 }
 
+#starting_inform {
+	font-size: 5px;
+}
+
 
 #canvasImage {
 	display: none;
