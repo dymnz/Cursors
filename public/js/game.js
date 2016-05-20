@@ -656,7 +656,7 @@ function draw() {
 	};
 
 	// Draw the local player
-	var colorSelfFill = '#66ff66'; var colorSelfBorder = '#66ff66';
+	var colorSelfFill = '#00ff00'; var colorSelfBorder = '#00ff00';
 	drawPlayer(localPlayer, colorSelfFill, colorSelfBorder);
 
 	// Draw gamepad	
