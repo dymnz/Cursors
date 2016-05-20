@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html class="light-blue lighten-1" lang="en">
 
 	<head>
 		<meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no"/>
@@ -22,7 +22,7 @@
 
 	
 	<body class = "light-blue lighten-1">
-		<div class="row" id="welcome">
+		<div class="row light-blue lighten-1" id="welcome">
 			<h1 class="center-align white-text">
 				balls
 			</h1>	
@@ -48,7 +48,7 @@
 			</div>
 			    </form>		
 			  </div>
-			  <div class="center-align col s12 light-blue-text text-lighten-1" id="essential"></div>
+			  <div class="center-align col s12 light-blue-text text-lighten-1 light-blue lighten-1" id="essential"></div>
 		</div>
 
 		<div class="row" id="joinTeam" >
@@ -73,9 +73,75 @@
 				</div>
 			</div>	
 		</div>
-		<div class="row" id="credit_roll" >
+
+		<div class="white valign" id="credit_roll" >
+			<div>
+					<h2 class="valign center-align grey-text">Brought to you by</h2>	
+			</div>
 			
+			<div class="row">
+				<div class="col s4 yellow lighten-2 valign-wrapper" id="credit_block">
+					<div class="col s4">
+						<img src="imgs/db.png" alt="" class="circle responsive-img">
+					</div>
+					<div class="col s8 valign">
+					Name: shit <br>
+					Doing: shit
+					</div>
+				</div>
+				<div class="col s4 blue lighten-2 valign-wrapper" id="credit_block">
+					<div class="col s4">
+						<img src="imgs/db.png" alt="" class="circle responsive-img">
+					</div>
+					<div class="col s8 valign">
+					Name: shit <br>
+					Doing: shit
+					</div>
+				</div>
+				<div class="col s4 green lighten-2 valign-wrapper" id="credit_block">
+					<div class="col s4">
+						<img src="imgs/db.png" alt="" class="circle responsive-img">
+					</div>
+					<div class="col s8 valign">
+					Name: shit <br>
+					Doing: shit
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s4 red lighten-2 valign-wrapper" id="credit_block">
+					<div class="col s4">
+						<img src="imgs/db.png" alt="" class="circle responsive-img">
+					</div>
+					<div class="col s8 valign">
+					Name: shit <br>
+					Doing: shit
+					</div>
+				</div>
+				<div class="col s4 lime lighten-2 valign-wrapper" id="credit_block">
+					<div class="col s4">
+						<img src="imgs/db.png" alt="" class="circle responsive-img">
+					</div>
+					<div class="col s8 valign">
+					Name: shit <br>
+					Doing: shit
+					</div>
+				</div>
+				<div class="col s4 teal lighten-2 valign-wrapper" id="credit_block">
+					<div class="col s4">
+						<img src="imgs/db.png" alt="" class="circle responsive-img">
+					</div>
+					<div class="col s8 valign">
+					Name: shit <br>
+					Doing: shit
+					</div>
+				</div>
+			</div>
+			<div>
+					<h4 class="valign center-align grey-text">Thanks for playing with our balls</h4>	
+			</div>
 		</div>
+
 		<div class="myCanvas">
 			<canvas id="gameCanvas"></canvas>	
 		</div>
@@ -123,6 +189,17 @@
 		   		checkTeamID();
 		   	}
 
+		   	function showCredit() {
+		   		document.getElementById("gameCanvas").style.display = "none";
+		   		document.getElementById("welcome").style.display = "none";
+		   		document.getElementById("joinTeam").style.display = "none";
+
+		   		document.getElementById("credit_roll").style.display = "block";
+		   		document.body.className = "grey lighten-4 valign-wrapper";
+		   	}
+
+
+
 			$('#essential').html(strVar);
 			var showing = false;
 			$('#essential').click(function(){
@@ -139,7 +216,7 @@
 			window.addEventListener( "keypress", doKeyDown, false )
 			function doKeyDown(e) {
 				if(e.keyCode == 13)
-					socket.emit("on goal");
+					showCredit();
 			}
 			*/
 		</script>
