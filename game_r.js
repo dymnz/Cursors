@@ -526,11 +526,23 @@ function onGameOver()
 {
 	var num = 0;
 	var chosenPlayer = [];
-	for(var i = mapCount-1;i >= 0;i--){
-		if(num < 2){
-			
+	var flag = false;
+	for(var i = mapCount - 1;i >= 0;i--){
+		for(var j = 0;j < players[0][i].length;j++){
+			if(num < 2){
+				num++;
+				chosenPlayer.push(players[0][i][j]);
+			}else{
+				flag = true;
+				break;
+			}
+		}
+		if(flag){
+			break;
 		}
 	}
+
+	broadcastAllConsoles("chosen players", JSON.stringify(chosenPlayer));
 }
 
 
