@@ -687,6 +687,7 @@ function drawMap(map) {
 		for(r = 0 ; r<mapWidth ; r++){
 			var blockId = (maps[map])[i][r];
 			// Button
+			ctx.strokeStyle = 'black';
 			if (blockId>=200 && blockId<=209){
 				ctx.fillStyle = findStyle(blockId);
 				//drawBlock(i, r, false);
@@ -699,6 +700,7 @@ function drawMap(map) {
 			}
 			else if (blockId == 1 || blockId == 600){
 				ctx.fillStyle = findStyle(blockId);
+				ctx.strokeStyle = ctx.fillStyle;
 				drawBlock(i, r, true);
 			}
 			//400 back to last, 500 back to origin
@@ -717,6 +719,7 @@ function drawDoors(map) {
 			var blockId = (maps[map])[i][r];
 
 			// Doors
+			ctx.strokeStyle = 'black';
 			if(blockId>=100 && blockId<=109){
 				ctx.fillStyle = findStyle(blockId);
 				if(!isDoorOpen(blockId))
@@ -766,7 +769,7 @@ function drawBlock(i, r, withBorder)
 	if(withBorder == true)
 	{
 		ctx.beginPath();
-		ctx.fillStyle = 'black';
+		
 		ctx.lineWidth=1;
 		ctx.rect(r*blockWidth+paddingX, i*blockWidth+paddingY, blockWidth, blockWidth);
 		ctx.stroke();

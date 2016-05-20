@@ -342,7 +342,7 @@ var map20=[
 //999 #92D050綠
 //500 #FF66FF粉紅陷阱
 var stylelist = [
-[1, 'black'],
+[1, '#ff6666'],
 [101, '#FFFF33'],
 [201, '#ffff80'],
 [102, '#ac00e6'],
@@ -355,9 +355,8 @@ var stylelist = [
 [400, '#e6e6e6'],
 [500, '#ff99ff']];
 [600, 'black'] //可以通行的牆壁
-var maxMapIndex = 24;
-var maps = [mapLob, map0
-, mapHi, mapAre, 
+var maxMapIndex = 22;
+var maps = [mapHi, mapAre, 
 		mapYou, mapReady, map1,
 		map2, map3, map4, map5, 
 		map6, map7, map9, 
