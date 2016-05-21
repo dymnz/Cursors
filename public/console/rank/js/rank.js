@@ -120,10 +120,11 @@ function animate() {
 	{
 		context.fillStyle = serverColors[i];
 		context.strokeStyle = serverColors[i];
+		console.log(serverMemeberCounts[i]);
 		for(var r=0 ; r<mapCount ; r++)
 		{
 			//console.log(serverCount + " " +serverMemeberCounts[2].length);
-			if( serverMemeberCounts[i][r]!=0){
+			if( serverMemeberCounts[i][r]>0){
 				circleRadius = calculateCircleRadius(blockWidth, serverMemeberCounts[i][r]);
 				if(circleRadius<blockWidth/3)
 					circleRadius = blockWidth/3;

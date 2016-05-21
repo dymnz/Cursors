@@ -147,6 +147,8 @@ var setEventHandlers = function() {
 	socket.on("chosen players", onChosenPlayers);
 
 	socket.on("credit roll", showCredit);
+
+		socket.on("player info", onPlayerInfo);
 };
 
 // Keyboard key down
@@ -695,4 +697,12 @@ function onChosenPlayers(data) {
 	var players = JSON.parse(data);
 
 	console.log(players);
+}
+
+
+function dump() {
+	socket.emit("dump players");
+}
+function onPlayerInfo(data) {
+	console.log(data.name);
 }
