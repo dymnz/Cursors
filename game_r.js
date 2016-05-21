@@ -540,7 +540,19 @@ function broadcastAllConsoles(cmd, msg)
 /*special console*/
 function onGetServerInfo()
 {
-	this.emit("map info", JSON.stringify(mapNum));
+	//this.emit("map info", JSON.stringify(mapNum));
+	console.log("here");
+	var mapNumber = [];
+	for(var i = 0;i < players[0].length;i++){
+		mapNumber[i] = 0;
+		for(var j = 0;j < players[0][i].length;j++){
+			if(players[0][i][j].teamId != 123){
+				mapNumber[i]++;
+			}
+		}
+	}
+	this.emit("map info", JSON.stringify(mapNumber));	
+
 }
 
 function onGetRank(){
