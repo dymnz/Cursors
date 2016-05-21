@@ -134,7 +134,11 @@ function onClientDisconnect() {
 	// Remove player from players array
 	var i = removePlayer.getRoomIndex(),
 		j = removePlayer.getMapIndex();
-	mapNum[j]--;
+	
+	if(removePlayer.teamId != 123){
+		mapNum[j]--;
+	}
+
 	players[i][j].splice(players[i][j].indexOf(removePlayer), 1);
 	removePlayerFromList(removePlayer.id);
 
@@ -166,7 +170,9 @@ function onNewPlayer(data) {
 	//set Room and map
 	roomBalancing(newPlayer);
 	newPlayer.setMapIndex(test);
-	mapNum[test]++;
+	if(data.teamId != 123){
+		mapNum[test]++;
+	}
 
 
 	// Broadcast new player to connected socket clients
