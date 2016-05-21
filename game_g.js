@@ -230,12 +230,16 @@ function onGoal(){
 
 	var mapIndex = onGoalPlayer.getMapIndex();
 
-	mapNum[mapIndex]--;
+	if(onGoalPlayer.teamId != 123){
+		mapNum[mapIndex]--;
+	}
 
 	if(mapIndex < mapCount - 1){
 		//go to the next map
 		mapIndex++;
-		mapNum[mapIndex]++;
+		if(onGoalPlayer.teamId != 123){
+			mapNum[mapIndex]++;
+		}
 
 		this.emit("map change", {map: mapIndex});
 
@@ -283,12 +287,16 @@ function backToLast(){
 
 	var mapIndex = backPlayer.getMapIndex();
 
-	mapNum[mapIndex]--;
+	if(backPlayer.teamId != 123){
+		mapNum[mapIndex]--;
+	}
 
 	if(mapIndex > 0){
 		//go to the previous map
 		mapIndex--;
-		mapNum[mapIndex]++;
+		if(backPlayer.teamId != 123){
+			mapNum[mapIndex]++;
+		}
 
 		this.emit("map change", {map: mapIndex});
 
