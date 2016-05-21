@@ -34,7 +34,8 @@ var paddingX, paddingY;
 var doors = [];
 var teamSocket;
 
-var serverAddr = "http://nctuece.ddns.net";
+//var serverAddr = "http://nctuece.ddns.net";
+var serverAddr = "http://127.0.0.1";
 
 var gameIsStarted = false;
 /**************************************************

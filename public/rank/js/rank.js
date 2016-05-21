@@ -1,6 +1,8 @@
 
 var serverPorts = [8000, 8002, 8003];
-var serverAddrs = "http://nctuece.ddns.net";
+//var serverAddrs = "http://nctuece.ddns.net";
+var serverAddrs = "http://127.0.0.1";
+
 var serverColors = ['#ff6666', '#11d4d4', '#4da6ff'];
 var serverMemeberCounts = [];
 
@@ -34,6 +36,7 @@ function init(){
 	window.setTimeout(askForData, requestInterval);
 
 	for(var i=0 ; i<sockets.length ; i++){
+		sockets[i].emit("i am rank");
 		sockets[i].on("map info", onMapInfo);
 		sockets[i].on("success", onSuccess);	
 	}
@@ -119,16 +122,19 @@ function animate() {
 		for(var r=0 ; r<mapCount ; r++)
 		{
 			//console.log(serverCount + " " +serverMemeberCounts[2].length);
-			circleRadius = calculateCircleRadius(blockWidth, serverMemeberCounts[i][r]);
-			console.log("c" + circleRadius);
-			drawCircle(i+1, r+1, circleRadius);
+			if( serverMemeberCounts[i][r]!=0){
+				circleRadius = calculateCircleRadius(blockWidth, serverMemeberCounts[i][r]);
+				if(circleRadius<blockWidth/3)
+					circleRadius = blockWidth/3;
+				drawCircle(i+1, r+1, circleRadius);
+			}
 		}
 	}	
 }
 
 function calculateCircleRadius(maxWidth, count) {		
-	var upperBound = 10;
-	return Math.round(count/20*maxWidth);
+	var upperBound = 5;
+	return Math.round(count*2/upperBound*maxWidth);
 }
 
 function drawCircle(row, col, radius) {
