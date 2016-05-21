@@ -338,7 +338,7 @@ function draw() {
 		return;
 
 	// Wipe the canvas clean
-	ctx.fillStyle = 'black';
+	ctx.fillStyle = 'white';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	ctx.fillStyle = 'white';
@@ -615,7 +615,6 @@ function checkOnButton(x, y, map) {
 /*CONSOLE*/
 function updateHtml(){
 	document.getElementById("map").innerHTML = localPlayer.getMap();
-	document.getElementById("room").innerHTML = localPlayer.getRoom();
 }
 
 function onRoomChange(data)
@@ -637,8 +636,9 @@ function NextRoom(){
 }
 
 function LastRoom(){
-	localPlayer.lastRoom();
 	socket.emit("credit roll"); //change to previse map after press the button
+	showCredit();
+
 }
 
 function NextMap(){
@@ -678,6 +678,15 @@ function onSendInit(data) {
 	maxRoomIndex = data.maxRoomIndex;
 	console.log("map room " + data.map +"  " + data.room + " maxRoomIndex " +maxRoomIndex);
 	updateHtml();
+}
+
+
+function showCredit() {
+	document.getElementById("gameCanvas").style.display = "none";
+	document.getElementById("console").style.display = "none";
+
+	document.getElementById("credit_roll").style.display = "block";
+	document.body.className = "grey lighten-4 valign-wrapper";
 }
 
 
