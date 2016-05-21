@@ -15,6 +15,7 @@ var remainingWidth, remainingHeight;
 var paddingX, paddingY;
 var blockWidth, blockHeight;
 var requestInterval = 1000;
+var gameOver = false;
 
 	var testMemberCounts = [5, 10, 20, 30, 2,
 	0, 10, 20, 30, 2,
@@ -38,7 +39,7 @@ function init(){
 	for(var i=0 ; i<sockets.length ; i++){
 		sockets[i].emit("i am rank");
 		sockets[i].on("map info", onMapInfo);
-		sockets[i].on("success", onSuccess);	
+		sockets[i].on("success", onSuccess);		
 	}
 
 	

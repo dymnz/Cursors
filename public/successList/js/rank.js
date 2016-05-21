@@ -9,6 +9,7 @@ var serverMemeberCounts = [];
 
 var successList = [];
 var  serverCount = 3;
+var gameOver = false;
 
 
 function init(){
@@ -19,6 +20,7 @@ function init(){
 	for(var i=0 ; i<sockets.length ; i++){
 		sockets[i].emit("i am rank");
 		sockets[i].on("success", onSuccess);	
+		sockets[i].on("chosen players", onGameOver);
 	}
 }
 
@@ -56,4 +58,14 @@ function updateList(newData) {
     	
     	document.getElementById("list").appendChild(x);
 	
+}
+
+
+
+function onGameOver() {
+	if(gameOver == false)
+	{
+		gameOver = true;
+		document.getElementById("list").innerHTML = "";
+	}
 }

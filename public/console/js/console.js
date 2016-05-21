@@ -139,7 +139,9 @@ var setEventHandlers = function() {
 
 	socket.on("room change", onRoomChange);
 
-	socket.on("sendInit", onSendInit)
+	socket.on("sendInit", onSendInit);
+
+	socket.on("chosen players", onChosenPlayers);
 };
 
 // Keyboard key down
@@ -690,3 +692,12 @@ function showCredit() {
 }
 
 
+function ChooseRandom() {
+	socket.emit("gameover");
+}
+
+function onChosenPlayers(data) {
+	var players = JSON.parse(data);
+
+	console.log(players);
+}

@@ -28,3 +28,14 @@ td {
 	font-size: 3vw;
 	width: 100%;
 }
+
+
+.circle{
+	width: 100px;
+	height: 100px;
+}
+#credit_block{
+	padding: 10px 0 10px 0;
+	font-size: 3vw;
+
+}
