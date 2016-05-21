@@ -560,7 +560,7 @@ function onGameOver()
 
 function onCreditRoll()
 {
-	for(var j = 0;j < playes[0].length;j++){
+	for(var j = 0;j < players[0].length;j++){
 		for(var index = 0;index < players[0][j].length;index++){
 			players[0][j][index].getSocket().emit("credit roll");
 		}
