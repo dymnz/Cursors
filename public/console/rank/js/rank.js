@@ -120,7 +120,6 @@ function animate() {
 	{
 		context.fillStyle = serverColors[i];
 		context.strokeStyle = serverColors[i];
-		console.log(serverMemeberCounts[i]);
 		for(var r=0 ; r<mapCount ; r++)
 		{
 			//console.log(serverCount + " " +serverMemeberCounts[2].length);
