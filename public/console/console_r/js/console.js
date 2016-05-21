@@ -62,12 +62,15 @@ function init(name, team_id) {
 	{
 		case 8000:
 			stylelist[0][1] = '#ff6666';
+			stylelist[12][1] = '#ff6666';
 			break;
 		case 8002:
 			stylelist[0][1] = '#11d4d4';
+			stylelist[12][1] = '#11d4d4';
 			break;
 		case 8003:
 			stylelist[0][1] = '#4da6ff';
+			stylelist[12][1] = '#4da6ff';
 			break;
 	}
 

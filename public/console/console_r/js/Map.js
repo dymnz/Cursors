@@ -354,8 +354,8 @@ var stylelist = [
 [204, '#ffd699'],
 [999, '#80ff80'],
 [400, '#e6e6e6'],
-[500, '#ff99ff']];
-[600, 'black'] //可以通行的牆壁
+[500, '#ff99ff'],
+[600, 'black']]; //可以通行的牆壁
 var maxMapIndex = 22;
 var maps = [mapHi, mapAre, 
 		mapYou, mapReady, map1,
