@@ -1,7 +1,7 @@
 
 var serverPorts = [8000, 8002, 8003];
 var serverAddrs = "http://nctuece.ddns.net";
-var serverColors = ['#ff0000', '#00ff00', '#0000ff'];
+var serverColors = ['#ff6666', '#11d4d4', '#4da6ff'];
 var serverMemeberCounts = [];
 
 var sockets = [];
