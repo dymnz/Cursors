@@ -127,6 +127,8 @@ function animate() {
 				circleRadius = calculateCircleRadius(blockWidth, serverMemeberCounts[i][r]);
 				if(circleRadius<blockWidth/3)
 					circleRadius = blockWidth/3;
+				if(circleRadius>blockWidth*2)
+					circleRadius = blockWidth*2;
 				drawCircle(i+1, r+1, circleRadius);
 			}
 		}
