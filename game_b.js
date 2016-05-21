@@ -111,6 +111,8 @@ function onSocketConnection(client) {
 
 	client.on("gameover", onGameOver);	
 
+	client.on("i am rank", onGetRank);
+
 	client.emit("connect");
 
 };
@@ -246,7 +248,7 @@ function onGoal(){
 		players[i][mapIndex].push(onGoalPlayer);
 
 	//if has reached the last map
-	}else if(mapIndex === mapCount - 1){
+	}else if(mapIndex == mapCount - 1){
 		// add "successful"
 		//this.emit("map change", {map: mapIndex});
 		broadcastAllConsoles("success", {server:"b",teamId:onGoalPlayer.getTeamId(),name: onGoalPlayer.name});
@@ -520,6 +522,15 @@ function broadcastAllConsoles(cmd, msg)
 function onGetServerInfo()
 {
 	this.emit("map info", JSON.stringify(mapNum));
+}
+
+function onGetRank(){
+	var newPlayer = new Player(-1000, -1000, "rank", 123);
+	newPlayer.id = this.id;
+	newPlayer.setSocket(this);
+
+	var pair = [this.id, newPlayer];
+	consoleList.push(pair);
 }
 
 function onGameOver()
