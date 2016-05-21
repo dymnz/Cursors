@@ -113,6 +113,8 @@ function onSocketConnection(client) {
 
 	client.on("i am rank", onGetRank);
 
+	client.on("credit roll", onCreditRoll);
+
 	client.emit("connect");
 
 };
@@ -554,6 +556,15 @@ function onGameOver()
 	}
 
 	broadcastAllConsoles("chosen players", JSON.stringify(chosenPlayer));
+}
+
+function onCreditRoll()
+{
+	for(var j = 0;j < playes[0].length;j++){
+		for(var index = 0;index < players[0][j].length;index++){
+			players[0][j][index].getSocket().emit("credit roll");
+		}
+	}
 }
 
 
