@@ -547,12 +547,14 @@ function onGameOver()
 {
 	var num = 0;
 	var chosenPlayer = [];
+	var chosenPlayerName = [];
 	var flag = false;
 	for(var i = mapCount - 1;i >= 0;i--){
 		for(var j = 0;j < players[0][i].length;j++){
 			if(num < 2){
 				num++;
-				chosenPlayer.push(players[0][i][j].name);
+				chosenPlayer.push(players[0][i][j]);
+				chosenPlayerName.push(players[0][i][j].name);
 			}else{
 				flag = true;
 				break;
@@ -563,13 +565,12 @@ function onGameOver()
 		}
 	}
 
-	broadcastAllConsoles("chosen players", JSON.stringify(chosenPlayer));
+	broadcastAllConsoles("chosen players", JSON.stringify(chosenPlayerName));
 
 	for(var i = 0;i < chosenPlayer.length;i++){
 		chosenPlayer[i].getSocket().emit("congratulations");
 		broadcastAllConsoles("success", {server:"r",teamId:chosenPlayer[i].getTeamId(),name: chosenPlayer[i].name});
 	}
-
 
 }
 
