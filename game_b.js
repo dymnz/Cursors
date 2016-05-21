@@ -514,7 +514,7 @@ function onChangeRoomTo(data) {
 function broadcastAllConsoles(cmd, msg)
 {
 	for(var i = 0;i < consoleList.length;i++){
-		consoleList[i].getSocket().emit(cmd, msg);
+		consoleList[i][1].getSocket().emit(cmd, msg);
 	}
 }
 
