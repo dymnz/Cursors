@@ -4,6 +4,8 @@ var serverAddrs = "http://nctuece.ddns.net";
 var serverColors = ['#ff6666', '#11d4d4', '#4da6ff'];
 var serverMemeberCounts = [];
 
+var successList = [];
+
 var sockets = [];
 var canvas, context;
 var  mapCount = 22, mapHeight = 4, serverCount = 3, mapWidth = mapCount + 1;
@@ -31,8 +33,13 @@ function init(){
 
 	window.setTimeout(askForData, requestInterval);
 
-	for(var i=0 ; i<sockets.length ; i++)
+	for(var i=0 ; i<sockets.length ; i++){
 		sockets[i].on("map info", onMapInfo);
+		sockets[i].on("success", onSuccess);	
+	}
+
+	
+
 
 	uiScaling();
 }
@@ -49,6 +56,14 @@ function askForData() {
 
 function updateRankList() {
 	animate();
+}
+
+function onSuccess(data) {
+	var successData = [data.server, data.teamId, data.name];
+
+	successList.push(successData);
+	console.log(successData);
+
 }
 
 function onMapInfo(data) {
