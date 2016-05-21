@@ -552,7 +552,7 @@ function onGameOver()
 		for(var j = 0;j < players[0][i].length;j++){
 			if(num < 2){
 				num++;
-				chosenPlayer.push(players[0][i][j]);
+				chosenPlayer.push(players[0][i][j].name);
 			}else{
 				flag = true;
 				break;

@@ -115,6 +115,8 @@ function onSocketConnection(client) {
 
 	client.on("credit roll", onCreditRoll);
 
+	client.on("dump players", dump);
+
 	client.emit("connect");
 
 };
@@ -138,7 +140,7 @@ function onClientDisconnect() {
 	if(removePlayer.teamId != 123){
 		mapNum[j]--;
 	}
-
+	
 	players[i][j].splice(players[i][j].indexOf(removePlayer), 1);
 	removePlayerFromList(removePlayer.id);
 
@@ -550,7 +552,7 @@ function onGameOver()
 		for(var j = 0;j < players[0][i].length;j++){
 			if(num < 2){
 				num++;
-				chosenPlayer.push(players[0][i][j]);
+				chosenPlayer.push(players[0][i][j].name);
 			}else{
 				flag = true;
 				break;
@@ -559,6 +561,10 @@ function onGameOver()
 		if(flag){
 			break;
 		}
+	}
+
+	for(var i = 0;i < chosenPlayer.length;i++){
+		chosenPlayer[i].getSocket().emit("congratulations");
 	}
 
 	broadcastAllConsoles("chosen players", JSON.stringify(chosenPlayer));
@@ -572,6 +578,11 @@ function onCreditRoll()
 		}
 	}
 }
+
+function dump(){
+
+}
+
 
 /**************************************************
 ** RUN THE GAME
