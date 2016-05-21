@@ -78,6 +78,12 @@ input{
 	font-size: 3vw;
 
 }
+
+
+#congrats{
+	display: none;
+
+}
 canvas {
 	display: block;
 	margin: 0 auto 0 auto;

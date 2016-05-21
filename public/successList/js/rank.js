@@ -61,6 +61,15 @@ function updateList(newData) {
 }
 
 
+function ChooseRandom() {
+	for(var i=0 ; i<sockets.length ; i++)
+		sockets[i].emit("gameover");
+}
+
+function showCredit() {
+	for(var i=0 ; i<sockets.length ; i++)
+		sockets[i].emit("credit roll");
+}
 
 function onGameOver() {
 	if(gameOver == false)

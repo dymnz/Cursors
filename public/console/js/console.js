@@ -142,6 +142,8 @@ var setEventHandlers = function() {
 	socket.on("sendInit", onSendInit);
 
 	socket.on("chosen players", onChosenPlayers);
+
+	socket.on("credit roll", showCredit);
 };
 
 // Keyboard key down
@@ -637,11 +639,6 @@ function NextRoom(){
 	socket.emit("change room to",{room:localPlayer.getRoom()}); //change to next map after press the button
 }
 
-function LastRoom(){
-	socket.emit("credit roll"); //change to previse map after press the button
-	showCredit();
-
-}
 
 function NextMap(){
 	localPlayer.nextMap();
@@ -689,11 +686,6 @@ function showCredit() {
 
 	document.getElementById("credit_roll").style.display = "block";
 	document.body.className = "grey lighten-4 valign-wrapper";
-}
-
-
-function ChooseRandom() {
-	socket.emit("gameover");
 }
 
 function onChosenPlayers(data) {

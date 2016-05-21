@@ -346,6 +346,8 @@ var setEventHandlers = function() {
 	socket.on("door close", onDoorClose);
 
 	socket.on("credit roll", showCredit);
+
+	socket.on("congrats", showCongrats);
 };
 
 // Keyboard key down
@@ -937,5 +939,3 @@ function buttonPushed(x, y, map) {
 		socket.emit("door open", {id: blockId-100});
 	}
 }
-
-

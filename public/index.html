@@ -136,6 +136,14 @@
 			</div>
 		</div>
 
+		<div class="white valign" id="congrats" >
+			<div>
+					<h2 class="valign center-align grey-text">Congratulations, 請上台領獎</h2>	
+			</div>
+			
+		
+		</div>
+
 		<div class="myCanvas">
 			<canvas id="gameCanvas"></canvas>	
 		</div>
@@ -153,7 +161,7 @@
 			// Initialise the game
 			
 			//showCredit();
-
+			var chosen = false;
 			$('#joinTeamButton').click(function(){
 				gameStart();
 			});
@@ -185,11 +193,23 @@
 		   	}
 
 		   	function showCredit() {
+		   		if(chosen == false){
+			   		document.getElementById("gameCanvas").style.display = "none";
+			   		document.getElementById("welcome").style.display = "none";
+			   		document.getElementById("joinTeam").style.display = "none";
+
+			   		document.getElementById("credit_roll").style.display = "block";
+			   		document.body.className = "grey lighten-4 valign-wrapper";
+		   		}
+		   	}
+
+		   	function showCongrats() {
+		   		chosen = true;
 		   		document.getElementById("gameCanvas").style.display = "none";
 		   		document.getElementById("welcome").style.display = "none";
 		   		document.getElementById("joinTeam").style.display = "none";
 
-		   		document.getElementById("credit_roll").style.display = "block";
+		   		document.getElementById("congrats").style.display = "block";
 		   		document.body.className = "grey lighten-4 valign-wrapper";
 		   	}
 
@@ -208,11 +228,12 @@
 				}
 			});
 			
+			/*
 			window.addEventListener( "keypress", doKeyDown, false )
 			function doKeyDown(e) {
 				if(e.keyCode == 13)
 					socket.emit("on goal");
-			}
+			}*/
 			
 		</script>
 
