@@ -581,7 +581,11 @@ function onCreditRoll()
 }
 
 function dump(){
-
+	for(var j = 0;j < players[0].length;j++){
+		for(var index = 0;index < players[0][j].length;index++){
+			players[0][j][index].getSocket().emit("player info",{server:"g",name:players[0][j][index].name});
+		}
+	}
 }
 
 
