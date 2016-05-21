@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html class="light-blue lighten-1" lang="en">
+
+	<head>
+		<meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no"/>
+
+		<title>Success</title>
+		<meta charset="utf-8">
+
+  		<link rel="stylesheet" href="style/materialize.min.css">  
+  		<link rel="stylesheet" href="style/rank.css">  
+	</head>
+
+	
+	<body class = "light-blue lighten-1">
+		<div class="row">
+			<h1 class="center-align white-text">Ranking</h3>
+			<div class="col s4 offset-s4 white list-wrapper">
+				<ul id="list" >
+					<h4 class="red-text center-align">No one</h4>
+				</ul>
+			</div>			
+		</div>
+		
+		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+		<script type="text/javascript" src="js/jquery-2.2.3.min.js"></script>
+		<script type="text/javascript" src="js/rank.js"></script>
+  		<script src="js/materialize.min.js"></script>
+
+		<script>
+			init();
+		</script>
+	</body>
+
+</html>
