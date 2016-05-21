@@ -14,7 +14,7 @@ var  mapCount = 22, mapHeight = 4, serverCount = 3, mapWidth = mapCount + 1;
 var remainingWidth, remainingHeight;
 var paddingX, paddingY;
 var blockWidth, blockHeight;
-var requestInterval = 1000;
+var requestInterval = 200;
 var gameOver = false;
 
 	var testMemberCounts = [5, 10, 20, 30, 2,

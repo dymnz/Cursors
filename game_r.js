@@ -541,7 +541,6 @@ function broadcastAllConsoles(cmd, msg)
 function onGetServerInfo()
 {
 	//this.emit("map info", JSON.stringify(mapNum));
-	console.log("here");
 	var mapNumber = [];
 	for(var i = 0;i < players[0].length;i++){
 		mapNumber[i] = 0;
