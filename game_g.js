@@ -571,7 +571,7 @@ function onGameOver()
 	broadcastAllConsoles("chosen players", JSON.stringify(chosenPlayerName));
 
 	for(var i = 0;i < chosenPlayer.length;i++){
-		chosenPlayer[i].getSocket().emit("congratulations");
+		chosenPlayer[i].getSocket().emit("congrats");
 		broadcastAllConsoles("success", {server:"g",teamId:chosenPlayer[i].getTeamId(),name: chosenPlayer[i].name});
 	}
 }
