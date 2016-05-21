@@ -1,0 +1,35 @@
+html, body {
+	font-family: Verdana, Sans-serif;
+	background-color: #FFFFFF;
+	height: 100%;
+}
+
+
+.redlist{
+	background-color: #ff6666;
+}
+.greenlist{
+	background-color: #11d4d4;
+}
+.bluelist{
+	background-color: #4da6ff;
+}
+
+
+h1{
+	margin-top: 20px;
+}
+
+h5{
+	margin: 10px 0 10px 0;
+	border-radius: 20px;
+	padding: 10px 0 10px 0;
+}
+
+#list{
+	border-radius: 20px;
+}
+
+.list-wrapper{
+	border-radius: 20px;	
+}

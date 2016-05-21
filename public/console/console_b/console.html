@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html class="light-blue lighten-1" lang="en">
+
+	<head>
+	<meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no"/>
+		<title>Console</title>
+		<meta charset="utf-8">
+		
+		<link rel="stylesheet" href="style/reset.css">
+		<link rel="stylesheet" href="style/game.css">
+		<link rel="stylesheet" href="style/materialize.min.css">  
+	</head>
+	
+	<body >
+		<div class="myCanvas">
+			<canvas id="gameCanvas"></canvas>	
+		</div>
+		<div id="console" >
+			<table>
+			<tr>
+				<td>
+					map: <span id="map"></span>
+				</td>
+				<td>
+					<input type="button" id="map last" value="last map" onClick="LastMap()">	
+				</td>	
+				<td>
+					<input type="button" id="map next" value="next map" onClick="NextMap();">
+				</td>
+			</tr>
+			</table>
+		</div>
+		<div class="white valign" id="credit_roll" >
+			<div>
+					<h2 class="valign center-align grey-text">Brought to you by</h2>	
+			</div>
+			
+			<div class="row ">
+				<div class="col s4 yellow lighten-2 valign-wrapper" id="credit_block">
+					<div class="col s4">
+						<img src="imgs/1.png" alt="" class="circle responsive-img">
+					</div>
+					<div class="col s8 valign center-align">
+					賈恩宇
+					</div>
+				</div>
+				<div class="col s4 blue lighten-2 valign-wrapper" id="credit_block">
+					<div class="col s4">
+						<img src="imgs/2.png" alt="" class="circle responsive-img">
+					</div>
+					<div class="col s8 valign center-align">
+					王順興
+					</div>
+				</div>
+				<div class="col s4 green lighten-2 valign-wrapper" id="credit_block">
+					<div class="col s4">
+						<img src="imgs/3.png" alt="" class="circle responsive-img">
+					</div>
+					<div class="col s8 valign center-align">
+					許維元
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s4 red lighten-2 valign-wrapper" id="credit_block">
+					<div class="col s4">
+						<img src="imgs/4.png" alt="" class="circle responsive-img">
+					</div>
+					<div class="col s8 valign center-align">
+					謝是合
+					</div>
+				</div>
+				<div class="col s4 lime lighten-2 valign-wrapper" id="credit_block">
+					<div class="col s4">
+						<img src="imgs/5.png" alt="" class="circle responsive-img">
+					</div>
+					<div class="col s8 valign center-align">
+					莊京翰
+					</div>
+				</div>
+				<div class="col s4 teal lighten-2 valign-wrapper" id="credit_block">
+					<div class="col s4">
+						<img src="imgs/6.png" alt="" class="circle responsive-img">
+					</div>
+					<div class="col s8 valign center-align">
+					楊東霖
+					</div>
+				</div>
+			</div>
+			<div>
+					<h4 class="valign center-align grey-text">Thanks for playing balls.oo</h4>	
+			</div>
+		</div>
+		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+		<script src="js/requestAnimationFrame.js"></script>
+		<script src="js/Keys.js"></script>
+		<script src="js/Player.js"></script>
+		<script src="js/Map.js"></script>
+		<script src="js/console.js"></script>
+		<script type="text/javascript" src="js/jquery-2.2.3.min.js"></script>
+  		<script src="js/materialize.min.js"></script>
+		<script>
+			init("ssss", 123);
+			animate();
+
+
+			window.addEventListener( "keypress", doKeyDown, false )
+			function doKeyDown(e) {
+				if(e.keyCode == 13)
+					DoorAllOpen();
+			}
+		</script>
+	</body>
+</html>

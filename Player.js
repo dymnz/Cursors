@@ -1,10 +1,15 @@
 /**************************************************
 ** GAME PLAYER CLASS
 **************************************************/
-var Player = function(startX, startY) {
+var Player = function(startX, startY, pname, tid) {
 	var x = startX,
 		y = startY,
-		id;
+		id,
+		teamId = tid,
+		name = pname,
+		roomIndex,
+		mapIndex,
+		socket;
 
 	// Getters and setters
 	var getX = function() {
@@ -22,6 +27,32 @@ var Player = function(startX, startY) {
 	var setY = function(newY) {
 		y = newY;
 	};
+	var getTeamId = function() {
+		return teamId;
+	};
+	var setRoomIndex = function(newIndex){
+		roomIndex = newIndex;
+	};
+
+	var setMapIndex = function(newIndex){
+		mapIndex = newIndex;
+	};
+
+	var getRoomIndex = function(){
+		return roomIndex;
+	};
+
+	var getMapIndex = function(){
+		return mapIndex;
+	};
+
+	var setSocket = function(newSocket){
+		socket = newSocket;
+	};
+
+	var getSocket = function(){
+		return socket;
+	};
 
 	// Define which variables and methods can be accessed
 	return {
@@ -29,7 +60,15 @@ var Player = function(startX, startY) {
 		getY: getY,
 		setX: setX,
 		setY: setY,
-		id: id
+		id: id,
+		getTeamId: getTeamId,
+		setRoomIndex: setRoomIndex,
+		setMapIndex: setMapIndex,
+		getRoomIndex: getRoomIndex,
+		getMapIndex: getMapIndex,
+		setSocket: setSocket,
+		getSocket: getSocket,
+		name: name
 	}
 };
 
