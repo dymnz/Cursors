@@ -1,0 +1,41 @@
+html, body {
+	font-family: Verdana, Sans-serif;
+	background-color: #FFFFFF;
+	height: 100%;
+}
+
+
+body {
+	overflow: hidden;
+	background-color: #FFFFFF;
+}
+
+canvas {
+	display: block;
+	margin: 0 auto 0 auto;
+}
+
+.console {
+	font-size: 12px;
+}
+
+td {
+	margin: 0 10px 0 0 ;
+}
+
+#credit_roll {
+	display: none;
+	font-size: 3vw;
+	width: 100%;
+}
+
+
+.circle{
+	width: 100px;
+	height: 100px;
+}
+#credit_block{
+	padding: 10px 0 10px 0;
+	font-size: 3vw;
+}
+

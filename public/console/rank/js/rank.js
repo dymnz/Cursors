@@ -1,7 +1,7 @@
 
 var serverPorts = [8000, 8002, 8003];
 //var serverAddrs = "http://nctuece.ddns.net";
-var serverAddrs = "http://127.0.0.1";
+var serverAddrs = "http://nctuece.ddns.net";
 
 var serverColors = ['#ff6666', '#11d4d4', '#4da6ff'];
 var serverMemeberCounts = [];

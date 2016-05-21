@@ -55,7 +55,7 @@ function init(name, team_id) {
 	//localPlayer.
 
 	// Initialise socket connection
-	socket = io.connect("http://127.0.0.1:" + p, {port: p, transports: ["websocket"]});
+	socket = io.connect("http://nctuece.ddns.net:" + p, {port: p, transports: ["websocket"]});
 
 
 	switch(p)
