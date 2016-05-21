@@ -552,9 +552,12 @@ function onGameOver()
 	for(var i = mapCount - 1;i >= 0;i--){
 		for(var j = 0;j < players[0][i].length;j++){
 			if(num < 2){
-				num++;
-				chosenPlayer.push(players[0][i][j]);
-				chosenPlayerName.push(players[0][i][j].name);
+				if( players[0][i][j].getTeamId() != 123)
+				{
+					num++;
+					chosenPlayer.push(players[0][i][j]);
+					chosenPlayerName.push(players[0][i][j].name);
+				}
 			}else{
 				flag = true;
 				break;
