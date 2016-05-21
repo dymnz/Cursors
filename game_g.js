@@ -563,12 +563,12 @@ function onGameOver()
 		}
 	}
 
+	broadcastAllConsoles("chosen players", JSON.stringify(chosenPlayer));
+
 	for(var i = 0;i < chosenPlayer.length;i++){
 		chosenPlayer[i].getSocket().emit("congratulations");
 		broadcastAllConsoles("success", {server:"g",teamId:chosenPlayer[i].getTeamId(),name: chosenPlayer[i].name});
 	}
-
-	broadcastAllConsoles("chosen players", JSON.stringify(chosenPlayer));
 }
 
 function onCreditRoll()
