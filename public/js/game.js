@@ -663,17 +663,19 @@ function draw() {
 	var colorOtherBorder = 'grey'; var colorOtherFill = 'grey';
 	var colorTeamFill = '#99ddff'; var colorTeamBorder = '#99ddff';
 	for (i = 0; i < remotePlayers.length; i++) {
-		if (remotePlayers[i].getTeamId() == localTeamId)
-		{
-			colorFill = colorTeamFill;
-			colorBorder = colorTeamBorder;
+		if(remotePlayers[i].getTeamId() != 123){
+			if (remotePlayers[i].getTeamId() == localTeamId)
+			{
+				colorFill = colorTeamFill;
+				colorBorder = colorTeamBorder;
+			}
+			else
+			{
+				colorFill = colorOtherFill;
+				colorBorder = colorOtherBorder;
+			}
+			drawPlayer(remotePlayers[i], colorFill, colorBorder);
 		}
-		else
-		{
-			colorFill = colorOtherFill;
-			colorBorder = colorOtherBorder;
-		}
-		drawPlayer(remotePlayers[i], colorFill, colorBorder);
 	};
 
 	// Draw the local player
